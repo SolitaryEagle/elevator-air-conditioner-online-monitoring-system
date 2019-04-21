@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<title>Login</title>
+	<link rel="stylesheet" href="../static/css/auth.css">
+</head>
+
+<body>
+	<div class="login">
+		<div class="login-brand">
+			<img src="../static/image/kodinger.jpg" alt="logo">
+		</div>
+		<div class="login-wrapper">
+			<div class="login-box login-login">
+				<div class="login-box-inner">
+					<form>
+						<p>您尚未激活！请激活</p>
+						<div class="login-group">
+							<label>激活码</label>
+							<input type="email" autocomplete="email" name="email" class="login-input">
+						</div>
+
+						<button class="login-btn login-btn">
+							激活
+						</button>
+
+					</form>
+				</div>
+			</div>
+		</div>
+		<footer class="login-footer">
+			Design By @itskodinger. More Templates <a href="http://www.cssmoban.com/" target="_blank" title="模板之家">模板之家</a> - Collect from <a href="http://www.cssmoban.com/" title="网页模板" target="_blank">网页模板</a>
+		</footer>
+	</div>
+
+	<script src="../static/js/auth.js"></script>
+	<script>
+		Auth.init({
+			login_url: '#login',
+			forgot_url: '#forgot'
+		});
+	</script>
+</body>
+</html>
