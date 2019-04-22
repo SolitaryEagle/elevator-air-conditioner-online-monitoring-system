@@ -12,7 +12,7 @@ body {
 	--color-semidark: rgba(68, 160, 179, .5);
 
 	text-align: center;
-	margin: 60px 0 0 0;
+	margin: 40px 0 0 0;
 	font-family: 'Segoe UI';
 	font-size: 14px;
 }
@@ -90,7 +90,6 @@ body {
 
 .login .login-box {
 	width: 100%;
-	position: absolute;
 	left: 0;
 }
 
@@ -135,7 +134,7 @@ body {
 }
 
 .login .login-box .login-group {
-	margin-bottom: 30px;
+	margin-bottom: 12px;
 }
 
 .login .login-box label {
@@ -152,7 +151,7 @@ body {
 
 .login .login-box .login-input {
 	background-color: var(--color-grey);
-	color: var(--color-dark);
+	color: #000000;
 	border: none;
 	border-radius: 3px;
 	padding: 15px 20px;
@@ -185,6 +184,25 @@ body {
 
 .login .login-box .login-btn:hover {
 	opacity: .9;
+}
+
+.login-btn-disabled, .login-btn-disabled:active, .login-btn-disabled:hover {
+	display: inline-block;
+	width: 100%;
+	padding: 15px;
+	border-radius: 3px;
+	-webkit-box-shadow: 0 2px 7px var(--color-semidark);
+	box-shadow: 0 2px 7px var(--color-semidark);
+	font-weight: 700;
+	outline: 0;
+	-webkit-transition: all .5s;
+	-o-transition: all .5s;
+	transition: all .5s;
+	border: 1px solid #e6e6e6;
+	background-color: #FBFBFB;
+	color: #C9C9C9;
+	cursor: not-allowed;
+	opacity: 1;
 }
 
 .login .text-foot {
@@ -285,257 +303,4 @@ body {
 	-webkit-transform-origin: 0 0;
 	    -ms-transform-origin: 0 0;
 	        transform-origin: 0 0;
-}
-
-.login .login-group.password-group.login-animated-back {
-	-webkit-animation-name: LoginPasswordAnimatedBack;
-	        animation-name: LoginPasswordAnimatedBack;
-	-webkit-animation-duration: 1s;
-	        animation-duration: 1s;
-	-webkit-animation-fill-mode: forwards;
-	        animation-fill-mode: forwards;
-	-webkit-animation-timing-function: ease-in-out;
-	        animation-timing-function: ease-in-out;
-	-webkit-transform-origin: 0 0;
-	    -ms-transform-origin: 0 0;
-	        transform-origin: 0 0;
-}
-
-/* keyframes */
-@-webkit-keyframes LoginAnimated {
-	0% {
-		-webkit-transform: rotate3d(0);
-		        transform: rotate3d(0);
-	}
-	99% {
-		opacity: 1;
-	}
-	100% {
-		opacity: 0;
-		-webkit-transform: rotate3d(0, 1, 0, 180deg);
-		        transform: rotate3d(0, 1, 0, 180deg);
-	}
-}
-@keyframes LoginAnimated {
-	0% {
-		-webkit-transform: rotate3d(0);
-		        transform: rotate3d(0);
-	}
-	99% {
-		opacity: 1;
-	}
-	100% {
-		opacity: 0;
-		-webkit-transform: rotate3d(0, 1, 0, 180deg);
-		        transform: rotate3d(0, 1, 0, 180deg);
-	}
-}
-
-@-webkit-keyframes LoginAnimatedBack {
-	0% {
-		opacity: 0;
-		-webkit-transform: rotate3d(0, 1, 0, 180deg);
-		        transform: rotate3d(0, 1, 0, 180deg);
-	}
-	99% {
-		opacity: 1;
-	}
-	100% {
-		opacity: 1;
-		-webkit-transform: rotate3d(0);
-		        transform: rotate3d(0);
-	}
-}
-
-@keyframes LoginAnimatedBack {
-	0% {
-		opacity: 0;
-		-webkit-transform: rotate3d(0, 1, 0, 180deg);
-		        transform: rotate3d(0, 1, 0, 180deg);
-	}
-	99% {
-		opacity: 1;
-	}
-	100% {
-		opacity: 1;
-		-webkit-transform: rotate3d(0);
-		        transform: rotate3d(0);
-	}
-}
-
-@-webkit-keyframes LoginAnimatedFlip {
-	0% {
-		-webkit-transform: rotate3d(0, 1, 0, -180deg);
-		        transform: rotate3d(0, 1, 0, -180deg);
-		opacity: 0;
-	}
-	99% {
-		opacity: 1;
-	}
-	100% {
-		opacity: 1;
-		-webkit-transform: rotate3d(0, 0, 0, 180deg);
-		        transform: rotate3d(0, 0, 0, 180deg);
-	}
-}
-
-@keyframes LoginAnimatedFlip {
-	0% {
-		-webkit-transform: rotate3d(0, 1, 0, -180deg);
-		        transform: rotate3d(0, 1, 0, -180deg);
-		opacity: 0;
-	}
-	99% {
-		opacity: 1;
-	}
-	100% {
-		opacity: 1;
-		-webkit-transform: rotate3d(0, 0, 0, 180deg);
-		        transform: rotate3d(0, 0, 0, 180deg);
-	}
-}
-
-@-webkit-keyframes LoginAnimatedFlipBack {
-	0% {
-		opacity: 1;
-		-webkit-transform: rotate3d(0, 0, 0, 180deg);
-		        transform: rotate3d(0, 0, 0, 180deg);
-	}
-	95% {
-		opacity: 0;
-	}
-	100% {
-		-webkit-transform: rotate3d(0, 1, 0, -180deg);
-		        transform: rotate3d(0, 1, 0, -180deg);
-		opacity: 0;
-	}
-}
-
-@keyframes LoginAnimatedFlipBack {
-	0% {
-		opacity: 1;
-		-webkit-transform: rotate3d(0, 0, 0, 180deg);
-		        transform: rotate3d(0, 0, 0, 180deg);
-	}
-	95% {
-		opacity: 0;
-	}
-	100% {
-		-webkit-transform: rotate3d(0, 1, 0, -180deg);
-		        transform: rotate3d(0, 1, 0, -180deg);
-		opacity: 0;
-	}
-}
-
-@-webkit-keyframes LoginBrandAnimated {
-	0% {
-		-webkit-transform: translate(0, 0);
-		        transform: translate(0, 0);
-	}
-	50% {
-		-webkit-transform: translate(0, -120px);
-		        transform: translate(0, -120px);
-	}
-	100% {
-		-webkit-transform: translate(0, 0);
-		        transform: translate(0, 0);
-	}
-}
-
-@keyframes LoginBrandAnimated {
-	0% {
-		-webkit-transform: translate(0, 0);
-		        transform: translate(0, 0);
-	}
-	50% {
-		-webkit-transform: translate(0, -120px);
-		        transform: translate(0, -120px);
-	}
-	100% {
-		-webkit-transform: translate(0, 0);
-		        transform: translate(0, 0);
-	}
-}
-
-@-webkit-keyframes LoginPasswordAnimated {
-	0% {
-		-webkit-transform: rotate3d(0, 0, 0, 0);
-		        transform: rotate3d(0, 0, 0, 0);
-	}
-	30% {
-		opacity: 1;
-	}
-	60% {
-		opacity: 0;
-	}
-	100% {
-		opacity: 0;
-		-webkit-transform: rotate3d(1, 0, 0, -180deg);
-		        transform: rotate3d(1, 0, 0, -180deg);
-		z-index: -1;
-	}
-}
-
-@keyframes LoginPasswordAnimated {
-	0% {
-		-webkit-transform: rotate3d(0, 0, 0, 0);
-		        transform: rotate3d(0, 0, 0, 0);
-	}
-	30% {
-		opacity: 1;
-	}
-	60% {
-		opacity: 0;
-	}
-	100% {
-		opacity: 0;
-		-webkit-transform: rotate3d(1, 0, 0, -180deg);
-		        transform: rotate3d(1, 0, 0, -180deg);
-		z-index: -1;
-	}
-}
-
-@-webkit-keyframes LoginPasswordAnimatedBack {
-	0% {
-		opacity: 0;
-		-webkit-transform: rotate3d(1, 0, 0, -180deg);
-		        transform: rotate3d(1, 0, 0, -180deg);
-	}
-	40% {
-		opacity: 0;
-	}
-	60% {
-		opacity: 1;
-	}
-	100% {
-		-webkit-transform: rotate3d(0, 0, 0, 0);
-		        transform: rotate3d(0, 0, 0, 0);
-	}
-}
-
-@keyframes LoginPasswordAnimatedBack {
-	0% {
-		opacity: 0;
-		-webkit-transform: rotate3d(1, 0, 0, -180deg);
-		        transform: rotate3d(1, 0, 0, -180deg);
-	}
-	40% {
-		opacity: 0;
-	}
-	60% {
-		opacity: 1;
-	}
-	100% {
-		-webkit-transform: rotate3d(0, 0, 0, 0);
-		        transform: rotate3d(0, 0, 0, 0);
-	}
-}
-
-@media screen and (max-width: 320px) {
-	.login .login-wrapper {
-		width: 100%;
-	}
-	.login .login-box {
-		padding: 0 10px;
-	}
 }

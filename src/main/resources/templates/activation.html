@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Activation</title>
+
+    <link href="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/css/bootstrap.min.css" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" rel="stylesheet" >
+    <link href="https://cdn.90so.net/layui/2.4.5/css/layui.css" th:href="@{/webjars/layui/css/layui.css}" rel="stylesheet">
+    <link href="../static/css/register.css" th:href="@{/css/auth.css}" rel="stylesheet" type="text/css">
+
+    <script type="text/javascript" src="https://cdn.staticfile.org/jquery/3.4.0/jquery.min.js" th:src="@{/webjars/jquery/jquery.min.js}"></script>
+    <script type="text/javascript" src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js" th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+    <script type="text/javascript" src="https://cdn.90so.net/layui/2.4.5/layui.js" th:src="@{/webjars/layui/layui.js}"></script>
+    <script type="text/javascript" src="https://cdn.90so.net/layui/2.4.5/layui.all.js" th:src="@{/webjars/layui/layui.all.js}"></script>
+    <script type="text/javascript" src="../static/js/common.js" th:src="@{/js/common.js}"></script>
+</head>
+
+<body>
+<div class="login">
+    <div class="login-brand">
+        <img src="../static/image/kodinger.jpg" th:src="@{/image/kodinger.jpg}" alt="logo">
+    </div>
+    <div class="login-wrapper">
+        <div class="login-box login-register">
+            <div class="login-box-inner">
+                <form id="activation-form" action="#" method="post">
+                    <p>账户激活</p>
+                    <div class="login-group">
+                        <label>邮箱</label>
+                        <input id="activation-email" type="text" name="username" autocomplete="username" class="login-input">
+                    </div>
+                    <div class="login-group">
+                        <label>激活码</label>
+                        <input id="activation-code" type="password" name="password" autocomplete="current-password" class="login-input">
+                    </div>
+                    <button id="activation-email-btn" class="login-btn" style="width:30%; margin: 0 10%">
+                        发送邮件
+                    </button>
+                    <button id="activation-btn" class="login-btn" style="width:30%; margin: 0 10px">
+                        激活
+                    </button>
+
+                    <div class="text-foot">
+                        账户已激活? <a href="" class="register-link">登录</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <footer class="login-footer">
+        河海大学常州校区  2015级物联网工程学院  毕业设计
+    </footer>
+</div>
+
+<script type="text/javascript">
+
+    window.onload = function (ev) {
+
+        // 添加激活邮箱检测事件
+        document.getElementById('activation-email').onblur = function () {
+            var result = checkActivationEmail();
+            if (typeof result != "undefined" && result != null && result.length > 0) {
+                layerMsg(result);
+            }
+        };
+
+        // 添加激活码检测事件
+        document.getElementById('activation-code').onblur = function () {
+            var result = checkActivationCode();
+            if (typeof result != "undefined" && result != null && result.length > 0) {
+                layerMsg(result);
+            }
+        };
+
+        // 添加发送邮件按钮事件
+        document.getElementById('activation-email-btn').onclick = function () {
+            var result = checkActivationEmail();
+            if (typeof result != "undefined" && result != null && result.length > 0) {
+                layerMsg(result);
+            } else {
+                // 设置倒计时
+                var button = document.getElementById('activation-email-btn');
+                button.className = "login-btn-disabled";
+                timer(button, 60);
+            }
+            // 这个返回值可以使页面不刷新
+            return false;
+        };
+
+        // 添加激活按钮事件
+        document.getElementById('activation-btn').onclick = function () {
+            var result = submitActivation();
+            if (typeof result != "undefined" && result != null && result.length > 0) {
+                layerMsg(result);
+                // 这个返回值可以使页面不刷新
+                return false;
+            } else {
+                document.getElementById('activation-form').submit();
+            }
+        }
+    };
+
+    // 检测激活邮箱
+    function checkActivationEmail() {
+        var email = document.getElementById('activation-email').value.trim();
+        var regex = /^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z0-9]+$/;
+        if (!regex.test(email)) {
+            return "邮箱格式不正确！";
+        }
+    }
+
+    // 检测激活码
+    function checkActivationCode() {
+        var code = document.getElementById('activation-code').value;
+        var regex = /^\\d{6}$/;
+        if (!regex.test(code)) {
+            return "激活码格式错误！"
+        }
+    }
+
+    // 激活表单提交
+    function submitActivation() {
+        var result = checkActivationEmail();
+        if (typeof result != "undefined" && result != null && result.length > 0) {
+            return result;
+        }
+        result = checkActivationCode();
+        if (typeof result != "undefined" && result != null && result.length > 0) {
+            return result;
+        }
+    }
+
+</script>
+</body>
+</html>
