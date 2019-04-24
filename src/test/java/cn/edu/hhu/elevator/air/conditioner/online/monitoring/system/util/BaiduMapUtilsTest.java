@@ -1,6 +1,9 @@
 package cn.edu.hhu.elevator.air.conditioner.online.monitoring.system.util;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.Arrays;
+
 import org.junit.Test;
 
 /**
@@ -22,10 +25,11 @@ http://api.map.baidu.com/geocoder?location=32.05723550180587,118.77807440802562&
     @Test
     public void getLongitudeAndLatitude() throws IOException {
 
-        String address = "南京市";
+        String address = "河海大学常州校区";
         String address2 = "北京市";
         String address3 = "中山公园";
-        BaiduMapUtils.getLongitudeAndLatitude(address3);
+        BigDecimal[] longitudeAndLatitude = BaiduMapUtils.getLongitudeAndLatitude(address);
+        System.out.println(Arrays.toString(longitudeAndLatitude));
     }
 
 }

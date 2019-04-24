@@ -27,8 +27,8 @@ public final class BaiduMapUtils {
 
     public static BigDecimal[] getLongitudeAndLatitude(String address) throws IOException {
 
-        String requestUrl = ADDRESS_RESOLUTION_URL + "?address=" + address + "&output=json&src=webapp.hhu"
-                + ".elevatorMonitoringSystem&ak=" + AK_KEY;
+        String requestUrl = ADDRESS_RESOLUTION_URL + "?address=" + address + "&output=json&src=" +
+                "webapp.hhu.elevatorMonitoringSystem&ak=" + AK_KEY;
         String jsonStr = loadUrl(requestUrl);
 
         ObjectMapper mapper = new ObjectMapper();
