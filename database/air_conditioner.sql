@@ -16,6 +16,7 @@ CREATE TABLE `air_conditioner` (
   `longitude` decimal(20, 14) NOT NULL COMMENT '地址经度',
   `latitude` decimal(20, 14) NOT NULL COMMENT '地址纬度',
   `temperature` int(11) NOT NULL COMMENT '温度',
+  `wind_speed` varchar(255) NOT NULL DEFAULT 'STOP' COMMENT '风速',
   `kwh` decimal(20, 2) NOT NULL COMMENT '用电量',
   `current_intensity` decimal(10, 3) NOT NULL COMMENT '电流强度',
   `voltage` decimal(5, 2) NOT NULL COMMENT '电压',

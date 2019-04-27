@@ -13,6 +13,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  */
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
+
+    public static final String userBaseMapping = "/v1/monitoring-system/users";
+
     /*
 
     @Override
@@ -32,7 +35,10 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
-        registry.addViewController("").setViewName("register");
+        registry.addViewController(userBaseMapping + "/page/login").setViewName("user/login");
+        registry.addViewController(userBaseMapping + "/page/register").setViewName("user/register");
+        registry.addViewController(userBaseMapping + "/page/forgot-password").setViewName("user/forgot-password");
+        registry.addViewController("").setViewName("user/register");
     }
 
     @Override

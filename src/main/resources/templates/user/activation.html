@@ -5,13 +5,12 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Activation</title>
 
-    <link href="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/css/bootstrap.min.css" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" rel="stylesheet" >
+    <link href="https://cdn.staticfile.org/twitter-bootstrap/3.4.1/css/bootstrap.min.css" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" rel="stylesheet" >
     <link href="https://cdn.90so.net/layui/2.4.5/css/layui.css" th:href="@{/webjars/layui/css/layui.css}" rel="stylesheet">
-    <link href="../../static/css/register.css" th:href="@{/css/auth.css}" rel="stylesheet" type="text/css">
+    <link href="../../static/css/register.css" th:href="@{/css/register.css}" rel="stylesheet" type="text/css">
 
     <script type="text/javascript" src="https://cdn.staticfile.org/jquery/3.4.0/jquery.min.js" th:src="@{/webjars/jquery/jquery.min.js}"></script>
-    <script type="text/javascript" src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js" th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
-    <script type="text/javascript" src="https://cdn.90so.net/layui/2.4.5/layui.js" th:src="@{/webjars/layui/layui.js}"></script>
+    <script type="text/javascript" src="https://cdn.staticfile.org/twitter-bootstrap/3.4.1/js/bootstrap.min.js" th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
     <script type="text/javascript" src="https://cdn.90so.net/layui/2.4.5/layui.all.js" th:src="@{/webjars/layui/layui.all.js}"></script>
     <script type="text/javascript" src="../../static/js/common.js" th:src="@{/js/common.js}"></script>
 </head>
@@ -24,15 +23,15 @@
     <div class="login-wrapper">
         <div class="login-box login-register">
             <div class="login-box-inner">
-                <form id="activation-form" action="#" method="post">
+                <form id="activation-form" action="#" th:action="@{/v1/monitoring-system/users/activation}" method="post">
                     <p>账户激活</p>
                     <div class="login-group">
                         <label>邮箱</label>
-                        <input id="activation-email" type="text" name="username" autocomplete="username" class="login-input">
+                        <input id="activation-email" type="text" name="receiverEmail" autocomplete="email" class="login-input" th:value="${session.loginUser != null} ? ${session.loginUser.email} : ''">
                     </div>
                     <div class="login-group">
                         <label>激活码</label>
-                        <input id="activation-code" type="password" name="password" autocomplete="current-password" class="login-input">
+                        <input id="activation-code" type="text" name="verificationCode" autocomplete="current-password" class="login-input">
                     </div>
                     <button id="activation-email-btn" class="login-btn" style="width:30%; margin: 0 10%">
                         发送邮件
@@ -42,7 +41,7 @@
                     </button>
 
                     <div class="text-foot">
-                        账户已激活? <a href="" class="register-link">登录</a>
+                        账户已激活? <a href="" th:href="@{/v1/monitoring-system/users/page/login}" class="register-link">登录</a>
                     </div>
                 </form>
             </div>
@@ -54,9 +53,13 @@
     </footer>
 </div>
 
+<input id="exceptionMessage" type="hidden" th:value="${exceptionMessage}">
+
 <script type="text/javascript">
 
     window.onload = function (ev) {
+
+        layerMsgInputValueById('exceptionMessage');
 
         // 添加激活邮箱检测事件
         document.getElementById('activation-email').onblur = function () {
@@ -80,6 +83,11 @@
             if (typeof result != "undefined" && result != null && result.length > 0) {
                 layerMsg(result);
             } else {
+                // 发送邮件
+                $.get("/v1/monitoring-system/users/activation", {receiverEmail: $("#activation-email").val()}, function (data) {
+                    layerMsg(data);
+                });
+
                 // 设置倒计时
                 var button = document.getElementById('activation-email-btn');
                 button.className = "login-btn-disabled";
@@ -114,7 +122,7 @@
     // 检测激活码
     function checkActivationCode() {
         var code = document.getElementById('activation-code').value;
-        var regex = /^\\d{6}$/;
+        var regex = /^\d{6}$/;
         if (!regex.test(code)) {
             return "激活码格式错误！"
         }

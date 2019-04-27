@@ -5,59 +5,87 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Map</title>
 
-    <link href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
-    <link href="https://cdn.90so.net/layui/2.4.5/css/layui.css" th:href="@{/webjars/layui/css/layui.css}" rel="stylesheet">
-    <link href="https://cdn.staticfile.org/jstree/3.3.7/themes/default/style.min.css" th:href="@{webjars/jstree/themes/default/style.min.css}" rel="stylesheet">
+    <link href="https://cdn.staticfile.org/twitter-bootstrap/3.4.1/css/bootstrap.min.css" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+    <link href="https://cdn.staticfile.org/jstree/3.3.8/themes/default/style.min.css" th:href="@{/webjars/jstree/themes/default/style.min.css}" rel="stylesheet">
+    <link href="../../static/layui/css/layui.css" th:href="@{/webjars/layui/css/layui.css}" rel="stylesheet">
 
     <script type="text/javascript" src="https://cdn.staticfile.org/jquery/3.4.0/jquery.min.js" th:src="@{/webjars/jquery/jquery.min.js}"></script>
-    <script type="text/javascript" src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js" th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
-    <script type="text/javascript" src="https://cdn.90so.net/layui/2.4.5/layui.js" th:src="@{/webjars/layui/layui.js}"></script>
-    <script type="text/javascript" src="https://cdn.90so.net/layui/2.4.5/layui.all.js" th:src="@{/webjars/layui/layui.all.js}"></script>
-    <script type="text/javascript" src="https://cdn.staticfile.org/jstree/3.3.7/jstree.min.js" th:src="@{/webjars/jstree/jstree.min.js}"></script>
+    <script type="text/javascript" src="https://cdn.staticfile.org/twitter-bootstrap/3.4.1/js/bootstrap.min.js" th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+    <script type="text/javascript" src="https://cdn.staticfile.org/jstree/3.3.8/jstree.min.js" th:src="@{/webjars/jstree/jstree.min.js}"></script>
+    <script type="text/javascript" src="../../static/layui/layui.js" th:src="@{/webjars/layui/layui.js}"></script>
 </head>
-<body style="margin: 0 50px">
-<ul class="layui-nav layui-bg-blue" lay-filter="">
-    <li class="layui-nav-item"><a href="">最新活动</a></li>
-    <li class="layui-nav-item layui-this"><a href="">产品</a></li>
-    <li class="layui-nav-item"><a href="">大数据</a></li>
-    <li class="layui-nav-item">
-        <a href="javascript:;">解决方案</a>
-        <dl class="layui-nav-child"> <!-- 二级菜单 -->
-            <dd><a href="">移动模块</a></dd>
-            <dd><a href="">后台模版</a></dd>
-            <dd><a href="">电商平台</a></dd>
-        </dl>
-    </li>
-    <li class="layui-nav-item"><a href="">社区</a></li>
-</ul>
-<div style="float:left;background-color: #e2e2e2;width: 270px;height: 880px; border-right: 2px solid #1E9FFF;">
-    <div style="overflow: hidden; width: 270px; margin: 20px 0;">
-        <i class="layui-icon layui-icon-search" style="font-size: 35px; float: left; margin: 0 10px"></i>
-        <input id="container_q" class="layui-input" placeholder="搜索" style="width: 200px; float: left; border: 1px solid #01AAED;">
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+        <div class="layui-logo" style="width: 300px; font-size: 26px;">电梯风扇监控系统</div>
+        <!-- 头部区域（可配合layui已有的水平导航） -->
+        <ul class="layui-nav layui-layout-left" style="left: 300px;">
+            <li class="layui-nav-item"><a href="">首页</a></li>
+            <li class="layui-nav-item"><a href="">设备管理</a></li>
+            <li class="layui-nav-item"><a href="">维修管理</a></li>
+        </ul>
+        <ul class="layui-nav layui-layout-right">
+            <li class="layui-nav-item">
+                <a href="javascript:;">
+                    <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
+                    贤心
+                </a>
+                <dl class="layui-nav-child">
+                    <dd><a href="">基本资料</a></dd>
+                    <dd><a href="">安全设置</a></dd>
+                </dl>
+            </li>
+            <li class="layui-nav-item"><a href="">退出</a></li>
+        </ul>
     </div>
-    <hr class="layui-bg-blue" style="height: 2px">
-    <div id="container">
-        <ul>
-            <li attr="attr">Root node
+
+    <div class="layui-side" style="width: 300px; background-color: #dddddd">
+        <div class="layui-side-scroll" style="width: 100%">
+            <div style="overflow: hidden; width: 270px; margin: 20px 0;">
+                <i class="layui-icon layui-icon-search" style="font-size: 35px; float: left; margin: 0 10px"></i>
+                <input id="container_q" class="layui-input" placeholder="搜索" style="width: 200px; float: left; border: 1px solid #01AAED;">
+            </div>
+            <hr class="layui-bg-blue" style="height: 2px">
+            <div id="container">
                 <ul>
-                    <li>Child node 1
+                    <li attr="attr">Root node
                         <ul>
-                            <li id="child_node_1" data-location="39.990912172420714,116.32715863448607">Child node 1</li>
-                            <li>Child node 2</li>
-                        </ul>
-                    </li>
-                    <li>Child node 2
-                        <ul>
-                            <li>Child node 1</li>
-                            <li>Child node 2</li>
+                            <li>Child node 1
+                                <ul>
+                                    <li id="child_node_1" data-location="39.990912172420714,116.32715863448607">Child node 1</li>
+                                    <li>Child node 2</li>
+                                </ul>
+                            </li>
+                            <li>Child node 2
+                                <ul>
+                                    <li>Child node 1</li>
+                                    <li>Child node 2</li>
+                                </ul>
+                            </li>
                         </ul>
                     </li>
                 </ul>
-            </li>
-        </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-body" style="left: 300px;">
+        <iframe id="mapContent" style="float:right; width: 100%; height: 100%" src="http://api.map.baidu.com/marker?output=html&src=webapp.hhu.elevatorMonitoringSystem&ak=Xnydmr1oWTenkGrNxvNk8WkXm6jOLcUF&title=河海大学常州校区&location=31.825418310126373,119.98784449530642"></iframe>
+    </div>
+
+    <div class="layui-footer" style="left: 300px">
+        <!-- 底部固定区域 -->
+        河海大学常州校区  2015级物联网工程学院  毕业设计
     </div>
 </div>
-<iframe id="mapContent" style="float:right; width: 1530px; height: 880px" src="http://api.map.baidu.com/marker?output=html&src=webapp.hhu.elevatorMonitoringSystem&ak=Xnydmr1oWTenkGrNxvNk8WkXm6jOLcUF&title=河海大学常州校区&location=31.825418310126373,119.98784449530642"></iframe>
+
+<script>
+    //JavaScript代码区域
+    layui.use('element', function(){
+        var element = layui.element;
+
+    });
+</script>
 <script type="text/javascript">
     var mapSrcHead = "http://api.map.baidu.com/marker?output=html&src=webapp.hhu.elevatorMonitoringSystem&ak=Xnydmr1oWTenkGrNxvNk8WkXm6jOLcUF&location=";
     $(function () {
@@ -79,11 +107,6 @@
             $("#mapContent").attr("src", mapSrcHead + location);
         })
     });
-
-
-    function changeIcon() {
-        layer.msg("hello");
-    }
 
 </script>
 </body>

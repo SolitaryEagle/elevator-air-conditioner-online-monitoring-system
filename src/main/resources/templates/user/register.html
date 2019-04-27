@@ -5,13 +5,12 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Register</title>
 
-    <link href="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/css/bootstrap.min.css" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" rel="stylesheet" >
+    <link href="https://cdn.staticfile.org/twitter-bootstrap/3.4.1/css/bootstrap.min.css" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
     <link href="https://cdn.90so.net/layui/2.4.5/css/layui.css" th:href="@{/webjars/layui/css/layui.css}" rel="stylesheet">
-    <link href="../../static/css/register.css" th:href="@{/css/auth.css}" rel="stylesheet" type="text/css">
+    <link href="../../static/css/register.css" th:href="@{/css/register.css}" rel="stylesheet" type="text/css">
 
     <script type="text/javascript" src="https://cdn.staticfile.org/jquery/3.4.0/jquery.min.js" th:src="@{/webjars/jquery/jquery.min.js}"></script>
-    <script type="text/javascript" src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js" th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
-    <script type="text/javascript" src="https://cdn.90so.net/layui/2.4.5/layui.js" th:src="@{/webjars/layui/layui.js}"></script>
+    <script type="text/javascript" src="https://cdn.staticfile.org/twitter-bootstrap/3.4.1/js/bootstrap.min.js" th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
     <script type="text/javascript" src="https://cdn.90so.net/layui/2.4.5/layui.all.js" th:src="@{/webjars/layui/layui.all.js}"></script>
     <script type="text/javascript" src="../../static/js/common.js" th:src="@{/js/common.js}"></script>
 </head>
@@ -24,15 +23,15 @@
     <div class="login-wrapper">
         <div class="login-box login-register">
             <div class="login-box-inner">
-                <form id="register-form" action="#" method="post">
+                <form id="register-form" action="/v1/monitoring-system/users" th:action="@{/v1/monitoring-system/users}" method="post">
                     <p></p>
                     <div class="login-group">
                         <label>用户名</label>
-                        <input id="register-username" type="text" name="username" autocomplete="username" class="login-input">
+                        <input id="register-username" type="text" name="username" autocomplete="username" class="login-input" th:value="${registerUser != null} ? ${registerUser.username} : ''">
                     </div>
                     <div class="login-group">
                         <label>邮箱</label>
-                        <input id="register-email" type="email" autocomplete="email" name="email" class="login-input">
+                        <input id="register-email" type="email" autocomplete="email" name="email" class="login-input" th:value="${registerUser != null} ? ${registerUser.email} : ''">
                     </div>
                     <div class="login-group">
                         <label>密码</label>
@@ -44,14 +43,14 @@
                     </div>
                     <div class="login-group">
                         <label>电话号码</label>
-                        <input id="register-phoneNumber" type="text" name="phoneNumber" autocomplete="phone-number" class="login-input">
+                        <input id="register-phoneNumber" type="text" name="phoneNumber" autocomplete="phone-number" class="login-input" th:value="${registerUser != null} ? ${registerUser.phoneNumber} : ''">
                     </div>
                     <button id="register-btn" class="login-btn">
                         注册
                     </button>
 
                     <div class="text-foot">
-                        已有账号? <a href="" class="login-link">登录</a>
+                        已有账号? <a href="#" th:href="@{/v1/monitoring-system/users/page/login}" class="login-link">登录</a>
                     </div>
                 </form>
             </div>
@@ -59,11 +58,70 @@
     </div>
 
     <footer class="login-footer">
-        河海大学常州校区  2015级物联网工程学院  毕业设计
+        河海大学常州校区 2015级物联网工程学院 毕业设计
     </footer>
 </div>
 
+<input id="exceptionMessage" type="hidden" th:value="${exceptionMessage}">
+
 <script type="text/javascript">
+
+    window.onload = function (ev) {
+
+        layerMsgInputValueById('exceptionMessage');
+
+        // 添加注册用户名检测事件
+        document.getElementById('register-username').onblur = function () {
+            var result = checkRegisterUsername();
+            if (typeof result != "undefined" && result != null && result.length > 0) {
+                layerMsg(result);
+            }
+        };
+
+        // 添加注册邮箱检测事件
+        document.getElementById('register-email').onblur = function () {
+            var result = checkRegisterEmail();
+            if (typeof result != "undefined" && result != null && result.length > 0) {
+                layerMsg(result);
+            }
+        };
+
+        // 添加注册密码检测事件
+        document.getElementById('register-password').onblur = function () {
+            var result = checkRegisterPassword();
+            if (typeof result != "undefined" && result != null && result.length > 0) {
+                layerMsg(result);
+            }
+        };
+
+        // 添加重复密码检测事件
+        document.getElementById('register-repassword').onblur = function () {
+            var result = checkRegisterRepassword();
+            if (typeof result != "undefined" && result != null && result.length > 0) {
+                layerMsg(result);
+            }
+        };
+
+        // 注册电话号码检测
+        document.getElementById('register-phoneNumber').onblur = function () {
+            var result = checkRegisterPhoneNumber();
+            if (typeof result != "undefined" && result != null && result.length > 0) {
+                layerMsg(result);
+            }
+        };
+
+        // 添加注册按钮事件
+        document.getElementById('register-btn').onclick = function () {
+            var result = submitRegister();
+            if (typeof result != "undefined" && result != null && result.length > 0) {
+                layerMsg(result);
+                // 这个返回值可以使页面不刷新
+                return false;
+            } else {
+                $("#register-form").submit();
+            }
+        }
+    };
 
     // 检测注册用户名
     function checkRegisterUsername() {
@@ -75,7 +133,10 @@
             return "用户名不能包含空格！";
         }
         if (username.length > 20) {
-            return "用户名的长度不能超过10个字符！";
+            return "用户名的长度不能超过20个字符！";
+        }
+        if (username.indexOf('@') !== -1) {
+            return "用户名不能包含@字符！"
         }
     }
 
@@ -141,60 +202,6 @@
         }
     }
 
-    window.onload = function (ev) {
-
-        // 添加注册用户名检测事件
-        document.getElementById('register-username').onblur = function () {
-            var result = checkRegisterUsername();
-            if (typeof result != "undefined" && result != null && result.length > 0) {
-                layerMsg(result);
-            }
-        };
-
-        // 添加注册邮箱检测事件
-        document.getElementById('register-email').onblur = function () {
-            var result = checkRegisterEmail();
-            if (typeof result != "undefined" && result != null && result.length > 0) {
-                layerMsg(result);
-            }
-        };
-
-        // 添加注册密码检测事件
-        document.getElementById('register-password').onblur = function () {
-            var result = checkRegisterPassword();
-            if (typeof result != "undefined" && result != null && result.length > 0) {
-                layerMsg(result);
-            }
-        };
-
-        // 添加重复密码检测事件
-        document.getElementById('register-repassword').onblur = function () {
-            var result = checkRegisterRepassword();
-            if (typeof result != "undefined" && result != null && result.length > 0) {
-                layerMsg(result);
-            }
-        };
-
-        // 注册电话号码检测
-        document.getElementById('register-phoneNumber').onblur = function () {
-            var result = checkRegisterPhoneNumber();
-            if (typeof result != "undefined" && result != null && result.length > 0) {
-                layerMsg(result);
-            }
-        };
-
-        // 添加注册按钮事件
-        document.getElementById('register-btn').onclick = function () {
-            var result = submitRegister();
-            if (typeof result != "undefined" && result != null && result.length > 0) {
-                layerMsg(result);
-                // 这个返回值可以使页面不刷新
-                return false;
-            } else {
-                document.getElementById('register-form').submit();
-            }
-        }
-    }
 </script>
 </body>
 </html>

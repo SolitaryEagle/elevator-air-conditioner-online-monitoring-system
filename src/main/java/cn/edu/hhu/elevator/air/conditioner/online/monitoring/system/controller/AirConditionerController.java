@@ -3,16 +3,10 @@ package cn.edu.hhu.elevator.air.conditioner.online.monitoring.system.controller;
 import cn.edu.hhu.elevator.air.conditioner.online.monitoring.system.constant.AirConditionerStateEnum;
 import cn.edu.hhu.elevator.air.conditioner.online.monitoring.system.constant.RoleEnum;
 import cn.edu.hhu.elevator.air.conditioner.online.monitoring.system.constant.SessionConsts;
-import cn.edu.hhu.elevator.air.conditioner.online.monitoring.system.exception.BusinessException;
-import cn.edu.hhu.elevator.air.conditioner.online.monitoring.system.exception.ResponseCode;
 import cn.edu.hhu.elevator.air.conditioner.online.monitoring.system.model.entity.AirConditioner;
 import cn.edu.hhu.elevator.air.conditioner.online.monitoring.system.model.entity.User;
 import cn.edu.hhu.elevator.air.conditioner.online.monitoring.system.model.vo.AirConditionerVO;
 import cn.edu.hhu.elevator.air.conditioner.online.monitoring.system.service.AirConditionerService;
-import java.io.IOException;
-import java.util.List;
-import javax.validation.Valid;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,6 +15,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.SessionAttribute;
+
+import javax.validation.Valid;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author 覃国强
@@ -69,6 +69,14 @@ public class AirConditionerController {
             probe.setUserId(user.getId());
         }
         return airConditionerService.listAirConditioners(probe);
+    }
+
+    @GetMapping("/search")
+    public Map<String, Object> listAllAirConditioners() {
+        Map<String, Object> map = new HashMap<>(2);
+        map.put("code", "0");
+        map.put("data", airConditionerService.listAll());
+        return map;
     }
 
 }

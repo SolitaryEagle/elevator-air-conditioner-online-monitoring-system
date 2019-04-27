@@ -18,4 +18,6 @@ public interface AirConditionerService {
 
     List<AirConditionerVO> listAirConditioners(AirConditioner example);
 
+    List<AirConditionerVO> listAll();
+
 }

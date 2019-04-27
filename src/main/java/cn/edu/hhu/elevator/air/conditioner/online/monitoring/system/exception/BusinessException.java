@@ -1,10 +1,13 @@
 package cn.edu.hhu.elevator.air.conditioner.online.monitoring.system.exception;
 
+import lombok.Getter;
+
 /**
  * @author 覃国强
  * @date 2019-02-21
  */
-public class BusinessException extends RuntimeException {
+@Getter
+public class BusinessException extends Exception {
 
     private static final long serialVersionUID = 4148993212167064741L;
     private ResponseCode responseCode;

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>OnlineState</title>
+
+    <link href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+    <link href="https://cdn.90so.net/layui/2.4.5/css/layui.css" th:href="@{/webjars/layui/css/layui.css}" rel="stylesheet">
+
+    <script type="text/javascript" src="https://cdn.staticfile.org/jquery/3.4.0/jquery.min.js" th:src="@{/webjars/jquery/jquery.min.js}"></script>
+    <script type="text/javascript" src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js" th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+    <script type="text/javascript" src="https://cdn.90so.net/layui/2.4.5/layui.js" th:src="@{/webjars/layui/layui.js}"></script>
+    <script type="text/javascript" src="https://cdn.90so.net/layui/2.4.5/layui.all.js" th:src="@{/webjars/layui/layui.all.js}"></script>
+    <script type="text/javascript" src="https://cdn.staticfile.org/distpicker/2.0.5/distpicker.min.js"></script>
+</head>
+<body style="margin: 0 50px;">
+<ul class="layui-nav layui-bg-blue" lay-filter="" style="padding: 0 200px">
+    <li class="layui-nav-item col-lg-1.5"><a href="">首页</a></li>
+    <li class="layui-nav-item col-lg-1.5 layui-this"><a href="">产品</a></li>
+    <li class="layui-nav-item col-lg-1.5"><a href="">大数据</a></li>
+    <li class="layui-nav-item col-lg-1.5">
+        <a href="javascript:;">解决方案</a>
+        <dl class="layui-nav-child"> <!-- 二级菜单 -->
+            <dd><a href="">移动模块</a></dd>
+            <dd><a href="">后台模版</a></dd>
+            <dd><a href="">电商平台</a></dd>
+        </dl>
+    </li>
+    <li class="layui-nav-item col-lg-1.5"><a href="">社区</a></li>
+</ul>
+<ul class="layui-nav layui-nav-tree" lay-filter="test" style="float: left; height: 880px;">
+    <li class="layui-nav-item">
+        <a href="javascript:;">新增设备</a>
+    </li>
+    <li class="layui-nav-item">
+        <a href="javascript:;">解决方案</a>
+    </li>
+    <li class="layui-nav-item"><a href="#">产品</a></li>
+    <li class="layui-nav-item"><a href="#">大数据</a></li>
+</ul>
+<div class="layui-container" style="
+    border: 1px solid #1E9FFF;
+    float: right;
+    margin: 50px 310px 0 0;
+    padding: 20px;
+    background-color: #e2e2e2;
+    border-radius: 10px;
+      ">
+    <input placeholder="搜索" style="height: 34px;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #555;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    float:right;
+    margin-bottom: 20px">
+    <div style="margin: 30px; width: 95%; overflow: hidden">
+        <table id="state-table" lay-filter="test"></table>
+    </div>
+</div>
+</body>
+<script>
+    layui.use('table', function(){
+        var table = layui.table;
+        table.render({
+            elem: '#state-table'
+            ,height: 650
+            ,url: '/v1/monitoring-system/air-conditioners/search' //数据接口
+            ,page: true //开启分页
+            ,cols: [
+
+                [ //表头
+                {field: 'equipmentNumber', title: '设备编号', width:140, sort: true, align: 'center'}
+                ,{field: 'temperature', title: '环境温度(℃)', width:130, sort: true, align: 'center'}
+                ,{field: 'windSpeed', title: '风速', width:85, sort: true, align: 'center'}
+                ,{field: 'kwh', title: '用电量(Kw/h)', width:130, sort: true, align: 'center'}
+                ,{field: 'currentIntensity', title: '电流', width: 85,  sort: true, align: 'center'}
+                ,{field: 'voltage', title: '电压', width: 85, sort: true, align: 'center'}
+                ,{field: 'power', title: '功率', width: 120, sort: true, align: 'center'}
+                ,{field: 'state', title: '状态', width: 85, sort: true, align: 'center'}
+                ,{field: 'gmtModified', title: '刷新时间', width: 200, sort: true, align: 'center'}
+            ]
+
+            ]
+        });
+
+    });
+</script>
+</html>

@@ -3,6 +3,8 @@ package cn.edu.hhu.elevator.air.conditioner.online.monitoring.system.service.imp
 import cn.edu.hhu.elevator.air.conditioner.online.monitoring.system.constant.AirConditionerConsts;
 import cn.edu.hhu.elevator.air.conditioner.online.monitoring.system.constant.AirConditionerStateEnum;
 import cn.edu.hhu.elevator.air.conditioner.online.monitoring.system.constant.RegionCodeEnum;
+import cn.edu.hhu.elevator.air.conditioner.online.monitoring.system.constant.WindSpeed;
+import cn.edu.hhu.elevator.air.conditioner.online.monitoring.system.exception.BusinessException;
 import cn.edu.hhu.elevator.air.conditioner.online.monitoring.system.exception.RegionCodeException;
 import cn.edu.hhu.elevator.air.conditioner.online.monitoring.system.exception.ResponseCode;
 import cn.edu.hhu.elevator.air.conditioner.online.monitoring.system.model.entity.AirConditioner;
@@ -17,6 +19,7 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.RandomUtils;
 import org.springframework.beans.BeanUtils;
@@ -77,6 +80,8 @@ public class AirConditionerServiceImpl implements AirConditionerService {
                 RandomUtils.nextInt(AirConditionerConsts.MIN_TEMPERATURE, AirConditionerConsts.MAX_TEMPERATURE);
         airConditionerVO.setTemperature(randomTemperature);
 
+        airConditionerVO.setWindSpeed(WindSpeed.random());
+
         double randomKwh = RandomUtils.nextDouble(AirConditionerConsts.MIN_KWH, AirConditionerConsts.MAX_KWH);
         airConditionerVO.setKwh(BigDecimal.valueOf(randomKwh));
 
@@ -125,10 +130,26 @@ public class AirConditionerServiceImpl implements AirConditionerService {
                 ExampleMatcher.matching().withMatcher("address", ExampleMatcher.GenericPropertyMatchers.contains());
         List<AirConditioner> list = airConditionerRepository.findAll(Example.of(probe, matcher));
         return list.stream().map(airConditioner -> {
-            User user = userService.findById(airConditioner.getUserId());
+            User user = null;
+            try {
+                user = userService.findById(airConditioner.getUserId());
+            } catch (BusinessException e) {
+                e.printStackTrace();
+                throw new RuntimeException("我发生异常了！");
+            }
             AirConditionerVO airConditionerVO = new AirConditionerVO();
             BeanUtils.copyProperties(airConditioner, airConditionerVO);
             airConditionerVO.setUser(user);
+            return airConditionerVO;
+        }).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<AirConditionerVO> listAll() {
+        List<AirConditioner> list = airConditionerRepository.findAll();
+        return list.stream().map(airConditioner -> {
+            AirConditionerVO airConditionerVO = new AirConditionerVO();
+            BeanUtils.copyProperties(airConditioner, airConditionerVO);
             return airConditionerVO;
         }).collect(Collectors.toList());
     }

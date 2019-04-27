@@ -1,9 +1,7 @@
 
 // 提示msg信息
 function layerMsg(msg) {
-    layui.use('layer', function () {
-        layer.msg(msg, {time:3000, skin:'layui-bg-red', offset:'50px'});
-    });
+    layer.msg(msg, {time:3000, skin:'layui-bg-red', offset:'50px'});
 }
 
 // 按钮定时器
@@ -20,3 +18,13 @@ function timer(btn, time) {
         }
     }, 1000);
 }
+
+// 提示给定input的id的value的非空白内容
+function layerMsgInputValueById(id) {
+
+    var message = $("#" + id).val();
+    if (typeof message != "undefined" && message != null && message.length > 0) {
+        layerMsg(message);
+    }
+}
+

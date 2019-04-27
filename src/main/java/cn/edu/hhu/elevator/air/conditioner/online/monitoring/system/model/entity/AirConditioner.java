@@ -11,6 +11,8 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+
+import cn.edu.hhu.elevator.air.conditioner.online.monitoring.system.constant.WindSpeed;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -82,6 +84,13 @@ public class AirConditioner implements Serializable {
 
     @Column(nullable = false)
     private Integer temperature;
+
+
+    // 系统生成
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private WindSpeed windSpeed;
 
     // 系统生成
 
