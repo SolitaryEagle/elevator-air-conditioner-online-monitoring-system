@@ -23,26 +23,26 @@
     <div class="login-wrapper">
         <div class="login-box login-register">
             <div class="login-box-inner">
-                <form id="register-form" action="/v1/monitoring-system/users" th:action="@{/v1/monitoring-system/users}" method="post">
+                <form id="register-form" action="/v1/monitoring-system/users/add" th:action="@{/v1/monitoring-system/users/add}" method="post">
                     <p></p>
                     <div class="login-group">
-                        <label>用户名</label>
+                        <label><span style="margin-right: 5px;font-size: 12px;color: red;">*</span>用户名</label>
                         <input id="register-username" type="text" name="username" autocomplete="username" class="login-input" th:value="${registerUser != null} ? ${registerUser.username} : ''">
                     </div>
                     <div class="login-group">
-                        <label>邮箱</label>
+                        <label><span style="margin-right: 5px;font-size: 12px;color: red;">*</span>邮箱</label>
                         <input id="register-email" type="email" autocomplete="email" name="email" class="login-input" th:value="${registerUser != null} ? ${registerUser.email} : ''">
                     </div>
                     <div class="login-group">
-                        <label>密码</label>
+                        <label><span style="margin-right: 5px;font-size: 12px;color: red;">*</span>密码</label>
                         <input id="register-password" type="password" name="password" autocomplete="current-password" class="login-input">
                     </div>
                     <div class="login-group">
-                        <label>重复密码</label>
+                        <label><span style="margin-right: 5px;font-size: 12px;color: red;">*</span>重复密码</label>
                         <input id="register-repassword" type="password" name="repassword" autocomplete="re-password" class="login-input">
                     </div>
                     <div class="login-group">
-                        <label>电话号码</label>
+                        <label><span style="margin-right: 5px;font-size: 12px;color: red;">*</span>电话号码</label>
                         <input id="register-phoneNumber" type="text" name="phoneNumber" autocomplete="phone-number" class="login-input" th:value="${registerUser != null} ? ${registerUser.phoneNumber} : ''">
                     </div>
                     <button id="register-btn" class="login-btn">

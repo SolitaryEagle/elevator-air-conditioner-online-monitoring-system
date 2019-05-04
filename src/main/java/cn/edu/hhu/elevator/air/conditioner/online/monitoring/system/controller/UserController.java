@@ -4,8 +4,6 @@ import cn.edu.hhu.elevator.air.conditioner.online.monitoring.system.constant.Mai
 import cn.edu.hhu.elevator.air.conditioner.online.monitoring.system.constant.RequestConsts;
 import cn.edu.hhu.elevator.air.conditioner.online.monitoring.system.constant.SessionConsts;
 import cn.edu.hhu.elevator.air.conditioner.online.monitoring.system.exception.BusinessException;
-import cn.edu.hhu.elevator.air.conditioner.online.monitoring.system.exception.ResponseCode;
-import cn.edu.hhu.elevator.air.conditioner.online.monitoring.system.exception.UserException;
 import cn.edu.hhu.elevator.air.conditioner.online.monitoring.system.model.entity.User;
 import cn.edu.hhu.elevator.air.conditioner.online.monitoring.system.model.vo.UserVO;
 import cn.edu.hhu.elevator.air.conditioner.online.monitoring.system.service.UserService;
@@ -19,7 +17,6 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttribute;
@@ -29,7 +26,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
@@ -60,9 +56,9 @@ public class UserController {
 
     // 注册
 
-    @PostMapping
+    @PostMapping("/add")
     public String register(@Valid UserVO userVO, HttpServletRequest request, HttpSession session) {
-        request.setAttribute("registerUser", userVO);
+        request.setAttribute(RequestConsts.USER_REGISTER_FORM_KEY, userVO);
         if (StringUtils.contains(userVO.getUsername(), "@")) {
             request.setAttribute(RequestConsts.TIP_KEY, "用户名不能包含@字符！");
             return "user/register";
@@ -72,7 +68,6 @@ public class UserController {
             saveUser = userService.save(userVO);
         } catch (BusinessException e) {
             request.setAttribute(RequestConsts.TIP_KEY, e.getMessage());
-            request.setAttribute("businessException", e);
             return "user/register";
         }
         session.setAttribute(SessionConsts.LOGIN_USER_KEY, saveUser);
@@ -108,7 +103,7 @@ public class UserController {
 
     // 验证激活码
 
-    @PostMapping("/activation")
+    @PostMapping("/activation/verify")
     public String validateActivationCode(@SessionAttribute(SessionConsts.LOGIN_USER_KEY) User user,
             String verificationCode, HttpServletRequest request, HttpSession session) {
 
@@ -117,7 +112,6 @@ public class UserController {
             testUser = userService.findById(user.getId());
         } catch (BusinessException e) {
             request.setAttribute(RequestConsts.TIP_KEY, e.getMessage());
-            request.setAttribute("businessException", e);
             return "user/activation";
         }
         if (testUser.getActivation()) {
@@ -135,7 +129,6 @@ public class UserController {
             result = userService.updateActivation(user);
         } catch (BusinessException e) {
             request.setAttribute(RequestConsts.TIP_KEY, e.getMessage());
-            request.setAttribute("businessException", e);
             return "user/activation";
         }
         if (result <= 0) {
@@ -151,7 +144,7 @@ public class UserController {
 
     @PostMapping("/login")
     public String login(String usernameOrEmail, String password, HttpServletRequest request, HttpSession session) {
-        request.setAttribute("usernameOrEmail", usernameOrEmail);
+        request.setAttribute(RequestConsts.USER_LOGIN_FORM_KEY, usernameOrEmail);
         User testUser = null;
         if (StringUtils.contains(usernameOrEmail, "@")) {
             try {
@@ -195,10 +188,10 @@ public class UserController {
 
     // 找回密码
 
-    @PostMapping("/password")
+    @PostMapping("/password/reset")
     public String retrievePassword(@Email String email, @Size(min = 8, max = 16) String newPassword,
             String reNewPassword, String verificationCode, HttpServletRequest request, HttpSession session) {
-        request.setAttribute("email", email);
+        request.setAttribute(RequestConsts.USER_EMAIL_KEY, email);
         String testVerificationCode = (String) session.getAttribute(SessionConsts.VERIFICATION_CODE_KEY);
         if (!StringUtils.equals(verificationCode, testVerificationCode)) {
             request.setAttribute(RequestConsts.TIP_KEY, "验证码错误或已失效!");

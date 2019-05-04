@@ -1,9 +1,14 @@
 package cn.edu.hhu.elevator.air.conditioner.online.monitoring.system.util;
 
+import cn.edu.hhu.elevator.air.conditioner.online.monitoring.system.exception.AddressContainSpaceException;
 import cn.edu.hhu.elevator.air.conditioner.online.monitoring.system.exception.BaiduMapException;
+import cn.edu.hhu.elevator.air.conditioner.online.monitoring.system.exception.BusinessException;
 import cn.edu.hhu.elevator.air.conditioner.online.monitoring.system.exception.ResponseCode;
+import cn.edu.hhu.elevator.air.conditioner.online.monitoring.system.model.EarthCoordinate;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -23,12 +28,17 @@ public final class BaiduMapUtils {
 
     private BaiduMapUtils() {}
 
-    // 获取根据地址获取经纬度
+    // 获取根据地址获取地球坐标（经纬度）
 
-    public static BigDecimal[] getLongitudeAndLatitude(String address) throws IOException {
+    public static EarthCoordinate getEarthCoordinate(String address) throws IOException, BusinessException {
+
+        address = address.trim();
+        if (StringUtils.contains(address, " ")) {
+            throw new AddressContainSpaceException(ResponseCode.INVALID, "address", "地址中不能包含空格！");
+        }
 
         String requestUrl = ADDRESS_RESOLUTION_URL + "?address=" + address + "&output=json&src=" +
-                "webapp.hhu.elevatorMonitoringSystem&ak=" + AK_KEY;
+                "webapp.hhu.elevator-monitoring&ak=" + AK_KEY;
         String jsonStr = loadUrl(requestUrl);
 
         ObjectMapper mapper = new ObjectMapper();
@@ -40,7 +50,8 @@ public final class BaiduMapUtils {
 
         JsonNode location = jsonNode.get("result").get("location");
 
-        return new BigDecimal[]{ location.get("lng").decimalValue(), location.get("lat").decimalValue() };
+        return EarthCoordinate.builder().longitude(location.get("lng").decimalValue())
+                .latitude(location.get("lat").decimalValue()).build();
     }
 
     // 加载url获取json结果

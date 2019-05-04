@@ -6,6 +6,8 @@ package cn.edu.hhu.elevator.air.conditioner.online.monitoring.system.exception;
  */
 public class UserException extends BusinessException {
 
+    private static final long serialVersionUID = -509363418131343068L;
+
     public UserException(ResponseCode responseCode) {
         super(responseCode);
     }

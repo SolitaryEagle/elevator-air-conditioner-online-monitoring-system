@@ -24,7 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @date 2019-02-13
  */
 @Slf4j
-@Service("userService")
+@Service
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;

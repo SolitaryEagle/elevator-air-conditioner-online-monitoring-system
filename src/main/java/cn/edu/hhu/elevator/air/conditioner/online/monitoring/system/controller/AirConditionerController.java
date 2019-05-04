@@ -1,21 +1,32 @@
 package cn.edu.hhu.elevator.air.conditioner.online.monitoring.system.controller;
 
 import cn.edu.hhu.elevator.air.conditioner.online.monitoring.system.constant.AirConditionerStateEnum;
+import cn.edu.hhu.elevator.air.conditioner.online.monitoring.system.constant.RequestConsts;
 import cn.edu.hhu.elevator.air.conditioner.online.monitoring.system.constant.RoleEnum;
 import cn.edu.hhu.elevator.air.conditioner.online.monitoring.system.constant.SessionConsts;
+import cn.edu.hhu.elevator.air.conditioner.online.monitoring.system.exception.BusinessException;
+import cn.edu.hhu.elevator.air.conditioner.online.monitoring.system.model.dto.AirConditionerDTO;
 import cn.edu.hhu.elevator.air.conditioner.online.monitoring.system.model.entity.AirConditioner;
 import cn.edu.hhu.elevator.air.conditioner.online.monitoring.system.model.entity.User;
+import cn.edu.hhu.elevator.air.conditioner.online.monitoring.system.model.request.AirConditionerRequest;
+import cn.edu.hhu.elevator.air.conditioner.online.monitoring.system.model.response.AirConditionerResponse;
 import cn.edu.hhu.elevator.air.conditioner.online.monitoring.system.model.vo.AirConditionerVO;
 import cn.edu.hhu.elevator.air.conditioner.online.monitoring.system.service.AirConditionerService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.HashMap;
@@ -26,28 +37,59 @@ import java.util.Map;
  * @author 覃国强
  * @date 2019-02-20
  */
-@RestController
+@Controller
 @RequestMapping("/v1/monitoring-system/air-conditioners")
 public class AirConditionerController {
 
-    private final AirConditionerService airConditionerService;
-
     @Autowired
-    public AirConditionerController(AirConditionerService airConditionerService) {
-        this.airConditionerService = airConditionerService;
-    }
+    private AirConditionerService airConditionerService;
 
     // 信息录入
 
-    @PostMapping
-    public AirConditioner save(@SessionAttribute(SessionConsts.LOGIN_USER_KEY) User user,
-            @Valid AirConditionerVO airConditionerVO)
-            throws IOException {
-
-        airConditionerVO.setUser(user);
-        return airConditionerService.save(airConditionerVO);
+    @PostMapping("/add")
+    public String add(@SessionAttribute(SessionConsts.LOGIN_USER_KEY) User user,
+            @ModelAttribute AirConditionerRequest airConditionerRequest, HttpServletRequest request) {
+        request.setAttribute(RequestConsts.AIR_CONDITIONER_ADD_FORM_KEY, airConditionerRequest);
+        AirConditionerDTO airConditionerDTO = new AirConditionerDTO();
+        BeanUtils.copyProperties(airConditionerRequest, airConditionerDTO);
+        airConditionerDTO.setUser(user);
+        try {
+            airConditionerService.add(airConditionerDTO);
+        } catch (BusinessException | IOException e) {
+            request.setAttribute(RequestConsts.TIP_KEY, e.getMessage());
+            return "air-conditioner/add-info";
+        }
+        return "map/address-catalogue";
     }
 
+    // 根据用户角色查询设备信息
+
+    @GetMapping("/list")
+    @ResponseBody
+    public List<AirConditionerResponse> listByUserRole(@SessionAttribute(SessionConsts.LOGIN_USER_KEY) User user) {
+        if (RoleEnum.ADMINISTRATOR.equals(user.getRole()) || RoleEnum.CUSTOM_SERVICE.equals(user.getRole())) {
+            return airConditionerService.listAll();
+        } else {
+            return airConditionerService.listByUserId(user.getId());
+        }
+    }
+
+    @GetMapping("/page/list")
+    @ResponseBody
+    public List<AirConditionerResponse> listByUserRole(@SessionAttribute(SessionConsts.LOGIN_USER_KEY) User user,
+            @RequestParam int page, @RequestParam int limit) {
+        if (page == 0 && limit == 0) {
+            return listByUserRole(user);
+        }
+        if (RoleEnum.ADMINISTRATOR.equals(user.getRole()) || RoleEnum.CUSTOM_SERVICE.equals(user.getRole())) {
+            return airConditionerService.listAll(page * limit, limit);
+        } else {
+            return airConditionerService.listLimitByUserId(user.getId(), (page - 1) * limit, limit);
+        }
+    }
+
+
+/*
     // 修改信息
 
     @PutMapping
@@ -78,5 +120,5 @@ public class AirConditionerController {
         map.put("data", airConditionerService.listAll());
         return map;
     }
-
+*/
 }

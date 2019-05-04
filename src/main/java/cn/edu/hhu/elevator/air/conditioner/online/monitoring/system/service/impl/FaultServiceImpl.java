@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @date 2019-02-13
  */
 @Slf4j
-@Service("faultService")
+@Service
 public class FaultServiceImpl implements FaultService {
 
     private final FaultRepository faultRepository;

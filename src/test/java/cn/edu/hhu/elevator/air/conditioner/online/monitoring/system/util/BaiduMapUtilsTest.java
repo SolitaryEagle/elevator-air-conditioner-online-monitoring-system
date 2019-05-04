@@ -20,7 +20,6 @@ v2: {"lng":118.77807440802562,"lat":32.05723550180587}
 v1: {"lng":118.778074,        "lat":32.057236}
 http://api.map.baidu.com/geocoder?location=32.05723550180587,118.77807440802562&output=html&src=webapp.baidu.openAPIdemo
 
-     */
 
     @Test
     public void getLongitudeAndLatitude() throws IOException {
@@ -32,4 +31,5 @@ http://api.map.baidu.com/geocoder?location=32.05723550180587,118.77807440802562&
         System.out.println(Arrays.toString(longitudeAndLatitude));
     }
 
+     */
 }

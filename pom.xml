@@ -20,7 +20,7 @@
         <bootstrap.version>3.4.1</bootstrap.version>
         <webjars-locator.version>0.30</webjars-locator.version>
         <layui.version>2.4.5</layui.version>
-        <jstree.version>3.3.8</jstree.version>
+        <jstree.version>3.3.7</jstree.version>
     </properties>
 
     <dependencyManagement>

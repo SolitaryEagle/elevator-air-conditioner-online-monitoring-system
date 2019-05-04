@@ -1,5 +1,6 @@
 package cn.edu.hhu.elevator.air.conditioner.online.monitoring.system.constant;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.Random;
@@ -9,7 +10,8 @@ import java.util.Random;
  * @date 2019/4/28 15:33
  */
 @Getter
-public enum WindSpeed {
+@AllArgsConstructor
+public enum WindSpeedEnum {
 
     /**
      * 快
@@ -28,12 +30,8 @@ public enum WindSpeed {
 
     private String value;
 
-    WindSpeed(String value) {
-        this.value = value;
-    }
-
-    public static WindSpeed random() {
-        WindSpeed[] values = values();
+    public static WindSpeedEnum random() {
+        WindSpeedEnum[] values = values();
         int index = new Random().nextInt(values.length);
         return values[index];
     }

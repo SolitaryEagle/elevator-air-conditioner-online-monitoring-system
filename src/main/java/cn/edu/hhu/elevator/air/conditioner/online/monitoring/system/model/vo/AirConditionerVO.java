@@ -2,7 +2,7 @@ package cn.edu.hhu.elevator.air.conditioner.online.monitoring.system.model.vo;
 
 import cn.edu.hhu.elevator.air.conditioner.online.monitoring.system.constant.AirConditionerStateEnum;
 import cn.edu.hhu.elevator.air.conditioner.online.monitoring.system.constant.RegionCodeEnum;
-import cn.edu.hhu.elevator.air.conditioner.online.monitoring.system.constant.WindSpeed;
+import cn.edu.hhu.elevator.air.conditioner.online.monitoring.system.constant.WindSpeedEnum;
 import cn.edu.hhu.elevator.air.conditioner.online.monitoring.system.model.entity.User;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -39,7 +39,7 @@ public class AirConditionerVO implements Serializable {
     private BigDecimal longitude;
     private BigDecimal latitude;
     private Integer temperature;
-    private WindSpeed windSpeed;
+    private WindSpeedEnum windSpeedEnum;
     private BigDecimal kwh;
     private BigDecimal currentIntensity;
     private BigDecimal voltage;

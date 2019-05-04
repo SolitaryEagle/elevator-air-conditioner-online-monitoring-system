@@ -14,7 +14,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-    public static final String userBaseMapping = "/v1/monitoring-system/users";
+    public static final String PROJECT_BASE_MAPPING_V1 = "/v1/monitoring-system";
+    public static final String USER_BASE_MAPPING_V1 = PROJECT_BASE_MAPPING_V1 + "/users";
+    public static final String AIR_CONDITIONER_BASE_MAPPING_V1 = PROJECT_BASE_MAPPING_V1 + "/air-conditioners";
 
     /*
 
@@ -35,10 +37,15 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
-        registry.addViewController(userBaseMapping + "/page/login").setViewName("user/login");
-        registry.addViewController(userBaseMapping + "/page/register").setViewName("user/register");
-        registry.addViewController(userBaseMapping + "/page/forgot-password").setViewName("user/forgot-password");
-        registry.addViewController("").setViewName("user/register");
+        registry.addViewController("").setViewName("user/login");
+        registry.addViewController(PROJECT_BASE_MAPPING_V1 + "/page/index").setViewName("map/address-catalogue");
+        registry.addViewController(USER_BASE_MAPPING_V1 + "/page/login").setViewName("user/login");
+        registry.addViewController(USER_BASE_MAPPING_V1 + "/page/register").setViewName("user/register");
+        registry.addViewController(USER_BASE_MAPPING_V1 + "/page/forgot-password").setViewName("user/forgot-password");
+        registry.addViewController(AIR_CONDITIONER_BASE_MAPPING_V1 + "/page/add-info")
+                .setViewName("air-conditioner/add-info");
+        registry.addViewController(AIR_CONDITIONER_BASE_MAPPING_V1 + "/page/online-state")
+                .setViewName("air-conditioner/online-state");
     }
 
     @Override

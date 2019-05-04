@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -40,9 +41,9 @@ public class Address implements Serializable {
     private String district;
     private String detail;
 
-
     @Override
     public String toString() {
-        return province + city + district + detail;
+        return ToStringBuilder.reflectionToString(this);
     }
+
 }

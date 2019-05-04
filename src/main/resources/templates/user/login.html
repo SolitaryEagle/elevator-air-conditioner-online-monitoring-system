@@ -74,7 +74,7 @@
             }
         };
 
-        // 添加注册按钮事件
+        // 添加登录按钮事件
         document.getElementById('login-btn').onclick = function () {
             var result = submitLogin();
             if (typeof result != "undefined" && result != null && result.length > 0) {
@@ -85,7 +85,7 @@
                 document.getElementById('login-form').submit();
             }
         }
-    }
+    };
 
     // 检测登入用户名
     function checkLoginUsername() {
