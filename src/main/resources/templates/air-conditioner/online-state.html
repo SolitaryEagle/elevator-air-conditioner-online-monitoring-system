@@ -56,30 +56,30 @@
         <div style="padding: 15px;">
             <div class="layui-container" style="
                 border: 1px solid #1E9FFF;
-                margin: 50px auto;
+                margin: 10px auto;
                 padding: 20px;
                 background-color: #e2e2e2;
                 border-radius: 10px;
                   ">
-                <form id="state-search-form" action="#" th:action="@{/v1/monitoring-system/air-conditioners}" method="post" class="form-horizontal" role="form" style="width: 95%; margin-top: 30px;">
+                <form id="state-search-form" class="form-horizontal" role="form" style="width: 95%; margin-top: 30px;">
                     <div class="form-group">
                         <label for="brand" class="col-sm-1 control-label">品牌</label>
                         <div class="col-sm-5">
-                            <input type="text" class="form-control" id="brand" name="brand" placeholder="请输入品牌" th:value="${airConditioner != null} ? ${airConditioner.brand} : ''">
+                            <input type="text" class="form-control" id="brand" name="brand" placeholder="请输入品牌">
                         </div>
                         <label for="model" class="col-sm-1 control-label">型号规格</label>
                         <div class="col-sm-5">
-                            <input type="text" class="form-control" id="model" name="model" placeholder="请输入型号规格" th:value="${airConditioner != null} ? ${airConditioner.model} : ''">
+                            <input type="text" class="form-control" id="model" name="model" placeholder="请输入型号规格">
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="seller" class="col-sm-1 control-label">销售单位</label>
                         <div class="col-sm-5">
-                            <input type="text" class="form-control" id="seller" name="seller" placeholder="请输入销售单位" th:value="${airConditioner != null} ? ${airConditioner.seller} : ''">
+                            <input type="text" class="form-control" id="seller" name="seller" placeholder="请输入销售单位">
                         </div>
                         <label for="address" class="col-sm-1 control-label">设备地址</label>
                         <div class="col-sm-5">
-                            <input type="text" class="form-control" id="address" name="model" placeholder="请输入设备地址" th:value="${airConditioner != null} ? ${airConditioner.model} : ''">
+                            <input type="text" class="form-control" id="address" name="model" placeholder="请输入设备地址">
                         </div>
                     </div>
                     <div class="form-group">
@@ -104,52 +104,52 @@
                     <div class="form-group">
                         <label for="min-temperature" class="col-sm-1 control-label">温度</label>
                         <div class="col-sm-2">
-                            <input type="text" class="form-control" id="min-temperature" name="seller" placeholder="℃" onkeyup="value=value.replace(/\D/g,'')" onblur="value=value.replace(/\D/g,'')" th:value="${airConditioner != null} ? ${airConditioner.seller} : ''">
+                            <input type="text" class="form-control" id="min-temperature" name="seller" placeholder="℃（整数）">
                         </div>
                         <label for="max-temperature" class="col-sm-1 control-label" style="text-align: center; font-size: 12px; padding: 10px 26px; height: 34px;">——</label>
                         <div class="col-sm-2">
-                            <input type="text" class="form-control" id="max-temperature" name="model" placeholder="℃" onkeyup="value=value.replace(/\D/g,'')" onblur="value=value.replace(/\D/g,'')" th:value="${airConditioner != null} ? ${airConditioner.model} : ''">
+                            <input type="text" class="form-control" id="max-temperature" name="model" placeholder="℃（整数）">
                         </div>
                         <label for="min-kwh" class="col-sm-1 control-label">用电量</label>
                         <div class="col-sm-2">
-                            <input type="text" class="form-control" id="min-kwh" name="seller" placeholder="Kw/h" onkeyup="value=value.replace(/[^\d.]/g,'')" onblur="value=value.replace(/[^\d.]/g,'')" th:value="${airConditioner != null} ? ${airConditioner.seller} : ''">
+                            <input type="text" class="form-control" id="min-kwh" name="seller" placeholder="Kw/h（正数）">
                         </div>
                         <label for="max-kwh" class="col-sm-1 control-label" style="text-align: center; font-size: 12px; padding: 10px 26px; height: 34px;">——</label>
                         <div class="col-sm-2">
-                            <input type="text" class="form-control" id="max-kwh" name="model" placeholder="Kw/h" onkeyup="value=value.replace(/[^\d.]/g,'')" onblur="value=value.replace(/[^\d.]/g,'')" th:value="${airConditioner != null} ? ${airConditioner.model} : ''">
+                            <input type="text" class="form-control" id="max-kwh" name="model" placeholder="Kw/h（正数）">
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="min-current-intensity" class="col-sm-1 control-label">电流</label>
                         <div class="col-sm-2">
-                            <input type="text" class="form-control" id="min-current-intensity" name="seller" placeholder="A" onkeyup="value=value.replace(/[^\d.]/g,'')" onblur="value=value.replace(/[^\d.]/g,'')" th:value="${airConditioner != null} ? ${airConditioner.seller} : ''">
+                            <input type="text" class="form-control" id="min-current-intensity" name="seller" placeholder="A（正数）">
                         </div>
                         <label for="max-current-intensity" class="col-sm-1 control-label" style="text-align: center; font-size: 12px; padding: 10px 26px; height: 34px;">——</label>
                         <div class="col-sm-2">
-                            <input type="text" class="form-control" id="max-current-intensity" name="model" placeholder="A" onkeyup="value=value.replace(/[^\d.]/g,'')" onblur="value=value.replace(/[^\d.]/g,'')" th:value="${airConditioner != null} ? ${airConditioner.model} : ''">
+                            <input type="text" class="form-control" id="max-current-intensity" name="model" placeholder="A（正数）">
                         </div>
                         <label for="min-voltage" class="col-sm-1 control-label">电压</label>
                         <div class="col-sm-2">
-                            <input type="text" class="form-control" id="min-voltage" name="seller" placeholder="V" onkeyup="value=value.replace(/[^\d.]/g,'')" onblur="value=value.replace(/[^\d.]/g,'')" th:value="${airConditioner != null} ? ${airConditioner.seller} : ''">
+                            <input type="text" class="form-control" id="min-voltage" name="seller" placeholder="V（正数）">
                         </div>
                         <label for="max-voltage" class="col-sm-1 control-label" style="text-align: center; font-size: 12px; padding: 10px 26px; height: 34px;">——</label>
                         <div class="col-sm-2">
-                            <input type="text" class="form-control" id="max-voltage" name="model" placeholder="V" onkeyup="value=value.replace(/[^\d.]/g,'')" onblur="value=value.replace(/[^\d.]/g,'')" th:value="${airConditioner != null} ? ${airConditioner.model} : ''">
+                            <input type="text" class="form-control" id="max-voltage" name="model" placeholder="V（正数）">
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="min-power" class="col-sm-1 control-label">功率</label>
                         <div class="col-sm-2">
-                            <input type="text" class="form-control" id="min-power" name="seller" placeholder="W" onkeyup="value=value.replace(/[^\d.]/g,'')" onblur="value=value.replace(/[^\d.]/g,'')" th:value="${airConditioner != null} ? ${airConditioner.seller} : ''">
+                            <input type="text" class="form-control" id="min-power" name="seller" placeholder="W（正数）">
                         </div>
                         <label for="max-power" class="col-sm-1 control-label" style="text-align: center; font-size: 12px; padding: 10px 26px; height: 34px;">——</label>
                         <div class="col-sm-2">
-                            <input type="text" class="form-control" id="max-power" name="model" placeholder="W" onkeyup="value=value.replace(/[^\d.]/g,'')" onblur="value=value.replace(/[^\d.]/g,'')" th:value="${airConditioner != null} ? ${airConditioner.model} : ''">
+                            <input type="text" class="form-control" id="max-power" name="model" placeholder="W（正数）">
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="col-sm-offset-2 col-sm-10" style="width: 40%; margin: 0 auto">
-                            <button class="btn btn-success" id="add-btn" style="margin: 20px 0 0 65%; width: 100px;">查询</button>
+                            <button class="btn btn-success" id="search-btn" style="margin: 20px 0 0 65%; width: 100px;">查询</button>
                         </div>
                         <div class="col-sm-offset-2 col-sm-10" style="width: 40%; margin: 0 auto">
                             <button class="btn btn-danger" id="reset-btn" style="margin: 20px 0 0 65%; width: 100px;">重置</button>
@@ -161,7 +161,7 @@
 
         <hr class="layui-bg-blue" style="margin-bottom: 30px;">
 
-        <div>
+        <div style="margin: 0 10px; padding: 0 10px; border: 1px solid #1E9FFF; border-radius: 5px;">
             <table id="equipment-data-table" lay-filter="test"></table>
         </div>
 
@@ -182,47 +182,196 @@
 
     });
 
-    // 表格渲染
     layui.use('table', function () {
         var table = layui.table;
 
-        //第一个实例
+        // 表格渲染
         table.render({
             elem: '#equipment-data-table',
-            url: '/v1/monitoring-system/air-conditioners/list', //数据接口
+            url: '/v1/monitoring-system/air-conditioners/page', //数据接口
             loading: true,  // 显示加载条
-            page: {
-                curr: 0
-            }, // 开启分页
+            page: true, // 开启分页
             even: true, // 设置隔行背景
-            parseData: function (data) { //res 即为原始返回的数据
+            parseData: function (result) { //result 即为原始返回的数据
                 return {
                     "code": 0,               //解析接口状态
                     "msg": "",               //解析提示文本
-                    "count": data.length,    //解析数据长度
-                    "data": data             //解析数据列表
+                    "count": result.count,   //解析数据长度
+                    "data": result.data      //解析数据列表
                 };
             },
             cols: [
                 [ //表头
-                    {field: 'equipmentId', title: '设备编号', sort: true, align: 'center'},
-                    {field: 'gmtModified', title: '刷新时间', sort: true, align: 'center'},
-                    {field: 'temperature', title: '温度(℃)', sort: true, align: 'center'},
-                    {field: 'windSpeed', title: '风速', sort: true, align: 'center'},
-                    {field: 'kwh', title: '用电量(Kw/h)', sort: true, align: 'center'},
-                    {field: 'currentIntensity', title: '电流(A)', sort: true, align: 'center'},
-                    {field: 'voltage', title: '电压(V)', sort: true, align: 'center'},
-                    {field: 'power', title: '功率(W)', sort: true, align: 'center'},
-                    {field: 'equipmentState', title: '状态', sort: true, align: 'center'},
-                    {field: 'brand', title: '品牌', sort: true, align: 'center'},
-                    {field: 'model', title: '型号', sort: true, align: 'center'},
-                    {field: 'seller', title: '销售单位', sort: true, align: 'center'},
+                    {field: 'id', hide: true},
+                    {field: 'equipmentId', title: '设备编号', sort: true, align: 'center', width: 126},
+                    {field: 'gmtModified', title: '刷新时间', sort: true, align: 'center', width: 161},
+                    {field: 'temperature', title: '温度(℃)', sort: true, align: 'center', width: 92},
+                    {field: 'windSpeed', title: '风速', sort: true, align: 'center', width: 65},
+                    {field: 'kwh', title: '用电量(Kw/h)', sort: true, align: 'center', width: 119},
+                    {field: 'currentIntensity', title: '电流(A)', sort: true, align: 'center', width: 83},
+                    {field: 'voltage', title: '电压(V)', sort: true, align: 'center', width: 83},
+                    {field: 'power', title: '功率(W)', sort: true, align: 'center', width: 98},
+                    {field: 'equipmentState', title: '状态', sort: true, align: 'center', width: 69},
+                    {field: 'brand', title: '品牌', sort: true, align: 'center', width: 120},
+                    {field: 'model', title: '型号', sort: true, align: 'center', width: 120},
+                    {field: 'seller', title: '销售单位', sort: true, align: 'center', width: 120},
                     {field: 'address', title: '地址', sort: true, align: 'center'}
                 ]
             ]
         });
 
+        // 行双击事件
+        table.on('rowDouble(equipment-data-table)', function (obj) {
+            var data = obj.data;
+            alert(data.id);
+            $.ajax({
+                url: '/v1/monitoring-system/air-conditioners/' + data.id,
+                async: false,
+                type: get
+            });
+        });
+
     });
+</script>
+<script type="text/javascript">
+
+    function isDigit(value) {
+        var regex = /^-?\d+.?\d*$/;
+        return regex.test(value);
+    }
+
+    function isInteger(value) {
+        var regex = /^-?\d+$/;
+        return regex.test(value);
+    }
+
+    function isPositive(value) {
+        var regex = /^\d+.?\d*$/;
+        return regex.test(value);
+    }
+
+    function checkMinTemperature() {
+        var value = $("#min-temperature").val().trim();
+        if (value.length > 0 && !isInteger(value)) {
+            $("#min-temperature").val('');
+            layui.use('layer', function () {
+                layer.msg('请输入一个合法的整数！', {time: 3000, skin: 'layui-bg-red', offset: '128px'});
+            });
+            return false;
+        }
+        return true;
+    }
+
+    function checkMaxTemperature() {
+        var value = $("#max-temperature").val().trim();
+        if (value.length > 0 && !isInteger(value)) {
+            $("#max-temperature").val('');
+            layui.use('layer', function () {
+                var layer = layui.layer;
+                layer.msg('请输入一个合法的整数！', {time: 3000, skin: 'layui-bg-red', offset: '128px'});
+            });
+            return false;
+        }
+        return true;
+    }
+
+    function checkMinKwh() {
+        var value = $("#min-kwh").val().trim();
+        if (value.length > 0 && !isPositive(value)) {
+            $("#min-kwh").val('');
+            layui.use('layer', function () {
+                layer.msg('请输入一个合法的正数！', {time: 3000, skin: 'layui-bg-red', offset: '128px'});
+            });
+            return false;
+        }
+        return true;
+    }
+
+    function checkMaxKwh() {
+        var value = $("#max-kwh").val().trim();
+        if (value.length > 0 && !isPositive(value)) {
+            $("#max-kwh").val('');
+            layui.use('layer', function () {
+                layer.msg('请输入一个合法的正数！', {time: 3000, skin: 'layui-bg-red', offset: '128px'});
+            });
+            return false;
+        }
+        return true;
+    }
+
+    function checkMinCurrentIntensity() {
+        var value = $("#min-current-intensity").val().trim();
+        if (value.length > 0 && !isPositive(value)) {
+            $("#min-current-intensity").val('');
+            layui.use('layer', function () {
+                layer.msg('请输入一个合法的正数！', {time: 3000, skin: 'layui-bg-red', offset: '128px'});
+            });
+            return false;
+        }
+        return true;
+    }
+
+    function checkMaxCurrentIntensity() {
+        var value = $("#max-current-intensity").val().trim();
+        if (value.length > 0 && !isPositive(value)) {
+            $("#max-current-intensity").val('');
+            layui.use('layer', function () {
+                layer.msg('请输入一个合法的正数！', {time: 3000, skin: 'layui-bg-red', offset: '128px'});
+            });
+            return false;
+        }
+        return true;
+    }
+
+    function checkMinVoltage() {
+        var value = $("#min-voltage").val().trim();
+        if (value.length > 0 && !isPositive(value)) {
+            $("#min-voltage").val('');
+            layui.use('layer', function () {
+                layer.msg('请输入一个合法的正数！', {time: 3000, skin: 'layui-bg-red', offset: '128px'});
+            });
+            return false;
+        }
+        return true;
+    }
+
+    function checkMaxVoltage() {
+        var value = $("#max-voltage").val().trim();
+        if (value.length > 0 && !isPositive(value)) {
+            $("#max-voltage").val('');
+            layui.use('layer', function () {
+                layer.msg('请输入一个合法的正数！', {time: 3000, skin: 'layui-bg-red', offset: '128px'});
+            });
+            return false;
+        }
+        return true;
+    }
+
+    function checkMinPower() {
+        var value = $("#min-power").val().trim();
+        if (value.length > 0 && !isPositive(value)) {
+            $("#min-power").val('');
+            layui.use('layer', function () {
+                layer.msg('请输入一个合法的正数！', {time: 3000, skin: 'layui-bg-red', offset: '128px'});
+            });
+            return false;
+        }
+        return true;
+    }
+
+    function checkMaxPower() {
+        var value = $("#max-power").val().trim();
+        if (value.length > 0 && !isPositive(value)) {
+            $("#max-power").val('');
+            layui.use('layer', function () {
+                layer.msg('请输入一个合法的正数！', {time: 3000, skin: 'layui-bg-red', offset: '128px'});
+            });
+            return false;
+        }
+        return true;
+    }
+
+
 </script>
 <script type="text/javascript">
 
@@ -235,37 +384,64 @@
             });
         }
 
-        // 设置“添加”按钮事件
-        document.getElementById('add-btn').onclick = function () {
-            var province = $("#address-province").val().trim();
-            if (typeof province == "undefined" || province == null || province.length <= 0) {
-                layui.use('layer', function () {
-                    layer.msg('请选择省份!', {time: 3000, skin: 'layui-bg-red', offset: '128px'});
-                });
-                return false;
-            }
-            var city = $("#address-city").val().trim();
-            if (typeof city == "undefined" || city == null || city.length <= 0) {
-                layui.use('layer', function () {
-                    layer.msg('请选择城市!', {time: 3000, skin: 'layui-bg-red', offset: '128px'});
-                });
-                return false;
-            }
-            var district = $("#address-district").val().trim();
-            if (typeof district == "undefined" || district == null || district.length <= 0) {
-                layui.use('layer', function () {
-                    layer.msg('请选择地区!', {time: 3000, skin: 'layui-bg-red', offset: '128px'});
-                });
-                return false;
-            }
-            var detail = $("#address-detail").val().trim();
-            if (typeof detail != "undefined" && detail != null && detail.indexOf(' ') !== -1) {
-                layui.use('layer', function () {
-                    layer.msg('详细地址中不能包含空格!', {time: 3000, skin: 'layui-bg-red', offset: '128px'});
-                });
-                return false;
-            }
-            document.getElementById('state-search-form').submit();
+        document.getElementById('min-temperature').onblur = checkMinTemperature;
+        document.getElementById('max-temperature').onblur = checkMaxTemperature;
+        document.getElementById('min-kwh').onblur = checkMinKwh;
+        document.getElementById('max-kwh').onblur = checkMaxKwh;
+        document.getElementById('min-current-intensity').onblur = checkMinCurrentIntensity;
+        document.getElementById('max-current-intensity').onblur = checkMaxCurrentIntensity;
+        document.getElementById('min-voltage').onblur = checkMinVoltage;
+        document.getElementById('max-voltage').onblur = checkMaxVoltage;
+        document.getElementById('min-power').onblur = checkMinPower;
+        document.getElementById('max-power').onblur = checkMaxPower;
+
+        document.getElementById('min-temperature').onkeyup = checkMinTemperature;
+        document.getElementById('max-temperature').onkeyup = checkMaxTemperature;
+        document.getElementById('min-kwh').onkeyup = checkMinKwh;
+        document.getElementById('max-kwh').onkeyup = checkMaxKwh;
+        document.getElementById('min-current-intensity').onkeyup = checkMinCurrentIntensity;
+        document.getElementById('max-current-intensity').onkeyup = checkMaxCurrentIntensity;
+        document.getElementById('min-voltage').onkeyup = checkMinVoltage;
+        document.getElementById('max-voltage').onkeyup = checkMaxVoltage;
+        document.getElementById('min-power').onkeyup = checkMinPower;
+        document.getElementById('max-power').onkeyup = checkMaxPower;
+
+        // 设置“查询”按钮事件
+        document.getElementById('search-btn').onclick = function () {
+
+            $.get('/v1/monitoring-system/air-conditioners/search', {
+                'brand': $("#brand").val().trim(),
+                'model': $("#model").val().trim(),
+                'seller': $("#seller").val().trim(),
+                'address': $("#address").val().trim(),
+                'windSpeed': $("#wind-speed").val().trim(),
+                'equipmentState': $("#equipment-state").val().trim(),
+                'temperature.min': $("#min-temperature").val().trim(),
+                'temperature.max': $("#max-temperature").val().trim(),
+                'kwh.min': $("#min-kwh").val().trim(),
+                'kwh.max': $("#max-kwh").val().trim(),
+                'currentIntensity.min': $("#min-current-intensity").val().trim(),
+                'currentIntensity.max': $("#max-current-intensity").val().trim(),
+                'voltage.min': $("#min-voltage").val().trim(),
+                'voltage.max': $("#max-voltage").val().trim(),
+                'power.min': $("#min-power").val().trim(),
+                'power.max': $("#max-power").val().trim()
+
+            }, function (result, status, xhr) {
+                if (status == "success") {
+                    // 表格重载
+                    layui.use('table', function () {
+                        var table = layui.table;
+                        table.reload('equipment-data-table', {
+                            data: result,
+                            url: ''  // 数据接口置为空
+                        })
+                    });
+                } else {
+                    console.log("我出错了！");
+                }
+            });
+            return false;
         };
 
         // 设置“重置”按钮事件
@@ -280,6 +456,15 @@
             for (i = 0; i < selects.length; i++) {
                 selects[i].options[0].selected = true;
             }
+
+            // 表格重载
+            layui.use('table', function () {
+                var table = layui.table;
+                table.reload('equipment-data-table', {
+                    data: [],
+                    url: '/v1/monitoring-system/air-conditioners/page' // 数据接口
+                })
+            });
             return false;
         };
 

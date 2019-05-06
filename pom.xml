@@ -8,7 +8,7 @@
         <version>2.1.2.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>cn.edu.hhu</groupId>
+    <groupId>edu.hhu</groupId>
     <artifactId>elevator-air-conditioner-online-monitoring-system</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>elevator-air-conditioner-online-monitoring-system</name>

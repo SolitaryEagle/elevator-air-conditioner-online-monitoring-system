@@ -1,7 +1,7 @@
 package constant;
 
-import cn.edu.hhu.elevator.air.conditioner.online.monitoring.system.constant.RoleEnum;
-import cn.edu.hhu.elevator.air.conditioner.online.monitoring.system.model.entity.User;
+import edu.hhu.air.conditioner.online.monitoring.constant.RoleEnum;
+import edu.hhu.air.conditioner.online.monitoring.model.entity.User;
 
 /**
  * @author 覃国强
