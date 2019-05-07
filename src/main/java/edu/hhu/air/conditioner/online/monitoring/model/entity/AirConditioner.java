@@ -1,8 +1,8 @@
 package edu.hhu.air.conditioner.online.monitoring.model.entity;
 
-import edu.hhu.air.conditioner.online.monitoring.constant.AirConditionerStateEnum;
-import edu.hhu.air.conditioner.online.monitoring.constant.RegionCodeEnum;
-import edu.hhu.air.conditioner.online.monitoring.constant.WindSpeedEnum;
+import edu.hhu.air.conditioner.online.monitoring.constant.enums.AirConditionerStateEnum;
+import edu.hhu.air.conditioner.online.monitoring.constant.enums.RegionCodeEnum;
+import edu.hhu.air.conditioner.online.monitoring.constant.enums.WindSpeedEnum;
 
 import java.io.Serializable;
 import java.math.BigDecimal;

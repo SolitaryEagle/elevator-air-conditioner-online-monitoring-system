@@ -1,7 +1,7 @@
 package edu.hhu.air.conditioner.online.monitoring.model.vo;
 
-import edu.hhu.air.conditioner.online.monitoring.constant.FaultTypeEnum;
-import edu.hhu.air.conditioner.online.monitoring.constant.RepairResultEnum;
+import edu.hhu.air.conditioner.online.monitoring.constant.enums.FaultTypeEnum;
+import edu.hhu.air.conditioner.online.monitoring.constant.enums.RepairResultEnum;
 
 import java.io.Serializable;
 import java.sql.Timestamp;

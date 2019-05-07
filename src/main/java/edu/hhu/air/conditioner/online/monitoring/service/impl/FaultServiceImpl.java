@@ -1,8 +1,8 @@
 package edu.hhu.air.conditioner.online.monitoring.service.impl;
 
-import edu.hhu.air.conditioner.online.monitoring.constant.AirConditionerStateEnum;
+import edu.hhu.air.conditioner.online.monitoring.constant.enums.AirConditionerStateEnum;
+import edu.hhu.air.conditioner.online.monitoring.constant.enums.ErrorCodeEnum;
 import edu.hhu.air.conditioner.online.monitoring.exception.FaultException;
-import edu.hhu.air.conditioner.online.monitoring.exception.ResponseCode;
 import edu.hhu.air.conditioner.online.monitoring.model.entity.Fault;
 import edu.hhu.air.conditioner.online.monitoring.model.vo.FaultVO;
 import edu.hhu.air.conditioner.online.monitoring.repository.AirConditionerRepository;
@@ -72,7 +72,7 @@ public class FaultServiceImpl implements FaultService {
                 Optional<Fault> optional = faultRepository.findById(faultVO.getId());
                 if (!optional.isPresent()) {
                     log.error("id为 {} 的Fault不存在", faultVO.getId());
-                    throw new FaultException(ResponseCode.MISSING, "id", "id为 " + faultVO.getId() + " 的Fault不存在");
+                    throw new FaultException(ErrorCodeEnum.MISSING, "id", "id为 " + faultVO.getId() + " 的Fault不存在");
                 }
                 Fault fault = optional.get();
                 FaultVO saveFaultVO =
@@ -82,7 +82,7 @@ public class FaultServiceImpl implements FaultService {
                 break;
             default:
                 log.error("维修结果填写错误，{}", faultVO.getRepairResult());
-                throw new FaultException(ResponseCode.INVALID, "repairResult", "维修结果无效");
+                throw new FaultException(ErrorCodeEnum.INVALID, "repairResult", "维修结果无效");
         }
         faultVO.setGmtModified(new Timestamp(System.currentTimeMillis()));
         faultVO.setGmtRepair(new Timestamp(System.currentTimeMillis()));

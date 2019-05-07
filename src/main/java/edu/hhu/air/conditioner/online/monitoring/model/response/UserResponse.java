@@ -1,51 +1,41 @@
-package edu.hhu.air.conditioner.online.monitoring.model.vo;
+package edu.hhu.air.conditioner.online.monitoring.model.response;
 
 import edu.hhu.air.conditioner.online.monitoring.constant.enums.RoleEnum;
-
-import java.io.Serializable;
-import java.sql.Timestamp;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
-
+import edu.hhu.air.conditioner.online.monitoring.model.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.springframework.beans.BeanUtils;
+
+import java.sql.Timestamp;
+import java.util.Date;
 
 /**
  * @author 覃国强
- * @date 2019-03-11
+ * @date 2019/5/9 09:12
  */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserVO {
+public class UserResponse {
 
     private Long id;
-    private Timestamp gmtCreate;
-    private Timestamp gmtModified;
-
-    @NotBlank
-    @Size(max = 20)
+    private Date gmtCreate;
+    private Date gmtModified;
     private String username;
-
-    @NotBlank
-    @Size(min = 8, max = 16)
-    private String password;
-
-    @Email
-    @Size(min = 2, max = 30)
     private String email;
-
-    @NotBlank
-    @Pattern(regexp = "^1\\d{10}")
     private String phoneNumber;
     private Boolean activation;
     private RoleEnum role;
+
+    public static UserResponse valueOf(User user) {
+        UserResponse userResponse = new UserResponse();
+        BeanUtils.copyProperties(user, userResponse);
+        return userResponse;
+    }
 
     @Override
     public String toString() {

@@ -12,7 +12,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  * @date 2019-03-04
  */
 @Configuration
-public class WebConfig implements WebMvcConfigurer {
+public class CustomizeWebMvcConfigurer implements WebMvcConfigurer {
 
     public static final String PROJECT_BASE_MAPPING_V1 = "/v1/monitoring-system";
     public static final String USER_BASE_MAPPING_V1 = PROJECT_BASE_MAPPING_V1 + "/users";
@@ -39,9 +39,11 @@ public class WebConfig implements WebMvcConfigurer {
     public void addViewControllers(ViewControllerRegistry registry) {
         registry.addViewController("").setViewName("user/login");
         registry.addViewController(PROJECT_BASE_MAPPING_V1 + "/page/index").setViewName("map/address-catalogue");
+
+        registry.addViewController(USER_BASE_MAPPING_V1 + "/page/activation").setViewName("user/activation");
+        registry.addViewController(USER_BASE_MAPPING_V1 + "/page/forgot-password").setViewName("user/forgot-password");
         registry.addViewController(USER_BASE_MAPPING_V1 + "/page/login").setViewName("user/login");
         registry.addViewController(USER_BASE_MAPPING_V1 + "/page/register").setViewName("user/register");
-        registry.addViewController(USER_BASE_MAPPING_V1 + "/page/forgot-password").setViewName("user/forgot-password");
         registry.addViewController(AIR_CONDITIONER_BASE_MAPPING_V1 + "/page/add-info")
                 .setViewName("air-conditioner/add-info");
         registry.addViewController(AIR_CONDITIONER_BASE_MAPPING_V1 + "/page/online-state")

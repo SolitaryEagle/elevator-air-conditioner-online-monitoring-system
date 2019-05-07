@@ -1,4 +1,4 @@
-package edu.hhu.air.conditioner.online.monitoring.model.request;
+package edu.hhu.air.conditioner.online.monitoring.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class IntervalRequest {
+public class Interval {
 
     private Number min;
     private Number max;

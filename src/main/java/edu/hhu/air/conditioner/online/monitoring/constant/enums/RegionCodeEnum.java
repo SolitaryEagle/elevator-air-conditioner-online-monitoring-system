@@ -1,7 +1,6 @@
-package edu.hhu.air.conditioner.online.monitoring.constant;
+package edu.hhu.air.conditioner.online.monitoring.constant.enums;
 
 import edu.hhu.air.conditioner.online.monitoring.exception.RegionCodeNonExistException;
-import edu.hhu.air.conditioner.online.monitoring.exception.ResponseCode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -66,8 +65,8 @@ public enum RegionCodeEnum {
         if (optional.isPresent()) {
             return optional.get();
         } else {
-            log.error("区域编码不存在！address ：{}", address);
-            throw new RegionCodeNonExistException(ResponseCode.MISSING, "regionCode", "区域编码不存在！");
+            log.error("区域编码不存在！address：{}", address);
+            throw new RegionCodeNonExistException(ErrorCodeEnum.MISSING, "regionCode", "区域编码不存在！");
         }
     }
 
@@ -77,8 +76,8 @@ public enum RegionCodeEnum {
         if (optional.isPresent()) {
             return optional.get();
         } else {
-            log.error("区域编码不存在！province ：{}", province);
-            throw new RegionCodeNonExistException(ResponseCode.MISSING, "regionCode", "区域编码不存在！");
+            log.error("区域编码不存在！province：{}", province);
+            throw new RegionCodeNonExistException(ErrorCodeEnum.MISSING, "regionCode", "区域编码不存在！");
         }
     }
 

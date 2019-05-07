@@ -1,12 +1,12 @@
 package edu.hhu.air.conditioner.online.monitoring.controller;
 
-import edu.hhu.air.conditioner.online.monitoring.constant.RoleEnum;
+import edu.hhu.air.conditioner.online.monitoring.constant.enums.RoleEnum;
 import edu.hhu.air.conditioner.online.monitoring.constant.SessionConsts;
+import edu.hhu.air.conditioner.online.monitoring.constant.enums.ErrorCodeEnum;
 import edu.hhu.air.conditioner.online.monitoring.exception.FaultException;
 import edu.hhu.air.conditioner.online.monitoring.model.entity.User;
 import edu.hhu.air.conditioner.online.monitoring.model.vo.FaultVO;
 import edu.hhu.air.conditioner.online.monitoring.service.FaultService;
-import edu.hhu.air.conditioner.online.monitoring.exception.ResponseCode;
 
 import java.sql.Timestamp;
 import java.util.Objects;
@@ -47,7 +47,7 @@ public class FaultController {
         boolean valid = RoleEnum.CUSTOM_SERVICE.equals(user.getRole()) && (Objects.isNull(faultVO.getRepairUserId())
                 || faultVO.getRepairUserId() <= 0);
         if (valid) {
-            throw new FaultException(ResponseCode.MISSING, "repairUserId", "缺少维修工");
+            throw new FaultException(ErrorCodeEnum.MISSING, "repairUserId", "缺少维修工");
         }
         faultVO.setReportUserId(user.getId());
         faultService.save(faultVO);
@@ -59,7 +59,7 @@ public class FaultController {
     public void arrangeRepairUser(@Valid FaultVO faultVO) {
 
         if (Objects.isNull(faultVO.getRepairUserId()) || faultVO.getRepairUserId() <= 0) {
-            throw new FaultException(ResponseCode.MISSING, "repairUserId", "缺少维修工");
+            throw new FaultException(ErrorCodeEnum.MISSING, "repairUserId", "缺少维修工");
         }
         faultService.updateRepairUserId(faultVO);
     }
@@ -80,13 +80,13 @@ public class FaultController {
 
         // 校验
         if (Objects.isNull(faultVO.getRepairResult())) {
-            throw new FaultException(ResponseCode.MISSING, "repairResult", "缺少维修结果");
+            throw new FaultException(ErrorCodeEnum.MISSING, "repairResult", "缺少维修结果");
         }
         if (StringUtils.isBlank(faultVO.getRepairRecord())) {
-            throw new FaultException(ResponseCode.MISSING, "repairRecord", "缺少维修记录");
+            throw new FaultException(ErrorCodeEnum.MISSING, "repairRecord", "缺少维修记录");
         }
         if (StringUtils.isBlank(faultVO.getRepairMaterial())) {
-            throw new FaultException(ResponseCode.MISSING, "repairMaterial", "缺少维修材料");
+            throw new FaultException(ErrorCodeEnum.MISSING, "repairMaterial", "缺少维修材料");
         }
 
         faultService.updateRepairInfo(faultVO);

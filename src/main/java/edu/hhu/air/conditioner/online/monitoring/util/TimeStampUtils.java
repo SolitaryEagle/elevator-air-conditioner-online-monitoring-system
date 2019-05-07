@@ -2,6 +2,7 @@ package edu.hhu.air.conditioner.online.monitoring.util;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 /**
  * @author 覃国强
@@ -15,4 +16,8 @@ public final class TimeStampUtils {
         return Timestamp.valueOf(LocalDateTime.now());
     }
 
+
+    public static Timestamp fromDate(Date date) {
+        return new Timestamp(date.getTime());
+    }
 }

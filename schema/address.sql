@@ -14,7 +14,7 @@ CREATE TABLE `address`
     `detail`       varchar(255)                 DEFAULT NULL,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8;
+  DEFAULT CHARSET = utf8mb4;
 
 
 

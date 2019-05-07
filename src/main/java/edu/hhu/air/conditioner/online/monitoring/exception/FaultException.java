@@ -1,46 +1,48 @@
 package edu.hhu.air.conditioner.online.monitoring.exception;
 
+import edu.hhu.air.conditioner.online.monitoring.constant.enums.ErrorCodeEnum;
+
 /**
  * @author 覃国强
  * @date 2019-02-21
  */
 public class FaultException extends RuntimeException {
 
-    private static final long serialVersionUID = 4148993212167064741L;
-    private ResponseCode responseCode;
+    private static final long serialVersionUID = 6920352937957943004L;
+    private ErrorCodeEnum errorCode;
     private String field;
 
-    public FaultException(ResponseCode responseCode) {
-        this.responseCode = responseCode;
+    public FaultException(ErrorCodeEnum errorCode) {
+        this.errorCode = errorCode;
     }
 
-    public FaultException(ResponseCode responseCode, String field) {
-        this.responseCode = responseCode;
+    public FaultException(ErrorCodeEnum errorCode, String field) {
+        this.errorCode = errorCode;
         this.field = field;
     }
 
-    public FaultException(ResponseCode responseCode, String field, String message) {
+    public FaultException(ErrorCodeEnum errorCode, String field, String message) {
         super(message);
-        this.responseCode = responseCode.withMessage(message);
+        this.errorCode = errorCode.withMessage(message);
         this.field = field;
     }
 
-    public FaultException(ResponseCode responseCode, String field, String message, Throwable cause) {
+    public FaultException(ErrorCodeEnum errorCode, String field, String message, Throwable cause) {
         super(message, cause);
-        this.responseCode = responseCode.withMessage(message);
+        this.errorCode = errorCode.withMessage(message);
         this.field = field;
     }
 
-    public FaultException(ResponseCode responseCode, String field, Throwable cause) {
+    public FaultException(ErrorCodeEnum errorCode, String field, Throwable cause) {
         super(cause);
-        this.responseCode = responseCode;
+        this.errorCode = errorCode;
         this.field = field;
     }
 
-    public FaultException(ResponseCode responseCode, String field, String message, Throwable cause,
+    public FaultException(ErrorCodeEnum errorCode, String field, String message, Throwable cause,
             boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
-        this.responseCode = responseCode.withMessage(message);
+        this.errorCode = errorCode.withMessage(message);
         this.field = field;
     }
 

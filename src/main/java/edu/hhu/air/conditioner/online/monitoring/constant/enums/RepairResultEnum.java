@@ -1,4 +1,4 @@
-package edu.hhu.air.conditioner.online.monitoring.constant;
+package edu.hhu.air.conditioner.online.monitoring.constant.enums;
 
 /**
  * @author 覃国强

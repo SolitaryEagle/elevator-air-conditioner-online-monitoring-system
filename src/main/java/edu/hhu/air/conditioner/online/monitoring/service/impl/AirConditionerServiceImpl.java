@@ -1,19 +1,19 @@
 package edu.hhu.air.conditioner.online.monitoring.service.impl;
 
 import edu.hhu.air.conditioner.online.monitoring.constant.AirConditionerConsts;
-import edu.hhu.air.conditioner.online.monitoring.constant.AirConditionerStateEnum;
-import edu.hhu.air.conditioner.online.monitoring.constant.RegionCodeEnum;
-import edu.hhu.air.conditioner.online.monitoring.constant.WindSpeedEnum;
+import edu.hhu.air.conditioner.online.monitoring.constant.enums.AirConditionerStateEnum;
+import edu.hhu.air.conditioner.online.monitoring.constant.enums.RegionCodeEnum;
+import edu.hhu.air.conditioner.online.monitoring.constant.enums.WindSpeedEnum;
 import edu.hhu.air.conditioner.online.monitoring.exception.AddressEmptyException;
 import edu.hhu.air.conditioner.online.monitoring.exception.BusinessException;
-import edu.hhu.air.conditioner.online.monitoring.exception.ResponseCode;
+import edu.hhu.air.conditioner.online.monitoring.constant.enums.ErrorCodeEnum;
 import edu.hhu.air.conditioner.online.monitoring.model.EarthCoordinate;
 import edu.hhu.air.conditioner.online.monitoring.model.dto.AddressDTO;
 import edu.hhu.air.conditioner.online.monitoring.model.dto.AirConditionerDTO;
 import edu.hhu.air.conditioner.online.monitoring.model.entity.Address;
 import edu.hhu.air.conditioner.online.monitoring.model.entity.AirConditioner;
 import edu.hhu.air.conditioner.online.monitoring.model.request.AirConditionerSearchRequest;
-import edu.hhu.air.conditioner.online.monitoring.model.request.IntervalRequest;
+import edu.hhu.air.conditioner.online.monitoring.model.Interval;
 import edu.hhu.air.conditioner.online.monitoring.model.response.AirConditionerResponse;
 import edu.hhu.air.conditioner.online.monitoring.model.response.PageResponse;
 import edu.hhu.air.conditioner.online.monitoring.repository.AirConditionerRepository;
@@ -70,7 +70,7 @@ public class AirConditionerServiceImpl implements AirConditionerService {
 
         AddressDTO addressDTO = airConditionerDTO.getAddressDTO();
         if (Objects.isNull(addressDTO)) {
-            throw new AddressEmptyException(ResponseCode.MISSING, "address", "地址不能为null");
+            throw new AddressEmptyException(ErrorCodeEnum.MISSING, "address", "地址不能为null");
         }
 
         // 查询当前地址是否存在
@@ -183,7 +183,7 @@ public class AirConditionerServiceImpl implements AirConditionerService {
                 predicates.add(criteriaBuilder.equal(root.get("state"), searchRequest.getEquipmentState()));
             }
             if (ObjectUtils.nonNull(searchRequest.getTemperature())) {
-                IntervalRequest temperature = searchRequest.getTemperature();
+                Interval temperature = searchRequest.getTemperature();
                 int min = ObjectUtils.nonNull(temperature.getMin()) ? temperature.getMin().intValue()
                         : Integer.MIN_VALUE;
                 int max = ObjectUtils.nonNull(temperature.getMax()) ? temperature.getMax().intValue()
@@ -191,14 +191,14 @@ public class AirConditionerServiceImpl implements AirConditionerService {
                 predicates.add(criteriaBuilder.between(root.get("temperature"), min, max));
             }
             if (ObjectUtils.nonNull(searchRequest.getKwh())) {
-                IntervalRequest kwh = searchRequest.getKwh();
+                Interval kwh = searchRequest.getKwh();
                 double min = ObjectUtils.nonNull(kwh.getMin()) ? kwh.getMin().doubleValue() : Double.MIN_VALUE;
                 double max = ObjectUtils.nonNull(kwh.getMax()) ? kwh.getMax().doubleValue() : Double.MAX_VALUE;
                 predicates.add(criteriaBuilder.between(root.get("kwh"), BigDecimal.valueOf(min),
                         BigDecimal.valueOf(max)));
             }
             if (ObjectUtils.nonNull(searchRequest.getCurrentIntensity())) {
-                IntervalRequest currentIntensity = searchRequest.getCurrentIntensity();
+                Interval currentIntensity = searchRequest.getCurrentIntensity();
                 double min = ObjectUtils.nonNull(currentIntensity.getMin()) ?
                         currentIntensity.getMin().doubleValue() : Double.MIN_VALUE;
                 double max = ObjectUtils.nonNull(currentIntensity.getMax()) ?
@@ -207,7 +207,7 @@ public class AirConditionerServiceImpl implements AirConditionerService {
                         BigDecimal.valueOf(max)));
             }
             if (ObjectUtils.nonNull(searchRequest.getVoltage())) {
-                IntervalRequest voltage = searchRequest.getVoltage();
+                Interval voltage = searchRequest.getVoltage();
                 double min = ObjectUtils.nonNull(voltage.getMin()) ? voltage.getMin().doubleValue()
                         : Double.MIN_VALUE;
                 double max = ObjectUtils.nonNull(voltage.getMax()) ? voltage.getMax().doubleValue()
@@ -216,7 +216,7 @@ public class AirConditionerServiceImpl implements AirConditionerService {
                         BigDecimal.valueOf(max)));
             }
             if (ObjectUtils.nonNull(searchRequest.getPower())) {
-                IntervalRequest power = searchRequest.getPower();
+                Interval power = searchRequest.getPower();
                 double min = ObjectUtils.nonNull(power.getMin()) ? power.getMin().doubleValue() : Double.MIN_VALUE;
                 double max = ObjectUtils.nonNull(power.getMax()) ? power.getMax().doubleValue() : Double.MAX_VALUE;
                 predicates.add(criteriaBuilder.between(root.get("power"), BigDecimal.valueOf(min),
@@ -272,7 +272,7 @@ public class AirConditionerServiceImpl implements AirConditionerService {
             // 根据地址获取区域编码
             RegionCodeEnum regionCode = RegionCodeEnum.parse(airConditionerVO.getAddress());
             if (Objects.isNull(regionCode)) {
-                throw new RegionCodeException(ResponseCode.INVALID, "address", "地址无效");
+                throw new RegionCodeException(ErrorCodeEnum.INVALID, "address", "地址无效");
             }
             airConditionerVO.setRegionCode(regionCode);
             // 获取地址经纬度

@@ -27,4 +27,4 @@ CREATE TABLE `air_conditioner` (
     `address_id`        bigint(20) UNSIGNED NOT NULL COMMENT '设备的地址',
     PRIMARY KEY (`id`),
     UNIQUE KEY `uk_equipment_id` (`equipment_id`)
-) ENGINE = InnoDB DEFAULT CHARSET = utf8;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;

@@ -1,6 +1,6 @@
 package edu.hhu.air.conditioner.online.monitoring.model.entity;
 
-import edu.hhu.air.conditioner.online.monitoring.constant.RoleEnum;
+import edu.hhu.air.conditioner.online.monitoring.constant.enums.RoleEnum;
 
 import java.io.Serializable;
 import java.sql.Timestamp;

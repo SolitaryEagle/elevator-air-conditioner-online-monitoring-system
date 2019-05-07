@@ -3,7 +3,7 @@ package edu.hhu.air.conditioner.online.monitoring.util;
 import edu.hhu.air.conditioner.online.monitoring.exception.AddressContainSpaceException;
 import edu.hhu.air.conditioner.online.monitoring.exception.BaiduMapException;
 import edu.hhu.air.conditioner.online.monitoring.exception.BusinessException;
-import edu.hhu.air.conditioner.online.monitoring.exception.ResponseCode;
+import edu.hhu.air.conditioner.online.monitoring.constant.enums.ErrorCodeEnum;
 import edu.hhu.air.conditioner.online.monitoring.model.EarthCoordinate;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -33,7 +33,7 @@ public final class BaiduMapUtils {
 
         address = address.trim();
         if (StringUtils.contains(address, " ")) {
-            throw new AddressContainSpaceException(ResponseCode.INVALID, "address", "地址中不能包含空格！");
+            throw new AddressContainSpaceException(ErrorCodeEnum.INVALID, "address", "地址中不能包含空格！");
         }
 
         String requestUrl = ADDRESS_RESOLUTION_URL + "?address=" + address + "&output=json&src=" +
@@ -44,7 +44,7 @@ public final class BaiduMapUtils {
         JsonNode jsonNode = mapper.readTree(jsonStr);
         int status = jsonNode.get("status").asInt();
         if (status != 0) {
-            throw new BaiduMapException(ResponseCode.INVALID, "address", "地址无效");
+            throw new BaiduMapException(ErrorCodeEnum.INVALID, "address", "地址无效");
         }
 
         JsonNode location = jsonNode.get("result").get("location");

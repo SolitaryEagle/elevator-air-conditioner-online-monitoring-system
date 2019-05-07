@@ -1,8 +1,7 @@
 package edu.hhu.air.conditioner.online.monitoring.service;
 
-import edu.hhu.air.conditioner.online.monitoring.exception.BusinessException;
 import edu.hhu.air.conditioner.online.monitoring.model.entity.User;
-import edu.hhu.air.conditioner.online.monitoring.model.vo.UserVO;
+import edu.hhu.air.conditioner.online.monitoring.model.request.UserAutoLoginRequest;
 
 /**
  * @author 覃国强
@@ -10,24 +9,24 @@ import edu.hhu.air.conditioner.online.monitoring.model.vo.UserVO;
  */
 public interface UserService {
 
-    User save(UserVO userVO) throws BusinessException;
+    User add(User user);
 
-    int updateActivation(User user) throws BusinessException;
+    int updateActivation(User user);
 
-    int updatePassword(UserVO userVO) throws BusinessException;
+    int updatePassword(User user);
 
-    int update(UserVO userVO) throws BusinessException;
+    int update(User user);
 
-    User findById(UserVO userVO) throws BusinessException;
+    boolean existsById(Long userId);
 
-    User findById(Long userId) throws BusinessException;
+    User findById(Long userId);
 
-    User findByUsername(UserVO userVO) throws BusinessException;
+    User findByUsername(String username);
 
-    User findByUsername(String username) throws BusinessException;
+    User findByEmail(String email);
 
-    User findByEmail(UserVO userVO) throws BusinessException;
+    boolean validatePassword(User user, String password);
 
-    User findByEmail(String email) throws BusinessException;
+    User autoLogin(User user);
 
 }

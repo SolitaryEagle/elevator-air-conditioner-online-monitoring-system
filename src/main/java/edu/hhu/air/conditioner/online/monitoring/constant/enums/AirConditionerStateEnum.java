@@ -1,4 +1,4 @@
-package edu.hhu.air.conditioner.online.monitoring.constant;
+package edu.hhu.air.conditioner.online.monitoring.constant.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

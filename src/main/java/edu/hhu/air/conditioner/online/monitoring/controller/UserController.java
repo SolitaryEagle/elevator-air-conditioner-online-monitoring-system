@@ -1,52 +1,52 @@
 package edu.hhu.air.conditioner.online.monitoring.controller;
 
-import edu.hhu.air.conditioner.online.monitoring.constant.MailConsts;
-import edu.hhu.air.conditioner.online.monitoring.constant.RequestConsts;
 import edu.hhu.air.conditioner.online.monitoring.constant.SessionConsts;
+import edu.hhu.air.conditioner.online.monitoring.constant.enums.ErrorCodeEnum;
+import edu.hhu.air.conditioner.online.monitoring.exception.ActivationException;
+import edu.hhu.air.conditioner.online.monitoring.exception.UserException;
 import edu.hhu.air.conditioner.online.monitoring.model.entity.User;
-import edu.hhu.air.conditioner.online.monitoring.model.vo.UserVO;
+import edu.hhu.air.conditioner.online.monitoring.model.request.UserAutoLoginRequest;
+import edu.hhu.air.conditioner.online.monitoring.model.request.UserRegisterRequest;
+import edu.hhu.air.conditioner.online.monitoring.model.request.UserResetPasswordRequest;
+import edu.hhu.air.conditioner.online.monitoring.model.response.UserResponse;
+import edu.hhu.air.conditioner.online.monitoring.service.MailService;
 import edu.hhu.air.conditioner.online.monitoring.service.UserService;
-import edu.hhu.air.conditioner.online.monitoring.util.PasswordEncryptionUtils;
 import edu.hhu.air.conditioner.online.monitoring.util.VerificationCodeUtils;
-import edu.hhu.air.conditioner.online.monitoring.exception.BusinessException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.MailSender;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.SessionAttribute;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
-import javax.validation.constraints.Size;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 /**
  * @author 覃国强
  * @date 2019-02-12
  */
 @Slf4j
-@Controller
+@RestController
 @RequestMapping("/v1/monitoring-system/users")
 public class UserController {
 
-    private final UserService userService;
-    private final MailSender mailSender;
-
     @Autowired
-    public UserController(UserService userService, MailSender mailSender) {
-        this.userService = userService;
-        this.mailSender = mailSender;
-    }
+    private HttpSession session;
+    @Autowired
+    private MailService mailService;
+    @Autowired
+    private UserService userService;
 
     @GetMapping("/test")
     public void test(HttpSession session, HttpServletRequest request, HttpServletResponse response) {
@@ -54,170 +54,142 @@ public class UserController {
         System.out.println(session.getAttribute(SessionConsts.VERIFICATION_CODE_KEY));
     }
 
-    // 注册
-
+    /**
+     * 注册请求
+     *
+     * @param userRegisterRequest 注册表单中提交的信息
+     * @return 注册成功后获取到的 User 部分信息
+     */
     @PostMapping("/add")
-    public String register(@Valid UserVO userVO, HttpServletRequest request, HttpSession session) {
-        request.setAttribute(RequestConsts.USER_REGISTER_FORM_KEY, userVO);
-        if (StringUtils.contains(userVO.getUsername(), "@")) {
-            request.setAttribute(RequestConsts.TIP_KEY, "用户名不能包含@字符！");
-            return "user/register";
+    public UserResponse register(@ModelAttribute @Valid UserRegisterRequest userRegisterRequest) {
+        if (StringUtils.contains(userRegisterRequest.getUsername(), "@")) {
+            throw new UserException(ErrorCodeEnum.ALREADY_EXISTS, "username", "用户名不能包含@字符！");
         }
-        User saveUser = null;
-        try {
-            saveUser = userService.save(userVO);
-        } catch (BusinessException e) {
-            request.setAttribute(RequestConsts.TIP_KEY, e.getMessage());
-            return "user/register";
+        if (!StringUtils.equals(userRegisterRequest.getPassword(), userRegisterRequest.getRepassword())) {
+            throw new UserException(ErrorCodeEnum.INCONSISTENT, "password", "两次密码不一致！");
         }
+        User user = new User();
+        BeanUtils.copyProperties(userRegisterRequest, user);
+        User saveUser = userService.add(user);
         session.setAttribute(SessionConsts.LOGIN_USER_KEY, saveUser);
-        log.info("注册成功");
-        request.setAttribute(RequestConsts.TIP_KEY, "注册成功，请激活邮箱！");
-        return "user/activation";
+        log.info("注册成功! user: {}", saveUser);
+        return UserResponse.valueOf(saveUser);
     }
 
-    // 获取激活验证码
-
+    /**
+     * 获取激活验证码请求
+     *
+     * @param receiverEmail 接收验证码的邮箱
+     * @return 邮件发送的反馈信息
+     */
     @ResponseBody
     @GetMapping("/activation")
-    public String sendActivationCode(@Email String receiverEmail, HttpSession session) {
-
-        // 获取验证码
-        String verificationCode = VerificationCodeUtils.generate();
-        session.setAttribute(SessionConsts.VERIFICATION_CODE_KEY, verificationCode);
-
-        //发送邮件，  TODO 但是由于发送过程需要与smtp服务器进行交互，所以有点慢，后期可以使用异步实现
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(MailConsts.SENDER_EMAIL);
-        message.setTo(receiverEmail);
-        message.setText(MailConsts.EMAIL_TEXT_TEMPLATE + verificationCode);
-        try {
-            this.mailSender.send(message);
-        } catch (Exception e) {
-            log.error("邮件发送出错", e);
-            return "邮件发送出错！";
+    public String sendActivationCode(@RequestParam @NotNull @Email String receiverEmail) {
+        // 校验该邮箱是否存在
+        User testUser = userService.findByEmail(receiverEmail);
+        if (testUser.getActivation()) {
+            throw new UserException(ErrorCodeEnum.ALREADY_EXISTS, "activation", "账户已激活！");
         }
-        log.debug("邮件已发送");
+        // 获取激活码（验证码的一种）
+        String activationCode = VerificationCodeUtils.generate();
+        session.setAttribute(SessionConsts.VERIFICATION_CODE_KEY, activationCode);
+        //发送邮件，
+        mailService.sendActivationCode(receiverEmail, activationCode);
+        log.debug("邮件已发送！receiverEmail: {}", receiverEmail);
         return "邮件已发送！";
     }
 
-    // 验证激活码
-
+    /**
+     * 验证激活码请求
+     *
+     * @param activationEmail 激活邮箱
+     * @param activationCode  待验证的激活码
+     * @return 激活结果的反馈信息
+     */
     @PostMapping("/activation/verify")
-    public String validateActivationCode(@SessionAttribute(SessionConsts.LOGIN_USER_KEY) User user,
-            String verificationCode, HttpServletRequest request, HttpSession session) {
-
-        User testUser = null;
-        try {
-            testUser = userService.findById(user.getId());
-        } catch (BusinessException e) {
-            request.setAttribute(RequestConsts.TIP_KEY, e.getMessage());
-            return "user/activation";
-        }
+    public String verifyActivationCode(@RequestParam @NotBlank @Email String activationEmail,
+            @RequestParam String activationCode) {
+        User testUser = userService.findByEmail(activationEmail);
         if (testUser.getActivation()) {
-            request.setAttribute(RequestConsts.TIP_KEY, "账户已激活!");
-            return "user/activation";
+            throw new ActivationException(ErrorCodeEnum.ALREADY_EXISTS, "activation", "账户已激活!");
         }
-        String testVerificationCode = (String) session.getAttribute(SessionConsts.VERIFICATION_CODE_KEY);
-        if (!StringUtils.equals(verificationCode, testVerificationCode)) {
-            request.setAttribute(RequestConsts.TIP_KEY, "验证码错误或已失效!");
-            return "user/activation";
+        String testActivationCode = (String) session.getAttribute(SessionConsts.VERIFICATION_CODE_KEY);
+        if (!StringUtils.equals(activationCode, testActivationCode)) {
+            throw new ActivationException(ErrorCodeEnum.INVALID, "activation", "验证码错误或已失效!");
         }
-
-        int result = 0;
-        try {
-            result = userService.updateActivation(user);
-        } catch (BusinessException e) {
-            request.setAttribute(RequestConsts.TIP_KEY, e.getMessage());
-            return "user/activation";
-        }
-        if (result <= 0) {
-            log.warn("激活失败； userId: {}, userEmail: {}", user.getId(), user.getEmail());
-            request.setAttribute(RequestConsts.TIP_KEY, "系统正在维护，请稍后重试!");
-            return "user/activation";
-        }
-        log.debug("激活成功");
-        return "map/address-catalogue";
+        testUser.setActivation(Boolean.TRUE);
+        userService.updateActivation(testUser);
+        log.debug("激活成功! activationEmail: {}", activationEmail);
+        return "激活成功!";
     }
 
-    // 登录
-
-    @PostMapping("/login")
-    public String login(String usernameOrEmail, String password, HttpServletRequest request, HttpSession session) {
-        request.setAttribute(RequestConsts.USER_LOGIN_FORM_KEY, usernameOrEmail);
-        User testUser = null;
-        if (StringUtils.contains(usernameOrEmail, "@")) {
-            try {
-                testUser = userService.findByEmail(usernameOrEmail);
-            } catch (BusinessException e) {
-                request.setAttribute(RequestConsts.TIP_KEY, "邮箱未注册！");
-                return "user/login";
-            }
-        } else {
-            try {
-                testUser = userService.findByUsername(usernameOrEmail);
-            } catch (BusinessException e) {
-                request.setAttribute(RequestConsts.TIP_KEY, "用户名未注册！");
-                return "user/login";
-            }
-        }
-
-        // 验证密码是否正确
-        try {
-            if (!PasswordEncryptionUtils.validate(password, testUser.getPassword())) {
-                request.setAttribute(RequestConsts.TIP_KEY, "用户名、邮箱或密码错误!");
-                return "user/login";
-            }
-        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-            log.error("密码验证器错误，password：{}", password, e);
-            request.setAttribute(RequestConsts.TIP_KEY, "系统正在维护！");
-        }
-
-        session.setAttribute(SessionConsts.LOGIN_USER_KEY, testUser);
-
-        // 验证是否激活
-
-        if (!testUser.getActivation()) {
-            request.setAttribute(RequestConsts.TIP_KEY, "请先激活账户！");
-            return "user/activation";
-        }
-
-        log.info("登录成功");
-        return "map/address-catalogue";
-    }
-
-    // 找回密码
-
+    /**
+     * 找回密码请求
+     *
+     * @param userResetPasswordRequest 重置密码提交的表单信息
+     * @return 重置密码结果的反馈信息
+     */
     @PostMapping("/password/reset")
-    public String retrievePassword(@Email String email, @Size(min = 8, max = 16) String newPassword,
-            String reNewPassword, String verificationCode, HttpServletRequest request, HttpSession session) {
-        request.setAttribute(RequestConsts.USER_EMAIL_KEY, email);
-        String testVerificationCode = (String) session.getAttribute(SessionConsts.VERIFICATION_CODE_KEY);
-        if (!StringUtils.equals(verificationCode, testVerificationCode)) {
-            request.setAttribute(RequestConsts.TIP_KEY, "验证码错误或已失效!");
-            return "user/forgot-password";
+    public String retrievePassword(@ModelAttribute @Valid UserResetPasswordRequest userResetPasswordRequest) {
+        String testActivationCode = (String) session.getAttribute(SessionConsts.VERIFICATION_CODE_KEY);
+        if (!StringUtils.equals(userResetPasswordRequest.getActivationCode(), testActivationCode)) {
+            throw new ActivationException(ErrorCodeEnum.INVALID, "activation", "验证码错误或已失效!");
         }
-        if (!StringUtils.equals(newPassword, reNewPassword)) {
-            request.setAttribute(RequestConsts.TIP_KEY, "两次密码不一致!");
-            return "user/forgot-password";
+        if (!StringUtils.equals(userResetPasswordRequest.getNewPassword(),
+                userResetPasswordRequest.getReNewPassword())) {
+            throw new UserException(ErrorCodeEnum.INCONSISTENT, "password", "两次密码不一致！");
         }
-
-        UserVO userVO = UserVO.builder().email(email).password(newPassword).build();
-        int result = 0;
-        try {
-            result = userService.updatePassword(userVO);
-        } catch (BusinessException e) {
-            request.setAttribute(RequestConsts.TIP_KEY, e.getMessage());
-            return "user/forgot-password";
-        }
-        if (result <= 0) {
-            request.setAttribute(RequestConsts.TIP_KEY, "系统正在维护，请稍后重试!");
-            return "user/forgot-password";
-        }
-        log.info("密码重置成功！email ：{}", email);
-        request.setAttribute(RequestConsts.TIP_KEY, "密码重置成功，请重新登录！");
-        return "user/login";
+        User user = User.builder().email(userResetPasswordRequest.getEmail())
+                .password(userResetPasswordRequest.getNewPassword()).build();
+        user.setPassword(userResetPasswordRequest.getNewPassword());
+        userService.updatePassword(user);
+        log.info("密码重置成功！email：{}", userResetPasswordRequest.getEmail());
+        return "密码重置成功，请重新登录！";
     }
+
+    /**
+     * 登录请求
+     *
+     * @param usernameOrEmail 用户名或者邮箱
+     * @param password        密码
+     * @return 登录的 User 部分信息
+     */
+    @PostMapping("/login")
+    public UserResponse login(@RequestParam String usernameOrEmail, @RequestParam String password) {
+        User testUser;
+        if (StringUtils.contains(usernameOrEmail, "@")) {
+            testUser = userService.findByEmail(usernameOrEmail);
+        } else {
+            testUser = userService.findByUsername(usernameOrEmail);
+        }
+        // 验证密码是否正确
+        if (!userService.validatePassword(testUser, password)) {
+            throw new UserException(ErrorCodeEnum.INCONSISTENT, "password", "用户名、邮箱或密码错误!");
+        }
+        // 验证是否激活
+        if (!testUser.getActivation()) {
+            throw new UserException(ErrorCodeEnum.ACCOUNT_INACTIVATED, "activation", "请先激活账户！");
+        }
+        session.setAttribute(SessionConsts.LOGIN_USER_KEY, testUser);
+        log.debug("登录成功! username: {}, email: {}", testUser.getUsername(), testUser.getEmail());
+        return UserResponse.valueOf(testUser);
+    }
+
+    /**
+     * 自动登入请求
+     *
+     * @param userAutoLoginRequest 自动登录的用户信息
+     * @return 登录的 User 部分信息
+     */
+    @PostMapping("/auto-login")
+    public UserResponse autoLogin(@ModelAttribute UserAutoLoginRequest userAutoLoginRequest) {
+        User testUser = userService.autoLogin(userAutoLoginRequest.toUser());
+        session.setAttribute(SessionConsts.LOGIN_USER_KEY, testUser);
+        log.debug("自动登录成功! userId: {}, username: {}, email: {}", testUser.getId(), testUser.getUsername(),
+                testUser.getEmail());
+        return UserResponse.valueOf(testUser);
+    }
+
 
 /*
 
@@ -235,7 +207,7 @@ public class UserController {
             }
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             log.error("加密密码验证器错误，password：{}", oldPassword, e);
-            throw new UserException(ResponseCode.PASSWORD_ENCRYPTION_ERROR, "password", "加密密码验证器错误");
+            throw new UserException(ErrorCodeEnum.PASSWORD_ENCRYPTION_ERROR, "password", "加密密码验证器错误");
         }
         if (!StringUtils.equals(newPassword, reNewPassword)) {
             return "两次密码不一致";

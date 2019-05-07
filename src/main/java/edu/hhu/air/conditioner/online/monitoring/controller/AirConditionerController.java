@@ -1,7 +1,7 @@
 package edu.hhu.air.conditioner.online.monitoring.controller;
 
 import edu.hhu.air.conditioner.online.monitoring.constant.RequestConsts;
-import edu.hhu.air.conditioner.online.monitoring.constant.RoleEnum;
+import edu.hhu.air.conditioner.online.monitoring.constant.enums.RoleEnum;
 import edu.hhu.air.conditioner.online.monitoring.constant.SessionConsts;
 import edu.hhu.air.conditioner.online.monitoring.model.dto.AirConditionerDTO;
 import edu.hhu.air.conditioner.online.monitoring.model.entity.User;

@@ -16,16 +16,19 @@ import org.springframework.data.jpa.repository.Query;
 public interface UserRepository extends JpaRepository<User, Long> {
 
     @Modifying(flushAutomatically = true, clearAutomatically = true)
-    @Query("update User set activation = :activation, gmtModified = :gmtModified where id = :id")
-    int updateActivationById(Long id, boolean activation, Timestamp gmtModified);
+    @Query("update User set activation = :#{#user.activation}, gmtModified = :#{#user.gmtModified} "
+            + "where id = :#{#user.id}")
+    int updateActivationById(User user);
 
     @Modifying(flushAutomatically = true, clearAutomatically = true)
-    @Query("update User set password = :password, gmtModified = :gmtModified where email = :email")
-    int updatePasswordByEmail(String email, String password, Timestamp gmtModified);
+    @Query("update User set password = :#{#user.password}, gmtModified = :#{#user.gmtModified} "
+            + "where email = :#{#user.email}")
+    int updatePasswordByEmail(User user);
 
     @Modifying(flushAutomatically = true, clearAutomatically = true)
-    @Query("update User set username = :username, phoneNumber = :phoneNumber, gmtModified = :gmtModified where id = :id")
-    int updateById(Long id, String username, String phoneNumber, Timestamp gmtModified);
+    @Query("update User set username = :#{#user.username}, phoneNumber = :#{#user.phoneNumber}, "
+            + "gmtModified = :#{#user.gmtModified} where id = :#{#user.id}")
+    int updateById(User user);
 
     Optional<User> findByUsername(String username);
 

@@ -1,6 +1,6 @@
 package constant;
 
-import edu.hhu.air.conditioner.online.monitoring.constant.RoleEnum;
+import edu.hhu.air.conditioner.online.monitoring.constant.enums.RoleEnum;
 import edu.hhu.air.conditioner.online.monitoring.model.entity.User;
 
 /**
