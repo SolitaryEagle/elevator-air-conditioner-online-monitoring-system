@@ -1,31 +1,26 @@
 package edu.hhu.air.conditioner.online.monitoring.service.impl;
 
 import edu.hhu.air.conditioner.online.monitoring.constant.AirConditionerConsts;
+import edu.hhu.air.conditioner.online.monitoring.constant.SystemConsts;
 import edu.hhu.air.conditioner.online.monitoring.constant.enums.AirConditionerStateEnum;
+import edu.hhu.air.conditioner.online.monitoring.constant.enums.ErrorCodeEnum;
 import edu.hhu.air.conditioner.online.monitoring.constant.enums.RegionCodeEnum;
 import edu.hhu.air.conditioner.online.monitoring.constant.enums.WindSpeedEnum;
-import edu.hhu.air.conditioner.online.monitoring.exception.AddressEmptyException;
-import edu.hhu.air.conditioner.online.monitoring.exception.BusinessException;
-import edu.hhu.air.conditioner.online.monitoring.constant.enums.ErrorCodeEnum;
+import edu.hhu.air.conditioner.online.monitoring.exception.ActivationException;
+import edu.hhu.air.conditioner.online.monitoring.exception.AirConditionerException;
 import edu.hhu.air.conditioner.online.monitoring.model.EarthCoordinate;
-import edu.hhu.air.conditioner.online.monitoring.model.dto.AddressDTO;
 import edu.hhu.air.conditioner.online.monitoring.model.dto.AirConditionerDTO;
 import edu.hhu.air.conditioner.online.monitoring.model.entity.Address;
 import edu.hhu.air.conditioner.online.monitoring.model.entity.AirConditioner;
-import edu.hhu.air.conditioner.online.monitoring.model.request.AirConditionerSearchRequest;
-import edu.hhu.air.conditioner.online.monitoring.model.Interval;
-import edu.hhu.air.conditioner.online.monitoring.model.response.AirConditionerResponse;
-import edu.hhu.air.conditioner.online.monitoring.model.response.PageResponse;
+import edu.hhu.air.conditioner.online.monitoring.model.entity.User;
 import edu.hhu.air.conditioner.online.monitoring.repository.AirConditionerRepository;
 import edu.hhu.air.conditioner.online.monitoring.service.AddressService;
 import edu.hhu.air.conditioner.online.monitoring.service.AirConditionerService;
 import edu.hhu.air.conditioner.online.monitoring.service.UserService;
 import edu.hhu.air.conditioner.online.monitoring.util.BaiduMapUtils;
-import edu.hhu.air.conditioner.online.monitoring.util.ObjectUtils;
 import edu.hhu.air.conditioner.online.monitoring.util.TimeStampUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
@@ -35,11 +30,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.criteria.Predicate;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -49,6 +41,7 @@ import java.util.stream.Collectors;
  * @author 覃国强
  * @date 2019-02-20
  */
+@Slf4j
 @Service
 public class AirConditionerServiceImpl implements AirConditionerService {
 
@@ -66,25 +59,17 @@ public class AirConditionerServiceImpl implements AirConditionerService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public AirConditioner add(AirConditionerDTO airConditionerDTO) throws BusinessException, IOException {
+    public AirConditionerDTO add(AirConditionerDTO airConditionerDTO) throws IOException {
 
-        AddressDTO addressDTO = airConditionerDTO.getAddressDTO();
-        if (Objects.isNull(addressDTO)) {
-            throw new AddressEmptyException(ErrorCodeEnum.MISSING, "address", "地址不能为null");
-        }
+        // 查询当前地址是否存在 ?  存在：不保存！不存在：保存！
+        Address address = airConditionerDTO.getAddress();
+        Address testAddress = addressService.getByExample(Example.of(address));
+        address = Objects.isNull(testAddress) ? addressService.add(address) : testAddress;
 
-        // 查询当前地址是否存在
-        Optional<Address> optional = addressService.findOne(Example.of(
-                Address.builder().province(addressDTO.getProvince()).city(addressDTO.getCity())
-                        .district(addressDTO.getDistrict()).detail(addressDTO.getDetail()).build()));
-        // 保存地址
-        Address address = optional.orElseGet(() -> addressService.add(addressDTO));
-
-        AirConditioner airConditioner = new AirConditioner();
-        BeanUtils.copyProperties(airConditionerDTO, airConditioner);
+        AirConditioner airConditioner = airConditionerDTO.toAirConditioner();
         airConditioner.setGmtCreate(TimeStampUtils.now());
         airConditioner.setGmtModified(TimeStampUtils.now());
-        airConditioner.setAddressString(addressDTO.toString());
+        airConditioner.setAddressString(address.toSimpleString());
 
         // 根据省份获取区域编码
         RegionCodeEnum regionCode = RegionCodeEnum.valueOfProvince(address.getProvince());
@@ -118,12 +103,55 @@ public class AirConditionerServiceImpl implements AirConditionerService {
         airConditioner.setPower(BigDecimal.valueOf(power));
         airConditioner.setState(AirConditionerStateEnum.GOOD);
 
-        // TODO 检查用户是否在数据库中存在
+        if (!userService.existsById(airConditioner.getUserId())) {
+            throw new AirConditionerException(ErrorCodeEnum.MISSING_FIELD, "userId", "该设备所属的用户不存在！");
+        }
 
         airConditioner.setUserId(airConditionerDTO.getUser().getId());
         airConditioner.setAddressId(address.getId());
 
-        return airConditionerRepository.save(airConditioner);
+        return airConditioner2AirConditionerDTO(airConditioner);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteByEquipmentId(String equipmentId) {
+        airConditionerRepository.deleteByEquipmentId(equipmentId);
+        log.info("设备信息已删除！equipmentId：{}", equipmentId);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public AirConditionerDTO updateByEquipmentId(AirConditionerDTO airConditionerDTO) throws IOException {
+
+        // 判断地址是否合法
+        Address address = airConditionerDTO.getAddress();
+        Address testAddress = addressService.getByExample(Example.of(address));
+        address = Objects.isNull(testAddress) ? addressService.add(address) : testAddress;
+
+        AirConditioner airConditioner = airConditionerDTO.toAirConditioner();
+        airConditioner.setGmtModified(TimeStampUtils.now());
+        airConditioner.setAddressString(address.toSimpleString());
+
+        // 根据省份获取区域编码
+        RegionCodeEnum regionCode = RegionCodeEnum.valueOfProvince(address.getProvince());
+        airConditioner.setRegionCode(regionCode);
+
+        // 获取地址经纬度
+        EarthCoordinate earthCoordinate = BaiduMapUtils.getEarthCoordinate(airConditioner.getAddressString());
+        airConditioner.setLongitude(earthCoordinate.getLongitude());
+        airConditioner.setLatitude(earthCoordinate.getLatitude());
+
+        airConditioner.setAddressId(address.getId());
+
+        int result = airConditionerRepository.updateByEquipmentId(airConditioner);
+        if (result <= 0) {
+            log.warn("更新设备信息失败； equipmentId: {}", airConditioner.getEquipmentId());
+            throw new ActivationException(ErrorCodeEnum.INTERNAL_SERVER_ERROR, "equipmentId",
+                    SystemConsts.SYSTEM_ERROR_PROMPT);
+        }
+        log.info("更新设备信息成功！ equipmentId: {}", airConditioner.getEquipmentId());
+        return getByEquipmentId(airConditioner.getEquipmentId());
     }
 
     @Override
@@ -132,197 +160,80 @@ public class AirConditionerServiceImpl implements AirConditionerService {
     }
 
     @Override
-    public List<AirConditionerResponse> listAll() {
+    public AirConditionerDTO getById(Long id) {
+
+        Optional<AirConditioner> optional = airConditionerRepository.findById(id);
+        if (optional.isPresent()) {
+            return airConditioner2AirConditionerDTO(optional.get());
+        }
+        log.warn("设备不存在！id ：{}", id);
+        throw new AirConditionerException(ErrorCodeEnum.MISSING, "id", "id 为 " + id + " 的设备不存在！");
+    }
+
+    private AirConditionerDTO airConditioner2AirConditionerDTO(AirConditioner airConditioner) {
+        AirConditionerDTO result = new AirConditionerDTO();
+        BeanUtils.copyProperties(airConditioner, result);
+        User user = userService.getById(airConditioner.getUserId());
+        Address address = addressService.getById(airConditioner.getAddressId());
+        result.setUser(user);
+        result.setAddress(address);
+        return result;
+    }
+
+    @Override
+    public List<AirConditionerDTO> listAll() {
         List<AirConditioner> list = airConditionerRepository.findAll();
-        return list.stream().map(this::airConditioner2AirConditionerResponse).collect(Collectors.toList());
+        return list.stream().map(this::airConditioner2AirConditionerDTO).collect(Collectors.toList());
     }
 
     @Override
-    public PageResponse<AirConditionerResponse> listAll(int page, int size) {
+    public Page<AirConditionerDTO> listAll(int page, int size) {
         Page<AirConditioner> pageResult = airConditionerRepository.findAll(PageRequest.of(page, size));
-        return PageResponse.of(pageResult.getTotalElements(),
-                pageResult.stream().map(this::airConditioner2AirConditionerResponse).collect(Collectors.toList()));
+        return pageResult.map(this::airConditioner2AirConditionerDTO);
     }
 
     @Override
-    public List<AirConditionerResponse> listAll(AirConditionerSearchRequest searchRequest) {
-        Specification<AirConditioner> specification = getAirConditionerSearchRequestSpecification(searchRequest);
+    public List<AirConditionerDTO> listAll(Specification<AirConditioner> specification) {
         // 使用 Specification 查询
         List<AirConditioner> list = airConditionerRepository.findAll(specification);
-        return list.stream().map(this::airConditioner2AirConditionerResponse).collect(Collectors.toList());
+        return list.stream().map(this::airConditioner2AirConditionerDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public Page<AirConditionerDTO> listAll(Specification<AirConditioner> specification, int page, int size) {
+        Page<AirConditioner> pageResult = airConditionerRepository.findAll(specification, PageRequest.of(page, size));
+        return pageResult.map(this::airConditioner2AirConditionerDTO);
+    }
+
+    @Override
+    public List<AirConditionerDTO> listAllByUserId(Long userId) {
+        List<AirConditioner> list = airConditionerRepository.findByUserId(userId);
+        return list.stream().map(this::airConditioner2AirConditionerDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public Page<AirConditionerDTO> listAllByUserId(Long userId, int page, int size) {
+        Page<AirConditioner> pageResult = airConditionerRepository
+                .findAll(Example.of(AirConditioner.builder().userId(userId).build()), PageRequest.of(page, size));
+        return pageResult.map(this::airConditioner2AirConditionerDTO);
+    }
+
+    @Override
+    public AirConditionerDTO getByEquipmentId(String equipmentId) {
+        Optional<AirConditioner> optional = airConditionerRepository.findByEquipmentId(equipmentId);
+        if (optional.isPresent()) {
+            return airConditioner2AirConditionerDTO(optional.get());
+        }
+        log.error("设备不存在！equipmentId ： " + equipmentId);
+        throw new AirConditionerException(ErrorCodeEnum.MISSING, "equipmentId", "设备不存在！");
     }
 
     /**
-     * 使用给定的 AirConditionerSearchRequest 参数构造一个 Specification
+     * 将 Long 类型的 regionCount 通过添加前导0变成一个 长度为 8 的定长字符串
      *
-     * @param searchRequest
-     * @return
+     * @param regionCount 当前 region 的数量
+     * @return 生成的 equipmentId
      */
-    @NotNull
-    private Specification<AirConditioner> getAirConditionerSearchRequestSpecification(
-            AirConditionerSearchRequest searchRequest) {
-        return (Specification<AirConditioner>) (root, query, criteriaBuilder) -> {
-            List<Predicate> predicates = new ArrayList<>();
-            if (StringUtils.isNotBlank(searchRequest.getBrand())) {
-                predicates.add(criteriaBuilder.like(root.get("brand"), "%" + searchRequest.getBrand() + "%"));
-            }
-            if (StringUtils.isNotBlank(searchRequest.getModel())) {
-                predicates.add(criteriaBuilder.like(root.get("model"), "%" + searchRequest.getModel() + "%"));
-            }
-            if (StringUtils.isNotBlank(searchRequest.getSeller())) {
-                predicates.add(criteriaBuilder.like(root.get("seller"), "%" + searchRequest.getSeller() + "%"));
-            }
-            if (StringUtils.isNotBlank(searchRequest.getAddress())) {
-                predicates.add(criteriaBuilder
-                        .like(root.get("addressString"), "%" + searchRequest.getAddress() + "%"));
-            }
-            if (ObjectUtils.nonNull(searchRequest.getWindSpeed())) {
-                predicates.add(criteriaBuilder.equal(root.get("windSpeed"), searchRequest.getWindSpeed()));
-            }
-            if (ObjectUtils.nonNull(searchRequest.getEquipmentState())) {
-                predicates.add(criteriaBuilder.equal(root.get("state"), searchRequest.getEquipmentState()));
-            }
-            if (ObjectUtils.nonNull(searchRequest.getTemperature())) {
-                Interval temperature = searchRequest.getTemperature();
-                int min = ObjectUtils.nonNull(temperature.getMin()) ? temperature.getMin().intValue()
-                        : Integer.MIN_VALUE;
-                int max = ObjectUtils.nonNull(temperature.getMax()) ? temperature.getMax().intValue()
-                        : Integer.MAX_VALUE;
-                predicates.add(criteriaBuilder.between(root.get("temperature"), min, max));
-            }
-            if (ObjectUtils.nonNull(searchRequest.getKwh())) {
-                Interval kwh = searchRequest.getKwh();
-                double min = ObjectUtils.nonNull(kwh.getMin()) ? kwh.getMin().doubleValue() : Double.MIN_VALUE;
-                double max = ObjectUtils.nonNull(kwh.getMax()) ? kwh.getMax().doubleValue() : Double.MAX_VALUE;
-                predicates.add(criteriaBuilder.between(root.get("kwh"), BigDecimal.valueOf(min),
-                        BigDecimal.valueOf(max)));
-            }
-            if (ObjectUtils.nonNull(searchRequest.getCurrentIntensity())) {
-                Interval currentIntensity = searchRequest.getCurrentIntensity();
-                double min = ObjectUtils.nonNull(currentIntensity.getMin()) ?
-                        currentIntensity.getMin().doubleValue() : Double.MIN_VALUE;
-                double max = ObjectUtils.nonNull(currentIntensity.getMax()) ?
-                        currentIntensity.getMax().doubleValue() : Double.MAX_VALUE;
-                predicates.add(criteriaBuilder.between(root.get("currentIntensity"), BigDecimal.valueOf(min),
-                        BigDecimal.valueOf(max)));
-            }
-            if (ObjectUtils.nonNull(searchRequest.getVoltage())) {
-                Interval voltage = searchRequest.getVoltage();
-                double min = ObjectUtils.nonNull(voltage.getMin()) ? voltage.getMin().doubleValue()
-                        : Double.MIN_VALUE;
-                double max = ObjectUtils.nonNull(voltage.getMax()) ? voltage.getMax().doubleValue()
-                        : Double.MAX_VALUE;
-                predicates.add(criteriaBuilder.between(root.get("voltage"), BigDecimal.valueOf(min),
-                        BigDecimal.valueOf(max)));
-            }
-            if (ObjectUtils.nonNull(searchRequest.getPower())) {
-                Interval power = searchRequest.getPower();
-                double min = ObjectUtils.nonNull(power.getMin()) ? power.getMin().doubleValue() : Double.MIN_VALUE;
-                double max = ObjectUtils.nonNull(power.getMax()) ? power.getMax().doubleValue() : Double.MAX_VALUE;
-                predicates.add(criteriaBuilder.between(root.get("power"), BigDecimal.valueOf(min),
-                        BigDecimal.valueOf(max)));
-            }
-            if (ObjectUtils.nonNull(searchRequest.getUserId()) && searchRequest.getUserId() > 0) {
-                predicates.add(criteriaBuilder.equal(root.get("userId"), searchRequest.getUserId()));
-            }
-            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
-        };
-    }
-
-    @Override
-    public PageResponse<AirConditionerResponse> listAll(AirConditionerSearchRequest searchRequest, int page, int size) {
-        Specification<AirConditioner> specification = getAirConditionerSearchRequestSpecification(searchRequest);
-        Page<AirConditioner> pageResult = airConditionerRepository.findAll(specification, PageRequest.of(page, size));
-        return PageResponse.of(pageResult.getTotalElements(),
-                pageResult.stream().map(this::airConditioner2AirConditionerResponse).collect(Collectors.toList()));
-    }
-
-    @Override
-    public List<AirConditionerResponse> listAllByUserId(Long userId) {
-        List<AirConditioner> list = airConditionerRepository.findByUserId(userId);
-        return list.stream().map(this::airConditioner2AirConditionerResponse).collect(Collectors.toList());
-    }
-
-    @Override
-    public PageResponse<AirConditionerResponse> listAllByUserId(Long userId, int page, int size) {
-        Page<AirConditioner> pageResult = airConditionerRepository
-                .findAll(Example.of(AirConditioner.builder().userId(userId).build()), PageRequest.of(page, size));
-        return PageResponse.of(pageResult.getTotalElements(),
-                pageResult.stream().map(this::airConditioner2AirConditionerResponse).collect(Collectors.toList()));
-    }
-
-    private AirConditionerResponse airConditioner2AirConditionerResponse(AirConditioner airConditioner) {
-
-        AirConditionerResponse response = new AirConditionerResponse();
-        BeanUtils.copyProperties(airConditioner, response);
-        response.setGmtCreate(new Date(airConditioner.getGmtCreate().getTime()));
-        response.setGmtModified(new Date(airConditioner.getGmtModified().getTime()));
-        response.setWindSpeed(airConditioner.getWindSpeed().getValue());
-        response.setEquipmentState(airConditioner.getState().getValue());
-        response.setAddress(airConditioner.getAddressString());
-        return response;
-
-    }
-
-    /*
-        @Transactional(rollbackFor = Exception.class)
-        @Override
-        public int update(AirConditionerVO airConditionerVO) throws IOException {
-
-            // 根据地址获取区域编码
-            RegionCodeEnum regionCode = RegionCodeEnum.parse(airConditionerVO.getAddress());
-            if (Objects.isNull(regionCode)) {
-                throw new RegionCodeException(ErrorCodeEnum.INVALID, "address", "地址无效");
-            }
-            airConditionerVO.setRegionCode(regionCode);
-            // 获取地址经纬度
-            BigDecimal[] longitudeAndLatitude = BaiduMapUtils.getLongitudeAndLatitude(airConditionerVO.getAddress());
-            airConditionerVO.setLongitude(longitudeAndLatitude[0]);
-            airConditionerVO.setLatitude(longitudeAndLatitude[1]);
-            airConditionerVO.setGmtModified(new Timestamp(System.currentTimeMillis()));
-            return airConditionerRepository.update(airConditionerVO.getId(), airConditionerVO.getGmtModified(),
-                    airConditionerVO.getBrand(), airConditionerVO.getModel(), airConditionerVO.getSeller(),
-                    airConditionerVO.getAddress(), airConditionerVO.getRegionCode(), airConditionerVO.getLongitude(),
-                    airConditionerVO.getLatitude());
-        }
-
-        @Override
-        public List<AirConditionerVO> listAirConditioners(AirConditioner probe) {
-
-            ExampleMatcher matcher =
-                    ExampleMatcher.matching().withMatcher("address", ExampleMatcher.GenericPropertyMatchers.contains());
-            List<AirConditioner> list = airConditionerRepository.findAll(Example.of(probe, matcher));
-            return list.stream().map(airConditioner -> {
-                User user = null;
-                try {
-                    user = userService.findById(airConditioner.getUserId());
-                } catch (BusinessException e) {
-                    e.printStackTrace();
-                    throw new RuntimeException("我发生异常了！");
-                }
-                AirConditionerVO airConditionerVO = new AirConditionerVO();
-                BeanUtils.copyProperties(airConditioner, airConditionerVO);
-                airConditionerVO.setUser(user);
-                return airConditionerVO;
-            }).collect(Collectors.toList());
-        }
-
-        @Override
-        public List<AirConditionerVO> listAll() {
-            List<AirConditioner> list = airConditionerRepository.findAll();
-            return list.stream().map(airConditioner -> {
-                AirConditionerVO airConditionerVO = new AirConditionerVO();
-                BeanUtils.copyProperties(airConditioner, airConditionerVO);
-                return airConditionerVO;
-            }).collect(Collectors.toList());
-        }
-
-        /**
-         * 将 Long 类型的 regionCount 通过添加前导0变成一个 长度为 8 的定长字符串
-         *
-         * @param regionCount
-         * @return
-         */
     private String regionCount2EquipmentId(long regionCount) {
 
         int length = 8;

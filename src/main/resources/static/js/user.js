@@ -1,8 +1,15 @@
+//////////////////////////   user common variables defined     /////////////////////////////////////////
+
+var userDefaultLayerMsgOptions = {time: 3000, skin: 'layui-bg-red', offset: '50px'};
+
+
+
+
 ////////////////////////  user common fragments defined  ////////////////////////////////////
 
 var LOGO_DIV_HTML_USER_MODEL =
     '<div class="login-brand">' +
-    '   <img src="/image/kodinger.jpg" th:src="@{/image/kodinger.jpg}" alt="logo">' +
+    '   <img src="/image/kodinger.jpg" alt="logo">' +
     '</div>';
 
 var FOOTER_DIV_HTML_USER_MODEL =
@@ -90,7 +97,7 @@ function checkUsernameOrEmailAndTip(usernameOrEmailId) {
     if (result1 === 0 || result2 === 0) {
         return true;
     }
-    layer.msg("用户名或邮箱有误，请重新输入！", {time: 3000, skin: 'layui-bg-red', offset: '50px'});
+    kingLayerMsg("用户名或邮箱有误，请重新输入！", userDefaultLayerMsgOptions);
     return false;
 }
 
@@ -99,19 +106,19 @@ function checkUsernameOrEmailAndTip(usernameOrEmailId) {
 function checkUsernameAndTip(usernameId) {
     var result = checkUsername(usernameId);
     if (result === 1) {
-        layer.msg("用户名不能为空！", {time: 3000, skin: 'layui-bg-red', offset: '50px'});
+        kingLayerMsg("用户名不能为空！", userDefaultLayerMsgOptions);
         return false;
     }
     if (result === 2) {
-        layer.msg("用户名不能包含空格！", {time: 3000, skin: 'layui-bg-red', offset: '50px'});
+        kingLayerMsg("用户名不能包含空格！", userDefaultLayerMsgOptions);
         return false;
     }
     if (result === 3) {
-        layer.msg("用户名的长度不能超过20个字符！", {time: 3000, skin: 'layui-bg-red', offset: '50px'});
+        kingLayerMsg("用户名的长度不能超过20个字符！", userDefaultLayerMsgOptions);
         return false;
     }
     if (result === 4) {
-        layer.msg("用户名不能包含@字符！", {time: 3000, skin: 'layui-bg-red', offset: '50px'});
+        kingLayerMsg("用户名不能包含@字符！", userDefaultLayerMsgOptions);
         return false;
     }
     return true;
@@ -121,7 +128,7 @@ function checkUsernameAndTip(usernameId) {
 function checkEmailAndTip(emailId) {
     var result = checkEmail(emailId);
     if (result === 1) {
-        layer.msg("邮箱格式不正确！", {time: 3000, skin: 'layui-bg-red', offset: '50px'});
+        kingLayerMsg("邮箱格式不正确！", userDefaultLayerMsgOptions);
         return false;
     }
     return true;
@@ -131,11 +138,11 @@ function checkEmailAndTip(emailId) {
 function checkPasswordAndTip(passwordId) {
     var result = checkPassword(passwordId);
     if (result === 1) {
-        layer.msg("密码不能包含空格！", {time: 3000, skin: 'layui-bg-red', offset: '50px'});
+        kingLayerMsg("密码不能包含空格！", userDefaultLayerMsgOptions);
         return false;
     }
     if (result === 2) {
-        layer.msg("密码长度必须在8到16之间！", {time: 3000, skin: 'layui-bg-red', offset: '50px'});
+        kingLayerMsg("密码长度必须在8到16之间！", userDefaultLayerMsgOptions);
         return false;
     }
     return true;
@@ -145,7 +152,7 @@ function checkPasswordAndTip(passwordId) {
 function checkRepasswordAndTip(passwordId, repasswordId) {
     var result = checkRepassword(passwordId, repasswordId);
     if (result === 1) {
-        layer.msg("两次密码不一致！", {time: 3000, skin: 'layui-bg-red', offset: '50px'});
+        kingLayerMsg("两次密码不一致！", userDefaultLayerMsgOptions);
         return false;
     }
     return true;
@@ -155,7 +162,7 @@ function checkRepasswordAndTip(passwordId, repasswordId) {
 function checkPhoneNumberAndTip(phoneNumberId) {
     var result = checkPhoneNumber(phoneNumberId);
     if (result === 1) {
-        layer.msg("电话号码格式错误！", {time: 3000, skin: 'layui-bg-red', offset: '50px'});
+        kingLayerMsg("电话号码格式错误！", userDefaultLayerMsgOptions);
         return false;
     }
     return true;
@@ -165,7 +172,7 @@ function checkPhoneNumberAndTip(phoneNumberId) {
 function checkActivationCodeAndTip(activationCodeId) {
     var result = checkActivationCode(activationCodeId);
     if (result === 1) {
-        layer.msg("激活码格式错误！", {time: 3000, skin: 'layui-bg-red', offset: '50px'});
+        kingLayerMsg("激活码格式错误！", userDefaultLayerMsgOptions);
         return false;
     }
     return true;
@@ -181,10 +188,10 @@ function sendEmail(receiverEmailId, btnId) {
                 var obj = JSON.parse(result);
                 // 邮件发送成功，添加倒计时！
                 if (obj.code === 200) {
-                    layer.msg(obj.data, {time: 3000, skin: 'layui-bg-red', offset: '50px'});
+                    kingLayerMsg(obj.data, userDefaultLayerMsgOptions);
                     timer(btnId, 60);
                 } else {
-                    layer.msg(obj.message, {time: 3000, skin: 'layui-bg-red', offset: '50px'});
+                    kingLayerMsg(obj.message, userDefaultLayerMsgOptions);
                 }
             });
     }

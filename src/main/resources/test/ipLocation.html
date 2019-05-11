@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <script type="text/javascript" src="https://cdn.staticfile.org/jquery/3.4.0/jquery.min.js"></script>
+</head>
+<body>
+
+
+<script type="text/javascript">
+
+    window.onload = function (ev) {
+        locationByIp();
+    };
+
+    // 初始位置根据 ip 定位
+    function locationByIp() {
+        var ipLocationUrl = 'http://api.map.baidu.com/location/ip?ak=Xnydmr1oWTenkGrNxvNk8WkXm6jOLcUF';
+        // var ipLocationUrl = 'http://api.map.baidu.com/highacciploc/v1?ak=Xnydmr1oWTenkGrNxvNk8WkXm6jOLcUF&extensions=3';"3710635.19""13356465"
+        "http://api.map.baidu.com/marker?output=html&src=webapp.hhu.elevator-monitoring&ak=Xnydmr1oWTenkGrNxvNk8WkXm6jOLcUF&title=河海大学常州校区&location=3710635.19,13356465"
+        $.ajax({
+            url: ipLocationUrl,
+            type: "get",
+            async: false,
+            dataType: "jsonp",
+            jsonp: "callback",
+            jsonpCallback:"handler",
+            success: function(result) {
+                console.log(result);
+            }
+        });
+    }
+
+
+</script>
+
+</body>
+</html>

@@ -15,7 +15,7 @@
     <script type="text/javascript" src="https://cdn.staticfile.org/moment.js/2.24.0/moment.min.js" th:src="@{/webjars/momentjs/min/moment.min.js}"></script>
     <script type="text/javascript" src="https://cdn.90so.net/layui/2.4.5/layui.all.js" th:src="@{/webjars/layui/layui.all.js}"></script>
     <script type="text/javascript" src="../../static/js/common.js" th:src="@{/js/common.js}"></script>
-    <script type="text/javascript" src="../../static/js/user.common.js" th:src="@{/js/user.common.js}"></script>
+    <script type="text/javascript" src="../../static/js/user.js" th:src="@{/js/user.js}"></script>
 </head>
 
 <body>
@@ -27,11 +27,11 @@
                 <form id="login-form" action="#" method="post">
                     <p></p>
                     <div class="login-group">
-                        <label>用户名/邮箱</label>
+                        <label for="login-username">用户名/邮箱</label>
                         <input id="login-username" type="text" name="usernameOrEmail" autocomplete="usernameOrEmail" class="login-input">
                     </div>
                     <div class="login-group">
-                        <label>密码 <a href="#" th:href="@{/v1/monitoring-system/users/page/forgot-password}" class="forgot-link">忘记密码?</a></label>
+                        <label for="login-password">密码 <a href="#" th:href="@{/v1/monitoring-system/users/page/forgot-password}" class="forgot-link">忘记密码?</a></label>
                         <input id="login-password" type="password" name="password" autocomplete="current-password" class="login-input">
                     </div>
 
@@ -120,20 +120,11 @@
                     var message = obj.message;
                     var data = obj.data;
                     if (code !== 200) {
-                        layer.msg(message, {time: 3000, skin: 'layui-bg-red', offset: '50px'});
+                        kingLayerMsg(message, userDefaultLayerMsgOptions);
                     } else {
-                        layer.msg("登入成功！", {time: 3000, skin: 'layui-bg-red', offset: '50px'});
-
-                        console.log("login.html line 126! data: " + data + " type: " + (typeof data));
-                        console.log("login.html line 127! data.gmtCreate: " + data.gmtCreate + " type: " + (typeof data.gmtCreate));
-
                         // 更新 store 中登录用户的激活信息
                         setValueToStore(LOGIN_USER_KEY, data);
-
-                        // 先等待信息提示结束，然后再跳转到主页面
-                        setTimeout(function () {
-                            window.location.href = PROJECT_BASE_MAPPING_V1 + "/page/index";
-                        }, 800);
+                        window.location.href = PROJECT_BASE_MAPPING_V1 + "/page/index";
                     }
                 }
             });
@@ -165,21 +156,23 @@
                 success: function (result, status, xhr) {
                     var obj = JSON.parse(result);
                     var code = obj.code;
+                    var message = obj.message;
                     var data = obj.data;
-
                     if (code === 200) {
                         // 更新 store 中登录用户的信息
                         setValueToStore(LOGIN_USER_KEY, data);
                         outResult = true;
+                        console.log("自动登录成功！");
+                    } else {
+                        console.log("自动登录失败！code：" + code + ", message：" + message);
                     }
                 }
             });
         }
+        console.log("是否执行了自动登录：" + outResult);
         return outResult;
     }
 
-
 </script>
-
 </body>
 </html>

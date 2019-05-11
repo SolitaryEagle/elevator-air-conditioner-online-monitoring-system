@@ -34,55 +34,25 @@ public class Fault implements Serializable {
     @Id
     @GeneratedValue
     private Long id;
-
-    @Column(nullable = false)
     private Timestamp gmtCreate;
-
-    @Column(nullable = false)
     private Timestamp gmtModified;
 
-    @Column(name = "is_handled", nullable = false, columnDefinition = "tinyint(1) UNSIGNED DEFAULT '0'")
-    private Boolean handle;
+    @Enumerated(EnumType.STRING)
+    private FaultTypeEnum type;
 
-    @Column(nullable = false, columnDefinition = "text")
+    @Column(columnDefinition = "text")
     private String description;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private FaultTypeEnum faultType;
+    private String realName;
+    private String contactAddress;
+    private String phoneNumber;
+    private String handleResult;
 
-    @Column(nullable = false, columnDefinition = "bigint(20) UNSIGNED")
+    @Column(columnDefinition = "bigint(20) UNSIGNED")
     private Long airConditionerId;
 
-    @Column(nullable = false, columnDefinition = "bigint(20) UNSIGNED")
+    @Column(columnDefinition = "bigint(20) UNSIGNED")
     private Long reportUserId;
-
-    @Column(nullable = false, columnDefinition = "bigint(20) UNSIGNED")
-    private Long repairUserId;
-
-    @Column(columnDefinition = "text")
-    private String repairRecord;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private RepairResultEnum repairResult;
-    private Timestamp gmtRepair;
-
-    @Column(columnDefinition = "text")
-    private String repairMaterial;
-
-    @Column(nullable = false, columnDefinition = "bigint(20) UNSIGNED")
-    private Long revisitUserId;
-
-    @Column(columnDefinition = "text")
-    private String revisitResult;
-    private Timestamp gmtRevisit;
-
-    @Column(nullable = false, columnDefinition = "bigint(20) UNSIGNED")
-    private Long evaluationUserId;
-    private String userEvaluation;
-    private Integer userSatisfaction;
-    private Timestamp gmtEvaluation;
 
     @Override
     public String toString() {

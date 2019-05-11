@@ -1,9 +1,9 @@
 package edu.hhu.air.conditioner.online.monitoring.service;
 
-import edu.hhu.air.conditioner.online.monitoring.model.dto.AddressDTO;
-import edu.hhu.air.conditioner.online.monitoring.model.entity.User;
 import edu.hhu.air.conditioner.online.monitoring.exception.BusinessException;
 import edu.hhu.air.conditioner.online.monitoring.model.dto.AirConditionerDTO;
+import edu.hhu.air.conditioner.online.monitoring.model.entity.Address;
+import edu.hhu.air.conditioner.online.monitoring.model.entity.User;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,10 +43,10 @@ public class AirConditionerServiceNoTransactionalTest {
         String[] sellers = { "小米", "海尔", "格力", "美的" };
 
         // 准备一些地址
-        AddressDTO[] addressDTOs = { new AddressDTO("江苏省", "常州市", "新北区", ""),
-                new AddressDTO("四川省", "乐山市", "夹江县", ""),
-                new AddressDTO("江西省", "吉安市", "吉州区", ""), new AddressDTO("北京市", "北京城区", "朝阳区", ""),
-                new AddressDTO("辽宁省", "沈阳市", "和平区", "") };
+        Address[] addresses = { new Address("江苏省", "常州市", "新北区"),
+                new Address("四川省", "乐山市", "夹江县"),
+                new Address("江西省", "吉安市", "吉州区"), new Address("北京市", "北京城区", "朝阳区"),
+                new Address("辽宁省", "沈阳市", "和平区") };
 
         int length = 100;
         for (int i = 0; i < length; i++) {
@@ -55,12 +55,11 @@ public class AirConditionerServiceNoTransactionalTest {
             int brandIndex = random.nextInt(brands.length);
             int modelIndex = random.nextInt(models.length);
             int sellerIndex = random.nextInt(sellers.length);
-            int addressDTOIndex = random.nextInt(addressDTOs.length);
+            int addressIndex = random.nextInt(addresses.length);
 
-            AirConditionerDTO value =
-                    AirConditionerDTO.builder().brand(brands[brandIndex]).model(models[modelIndex])
-                            .seller(sellers[sellerIndex]).addressDTO(addressDTOs[addressDTOIndex])
-                            .user(users[userIndex]).build();
+            AirConditionerDTO value = AirConditionerDTO.builder().brand(brands[brandIndex]).model(models[modelIndex])
+                    .seller(sellers[sellerIndex]).address(addresses[addressIndex])
+                    .user(users[userIndex]).build();
             airConditionerService.add(value);
         }
     }

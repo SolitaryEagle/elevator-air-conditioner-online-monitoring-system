@@ -1,6 +1,7 @@
 package edu.hhu.air.conditioner.online.monitoring.util;
 
 import edu.hhu.air.conditioner.online.monitoring.exception.AddressContainSpaceException;
+import edu.hhu.air.conditioner.online.monitoring.exception.AddressException;
 import edu.hhu.air.conditioner.online.monitoring.exception.BaiduMapException;
 import edu.hhu.air.conditioner.online.monitoring.exception.BusinessException;
 import edu.hhu.air.conditioner.online.monitoring.constant.enums.ErrorCodeEnum;
@@ -22,22 +23,22 @@ import java.util.Objects;
  */
 public final class BaiduMapUtils {
 
-    private final static String AK_KEY = "2NXdR6Sj4i9Zm07prVnAOW4NtCpG8oXt";
-    private final static String ADDRESS_RESOLUTION_URL = "http://api.map.baidu.com/geocoder/v2/";
+    private final static String AK_VALUE = "2NXdR6Sj4i9Zm07prVnAOW4NtCpG8oXt";
+    private final static String ADDRESS_RESOLUTION_URL_PREFIX = "http://api.map.baidu.com/geocoder/v2/";
 
     private BaiduMapUtils() {}
 
     // 获取根据地址获取地球坐标（经纬度）
 
-    public static EarthCoordinate getEarthCoordinate(String address) throws IOException, BusinessException {
+    public static EarthCoordinate getEarthCoordinate(String address) throws IOException {
 
         address = address.trim();
         if (StringUtils.contains(address, " ")) {
-            throw new AddressContainSpaceException(ErrorCodeEnum.INVALID, "address", "地址中不能包含空格！");
+            throw new AddressException(ErrorCodeEnum.INVALID, "address", "地址中不能包含空格！");
         }
 
-        String requestUrl = ADDRESS_RESOLUTION_URL + "?address=" + address + "&output=json&src=" +
-                "webapp.hhu.elevator-monitoring&ak=" + AK_KEY;
+        String requestUrl = ADDRESS_RESOLUTION_URL_PREFIX + "?address=" + address + "&output=json&src=" +
+                "webapp.hhu.elevator-monitoring&ak=" + AK_VALUE;
         String jsonStr = loadUrl(requestUrl);
 
         ObjectMapper mapper = new ObjectMapper();

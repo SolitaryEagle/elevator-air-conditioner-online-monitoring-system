@@ -86,7 +86,7 @@ public class UserController {
     @GetMapping("/activation")
     public String sendActivationCode(@RequestParam @NotNull @Email String receiverEmail) {
         // 校验该邮箱是否存在
-        User testUser = userService.findByEmail(receiverEmail);
+        User testUser = userService.getByEmail(receiverEmail);
         if (testUser.getActivation()) {
             throw new UserException(ErrorCodeEnum.ALREADY_EXISTS, "activation", "账户已激活！");
         }
@@ -109,7 +109,7 @@ public class UserController {
     @PostMapping("/activation/verify")
     public String verifyActivationCode(@RequestParam @NotBlank @Email String activationEmail,
             @RequestParam String activationCode) {
-        User testUser = userService.findByEmail(activationEmail);
+        User testUser = userService.getByEmail(activationEmail);
         if (testUser.getActivation()) {
             throw new ActivationException(ErrorCodeEnum.ALREADY_EXISTS, "activation", "账户已激活!");
         }
@@ -158,9 +158,9 @@ public class UserController {
     public UserResponse login(@RequestParam String usernameOrEmail, @RequestParam String password) {
         User testUser;
         if (StringUtils.contains(usernameOrEmail, "@")) {
-            testUser = userService.findByEmail(usernameOrEmail);
+            testUser = userService.getByEmail(usernameOrEmail);
         } else {
-            testUser = userService.findByUsername(usernameOrEmail);
+            testUser = userService.getByUsername(usernameOrEmail);
         }
         // 验证密码是否正确
         if (!userService.validatePassword(testUser, password)) {
@@ -218,7 +218,7 @@ public class UserController {
         if (result <= 0) {
             return "修改密码失败";
         }
-        User testUser = userService.findByEmail(userVO);
+        User testUser = userService.getByEmail(userVO);
         session.setAttribute(SessionConsts.LOGIN_USER_KEY, testUser);
         return "修改密码成功";
     }

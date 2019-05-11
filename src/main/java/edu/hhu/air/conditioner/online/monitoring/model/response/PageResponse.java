@@ -4,8 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * @author 覃国强
@@ -22,6 +25,10 @@ public class PageResponse<E> {
 
     public static <E> PageResponse<E> of(long count, List<E> data) {
         return new PageResponse<>(count, data);
+    }
+
+    public static <T, R> PageResponse<R> of(Page<T> page, Function<? super T, ? extends R> mapper) {
+        return of(page.getTotalElements(), page.stream().map(mapper).collect(Collectors.toList()));
     }
 
 }

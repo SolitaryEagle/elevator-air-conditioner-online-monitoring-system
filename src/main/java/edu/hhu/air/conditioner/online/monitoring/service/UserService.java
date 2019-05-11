@@ -17,13 +17,13 @@ public interface UserService {
 
     int update(User user);
 
-    boolean existsById(Long userId);
+    boolean existsById(Long id);
 
-    User findById(Long userId);
+    User getById(Long id);
 
-    User findByUsername(String username);
+    User getByUsername(String username);
 
-    User findByEmail(String email);
+    User getByEmail(String email);
 
     boolean validatePassword(User user, String password);
 

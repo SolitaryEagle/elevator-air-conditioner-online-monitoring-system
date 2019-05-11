@@ -6,50 +6,27 @@
     <title>AddInfo</title>
 
     <link href="https://cdn.staticfile.org/twitter-bootstrap/3.4.1/css/bootstrap.min.css" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
-    <link href="https://cdn.staticfile.org/jstree/3.3.8/themes/default/style.min.css" th:href="@{/webjars/jstree/themes/default/style.min.css}" rel="stylesheet">
+
     <link href="../../static/layui/css/layui.css" th:href="@{/webjars/layui/css/layui.css}" rel="stylesheet">
 
     <script type="text/javascript" src="https://cdn.staticfile.org/jquery/3.4.0/jquery.min.js" th:src="@{/webjars/jquery/jquery.min.js}"></script>
     <script type="text/javascript" src="https://cdn.staticfile.org/twitter-bootstrap/3.4.1/js/bootstrap.min.js" th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
     <script type="text/javascript" src="https://cdn.staticfile.org/distpicker/2.0.5/distpicker.min.js"></script>
+    <script type="text/javascript" src="https://cdn.staticfile.org/store.js/1.3.20/store.min.js" th:src="@{/webjars/store.js/store.min.js}"></script>
+
+    <script type="text/javascript" src="../../static/layui/layui.all.js" th:src="@{/webjars/layui/layui.all.js}"></script>
     <script type="text/javascript" src="../../static/layui/layui.js" th:src="@{/webjars/layui/layui.js}"></script>
     <script type="text/javascript" src="../../static/js/common.js" th:src="@{/js/common.js}"></script>
+    <script type="text/javascript" src="../../static/js/air.conditioner.js" th:src="@{/js/air.conditioner.js}"></script>
 </head>
 <body class="layui-layout-body">
 <div class="layui-layout layui-layout-admin">
-    <div class="layui-header">
-        <div class="layui-logo" style="width: 300px; font-size: 26px;">电梯风扇监控系统</div>
-        <!-- 头部区域（可配合layui已有的水平导航） -->
-        <ul class="layui-nav layui-layout-left" style="left: 300px;">
-            <li class="layui-nav-item"><a href="#" th:href="@{/v1/monitoring-system/page/index}">首页</a></li>
-            <li class="layui-nav-item"><a href="#" th:href="@{/v1/monitoring-system/air-conditioners/page/add-info}">设备管理</a></li>
-            <li class="layui-nav-item"><a href="#">维修管理</a></li>
-        </ul>
-        <ul class="layui-nav layui-layout-right">
-            <li class="layui-nav-item">
-                <a href="javascript:;">
-                    <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
-                    贤心
-                </a>
-                <dl class="layui-nav-child">
-                    <dd><a href="">基本资料</a></dd>
-                    <dd><a href="">安全设置</a></dd>
-                </dl>
-            </li>
-            <li class="layui-nav-item"><a href="">退出</a></li>
-        </ul>
-    </div>
 
-    <div class="layui-side layui-bg-black" style="width: 300px;">
-        <div class="layui-side-scroll" style="width: 100%">
-            <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
-            <ul class="layui-nav layui-nav-tree" lay-filter="test" style="width: 100%; text-align: center">
-                <li class="layui-nav-item"><a href="#" th:href="@{/v1/monitoring-system/air-conditioners/page/add-info}" style="font-size: 20px"><i class="layui-icon layui-icon-add-circle" style="font-size: 20px"></i> 添加设备</a></li>
-                <li class="layui-nav-item"><a href="#" th:href="@{/v1/monitoring-system/air-conditioners/page/online-state}" style="font-size: 20px"><i class="layui-icon layui-icon-console" style="font-size: 20px"></i> 状态查看</a></li>
-                <li class="layui-nav-item"><a href="" style="font-size: 20px"><i class="layui-icon layui-icon-face-surprised" style="font-size: 20px"></i> 故障查看</a></li>
-            </ul>
-        </div>
-    </div>
+    <!-- 头部导航栏 -->
+    <div id="header-navigation-div-id"></div>
+
+    <!-- 侧边导航栏 -->
+    <div id="side-navigation-div-id"></div>
 
     <div class="layui-body" style="left: 300px;">
         <!-- 内容主体区域 -->
@@ -62,23 +39,23 @@
                 background-color: #e2e2e2;
                 border-radius: 10px;
                   ">
-                <form id="add-info-form" action="#" th:action="@{/v1/monitoring-system/air-conditioners/add}" method="post" class="form-horizontal" role="form" style="width: 95%; margin-top: 50px;">
+                <form id="add-info-form" action="#" method="post" class="form-horizontal" role="form" style="width: 95%; margin-top: 50px;">
                     <div class="form-group">
                         <label for="brand" class="col-sm-2 control-label">品牌</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" id="brand" name="brand" placeholder="请输入品牌" th:value="${airConditioner != null} ? ${airConditioner.brand} : ''">
+                            <input type="text" class="form-control" id="brand" name="brand" placeholder="请输入品牌">
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="model" class="col-sm-2 control-label">型号规格</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" id="model" name="model" placeholder="请输入型号规格" th:value="${airConditioner != null} ? ${airConditioner.model} : ''">
+                            <input type="text" class="form-control" id="model" name="model" placeholder="请输入型号规格">
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="seller" class="col-sm-2 control-label">销售单位</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" id="seller" name="seller" placeholder="请输入销售单位" th:value="${airConditioner != null} ? ${airConditioner.seller} : ''">
+                            <input type="text" class="form-control" id="seller" name="seller" placeholder="请输入销售单位">
                         </div>
                     </div>
 
@@ -86,16 +63,16 @@
                         <label for="address" class="col-sm-2 control-label"><span style="margin-right: 10px;font-size: 17px;color: red;">*</span>设备地址</label>
                         <div class="col-sm-10">
                             <div data-toggle="distpicker" id="address">
-                                <select class="form-control" id="address-province" name="address.province" data-province="---- 选择省 ----" th:data-province="${airConditioner != null} ? (${airConditioner.address != null} ? ${airConditioner.address.province} : '---- 选择省 ----' ) : '---- 选择省 ----'" style="width: 32%; display: inline-block"></select>
-                                <select class="form-control" id="address-city" name="address.city" data-city="---- 选择市 ----" th:data-city="${airConditioner != null} ? (${airConditioner.address != null} ? ${airConditioner.address.city} : '---- 选择市 ----' ) : '---- 选择市 ----'" style="width: 31%; display: inline-block; margin: 0 2%"></select>
-                                <select class="form-control" id="address-district" name="address.district" data-district="---- 选择区 ----" th:data-district="${airConditioner != null} ? (${airConditioner.address != null} ? ${airConditioner.address.district} : '---- 选择区 ----' ) : '---- 选择区 ----'" style="width: 32%;  display: inline-block"></select>
+                                <select class="form-control" id="address-province" name="address.province" data-province="---- 选择省 ----" style="width: 32%; display: inline-block"></select>
+                                <select class="form-control" id="address-city" name="address.city" data-city="---- 选择市 ----" style="width: 31%; display: inline-block; margin: 0 2%"></select>
+                                <select class="form-control" id="address-district" name="address.district" data-district="---- 选择区 ----" style="width: 32%;  display: inline-block"></select>
                             </div>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="address-detail" class="col-sm-2 control-label">详细地址</label>
                         <div class="col-sm-10">
-                            <textarea class="form-control" id="address-detail" name="address.detail" rows="3" style="resize:none" placeholder="请输入详细地址" th:text="${airConditioner != null} ? (${airConditioner.address != null} ? ${airConditioner.address.detail} : '' ) : ''"></textarea>
+                            <textarea class="form-control" id="address-detail" name="address.detail" rows="3" style="resize:none" placeholder="请输入详细地址"></textarea>
                         </div>
                     </div>
                     <div class="form-group">
@@ -111,78 +88,106 @@
         </div>
     </div>
 
-    <div class="layui-footer" style="left: 300px">
-        <!-- 底部固定区域 -->
-        河海大学常州校区 2015级物联网工程学院 毕业设计
-    </div>
+    <!-- 页脚 -->
+    <div id="footer-div-id"></div>
 </div>
 
-<input id="exceptionMessage" type="hidden" th:value="${exceptionMessage}">
-
-<script type="text/javascript">
-    //JavaScript代码区域
-    layui.use('element', function () {
-        var element = layui.element;
-
-    });
-</script>
 <script type="text/javascript">
 
     window.onload = function (ev) {
 
-        var message = $("#exceptionMessage").val();
-        if (typeof message != "undefined" && message != null && message.length > 0) {
-            layui.use('layer', function(){
-                layer.msg(message, {time: 3000, skin: 'layui-bg-red',offset: '128px'});
-            });
-        }
+        // 页面初始化
+        pageAfterOnloadInit();
 
         // 设置“添加”按钮事件
-        document.getElementById('add-btn').onclick = function () {
-            var province = $("#address-province").val().trim();
-            if (typeof province == "undefined" || province == null || province.length <= 0) {
-                layui.use('layer', function(){
-                    layer.msg('请选择省份!', {time: 3000, skin: 'layui-bg-red',offset: '128px'});
-                });
-                return false;
-            }
-            var city = $("#address-city").val().trim();
-            if (typeof city == "undefined" || city == null || city.length <= 0) {
-                layui.use('layer', function(){
-                    layer.msg('请选择城市!', {time: 3000, skin: 'layui-bg-red',offset: '128px'});
-                });
-                return false;
-            }
-            var district = $("#address-district").val().trim();
-            if (typeof district == "undefined" || district == null || district.length <= 0) {
-                layui.use('layer', function(){
-                    layer.msg('请选择地区!', {time: 3000, skin: 'layui-bg-red',offset: '128px'});
-                });
-                return false;
-            }
-            var detail = $("#address-detail").val().trim();
-            if (typeof detail != "undefined" && detail != null && detail.indexOf(' ') !== -1) {
-                layui.use('layer', function(){
-                    layer.msg('详细地址中不能包含空格!', {time: 3000, skin: 'layui-bg-red',offset: '128px'});
-                });
-                return false;
-            }
-            document.getElementById('add-info-form').submit();
-        };
+        document.getElementById('add-btn').onclick = addInfoFormSubmitEvent;
 
         // 设置“重置”按钮事件
-        document.getElementById('reset-btn').onclick = function () {
-            document.getElementById("brand").value = "";
-            document.getElementById("model").value = "";
-            document.getElementById("seller").value = "";
-            document.getElementById("address-province").options[0].selected = true;
-            document.getElementById("address-city").options[0].selected = true;
-            document.getElementById("address-district").options[0].selected = true;
-            document.getElementById("address-detail").value = "";
-            return false;
-        };
+        document.getElementById('reset-btn').onclick = addInfoFormResetEvent;
 
-    };
+        // layui 初始化
+        layuiInit();
+    }
+
+</script>
+
+<script type="text/javascript">
+
+    //////////////// function defined ///////////////////////////////
+
+    // 页面初始化
+    function pageAfterOnloadInit() {
+        initHeaderNavigationDiv();
+        initSideNavigationDiv();
+        initFooterDiv();
+    }
+
+    // layui 初始化
+    function layuiInit() {
+        layui.use(['element', 'layer'], function () {
+            var element = layui.element;
+            var layer = layui.layer;
+
+        });
+    }
+
+
+    // 添加信息表单按钮事件
+    function addInfoFormSubmitEvent(ev) {
+
+        // 表单校验
+        if (!checkAddressInfoAndTip()) {
+            return false;
+        }
+
+        // 发送添加设备信息请求
+        $.ajax({
+            url: AIR_CONDITIONER_BASE_MAPPING_V1 + "/add",
+            type: "post",
+            data: {
+                'brand': $("#brand").val(),
+                'model': $("#model").val(),
+                'seller': $("#seller").val(),
+                'address.province': $("#address-province").val(),
+                'address.city': $("#address-city").val(),
+                'address.district': $("#address-district").val(),
+                'address.detail': $("#address-detail").val()
+            },
+            success: function (result, status, xhr) {
+                var obj = JSON.parse(result);
+                var code = obj.code;
+                var message = obj.message;
+                var data = obj.data;
+                if (code !== 200) {
+                    kingLayerMsg(message, airConditionerDefaultLayerMsgOptions);
+                } else {
+                    kingLayerMsg("添加成功！", airConditionerDefaultLayerMsgOptions);
+                    resetAddressInfo();
+                }
+            }
+        });
+
+        return false;
+    }
+
+    // “重置”按钮事件
+    function addInfoFormResetEvent(ev) {
+        document.getElementById("brand").value = "";
+        document.getElementById("model").value = "";
+        document.getElementById("seller").value = "";
+        resetAddressInfo();
+        return false;
+    }
+
+    // 重置地址选择
+    function resetAddressInfo() {
+        document.getElementById("address-province").options[0].selected = true;
+        document.getElementById("address-city").options[0].selected = true;
+        document.getElementById("address-district").options[0].selected = true;
+        document.getElementById("address-detail").value = "";
+        return false;
+    }
+
 </script>
 </body>
 </html>

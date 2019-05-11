@@ -14,6 +14,7 @@ public class BeanConfigurer {
 
     /**
      * 异常处理工具类
+     *
      * @return ResponseEntityExceptionHandler 的子类
      */
     @Bean
@@ -23,6 +24,7 @@ public class BeanConfigurer {
 
     /**
      * Json 工具类
+     *
      * @return {@link com.fasterxml.jackson.databind.ObjectMapper ObjectMapper}
      */
     @Bean

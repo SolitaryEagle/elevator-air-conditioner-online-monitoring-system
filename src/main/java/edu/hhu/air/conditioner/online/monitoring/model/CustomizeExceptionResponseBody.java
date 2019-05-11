@@ -1,4 +1,4 @@
-package edu.hhu.air.conditioner.online.monitoring.model.entity;
+package edu.hhu.air.conditioner.online.monitoring.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

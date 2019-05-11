@@ -14,7 +14,6 @@ import edu.hhu.air.conditioner.online.monitoring.util.TimeStampUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.MailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -127,22 +126,22 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean existsById(Long userId) {
-        return userRepository.existsById(userId);
+    public boolean existsById(Long id) {
+        return userRepository.existsById(id);
     }
 
     @Override
-    public User findById(Long userId) {
-        Optional<User> optional = userRepository.findById(userId);
+    public User getById(Long id) {
+        Optional<User> optional = userRepository.findById(id);
         if (!optional.isPresent()) {
-            log.warn("用户不存在! userId: {}", userId);
-            throw new UserException(ErrorCodeEnum.MISSING, "userId", "用户不存在");
+            log.warn("用户不存在! userId: {}", id);
+            throw new UserException(ErrorCodeEnum.MISSING, "id", "用户不存在");
         }
         return optional.get();
     }
 
     @Override
-    public User findByUsername(String username) {
+    public User getByUsername(String username) {
         Optional<User> optional = userRepository.findByUsername(username);
         if (!optional.isPresent()) {
             log.debug("用户名不存在! username: {}", username);
@@ -152,7 +151,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findByEmail(String email) {
+    public User getByEmail(String email) {
         Optional<User> optional = userRepository.findByEmail(email);
         if (!optional.isPresent()) {
             log.debug("邮箱未注册！email: {}", email);
@@ -174,14 +173,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User autoLogin(User user) {
-        User testUser = findById(user.getId());
+        User testUser = getById(user.getId());
         // 验证数据是否被更改过 以及 是否激活
         if (isNotModifiedUser(user, testUser) && testUser.getActivation()) {
             return testUser;
         }
         if (!testUser.getActivation()) {
+            log.debug("自动登录账户未激活！id ：{}", user.getId());
             throw new UserException(ErrorCodeEnum.AUTO_LOGIN_ERROR, "autoLogin", "账户未激活，无法自动登入，请手动登录！");
         }
+        log.debug("自动登录账户记录已更改！id ：{}", user.getId());
         throw new UserException(ErrorCodeEnum.AUTO_LOGIN_ERROR, "autoLogin", "账户记录已更改，无法自动登入，请手动登录！");
     }
 

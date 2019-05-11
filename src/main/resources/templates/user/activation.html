@@ -15,7 +15,7 @@
     <script type="text/javascript" src="https://cdn.staticfile.org/moment.js/2.24.0/moment.min.js" th:src="@{/webjars/momentjs/min/moment.min.js}"></script>
     <script type="text/javascript" src="https://cdn.staticfile.org/store.js/1.3.20/store.min.js" th:src="@{/webjars/store.js/store.min.js}"></script>
     <script type="text/javascript" src="../../static/js/common.js" th:src="@{/js/common.js}"></script>
-    <script type="text/javascript" src="../../static/js/user.common.js" th:src="@{/js/user.common.js}"></script>
+    <script type="text/javascript" src="../../static/js/user.js" th:src="@{/js/user.js}"></script>
 </head>
 
 <body>
@@ -27,11 +27,11 @@
                 <form id="activation-form" action="#" method="post">
                     <p>账户激活</p>
                     <div class="login-group">
-                        <label>邮箱</label>
+                        <label for="activation-email">邮箱</label>
                         <input id="activation-email" type="text" name="receiverEmail" autocomplete="email" class="login-input">
                     </div>
                     <div class="login-group">
-                        <label>激活码</label>
+                        <label for="activation-code">激活码</label>
                         <input id="activation-code" type="text" name="verificationCode" autocomplete="current-password" class="login-input">
                     </div>
                     <button id="activation-email-btn" class="login-btn" style="width:30%; margin: 0 10%">
@@ -119,9 +119,9 @@
                     var message = obj.message;
                     var data = obj.data;
                     if (code !== 200) {
-                        layer.msg(message, {time: 3000, skin: 'layui-bg-red', offset: '50px'});
+                        kingLayerMsg(message, userDefaultLayerMsgOptions);
                     } else {
-                        layer.msg(data, {time: 3000, skin: 'layui-bg-red', offset: '50px'});
+                        kingLayerMsg(data, userDefaultLayerMsgOptions);
 
                         // 更新 store 中登录用户的激活信息
                         updateValueFieldInStore(LOGIN_USER_KEY, 'activation', true);
@@ -129,7 +129,7 @@
                         // 先等待信息提示结束，然后再跳转到主页面
                         setTimeout(function () {
                             window.location.href = USER_BASE_MAPPING_V1 + "/page/login";
-                        }, 2000);
+                        }, SLEEP_TIME);
                     }
                 }
             });

@@ -18,6 +18,9 @@ import java.util.Optional;
 @AllArgsConstructor
 public enum RegionCodeEnum {
 
+    /**
+     * 各个城市的代码
+     */
     BEI_JING("11", "北京市"),
     TIAN_JIN("12", "天津市"),
     HE_BEI("13", "河北省"),

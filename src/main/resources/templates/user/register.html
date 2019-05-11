@@ -15,7 +15,7 @@
     <script type="text/javascript" src="https://cdn.staticfile.org/moment.js/2.24.0/moment.min.js" th:src="@{/webjars/momentjs/min/moment.min.js}"></script>
     <script type="text/javascript" src="https://cdn.90so.net/layui/2.4.5/layui.all.js" th:src="@{/webjars/layui/layui.all.js}"></script>
     <script type="text/javascript" src="../../static/js/common.js" th:src="@{/js/common.js}"></script>
-    <script type="text/javascript" src="../../static/js/user.common.js" th:src="@{/js/user.common.js}"></script>
+    <script type="text/javascript" src="../../static/js/user.js" th:src="@{/js/user.js}"></script>
 </head>
 
 <body>
@@ -27,23 +27,23 @@
                 <form id="register-form" action="" method="post">
                     <p></p>
                     <div class="login-group">
-                        <label><span style="margin-right: 5px;font-size: 12px;color: red;">*</span>用户名</label>
+                        <label for="register-username"><span style="margin-right: 5px;font-size: 12px;color: red;">*</span>用户名</label>
                         <input id="register-username" type="text" name="username" autocomplete="username" class="login-input">
                     </div>
                     <div class="login-group">
-                        <label><span style="margin-right: 5px;font-size: 12px;color: red;">*</span>邮箱</label>
+                        <label for="register-email"><span style="margin-right: 5px;font-size: 12px;color: red;">*</span>邮箱</label>
                         <input id="register-email" type="email" autocomplete="email" name="email" class="login-input">
                     </div>
                     <div class="login-group">
-                        <label><span style="margin-right: 5px;font-size: 12px;color: red;">*</span>密码</label>
+                        <label for="register-password"><span style="margin-right: 5px;font-size: 12px;color: red;">*</span>密码</label>
                         <input id="register-password" type="password" name="password" autocomplete="current-password" class="login-input">
                     </div>
                     <div class="login-group">
-                        <label><span style="margin-right: 5px;font-size: 12px;color: red;">*</span>重复密码</label>
+                        <label for="register-repassword"><span style="margin-right: 5px;font-size: 12px;color: red;">*</span>重复密码</label>
                         <input id="register-repassword" type="password" name="repassword" autocomplete="re-password" class="login-input">
                     </div>
                     <div class="login-group">
-                        <label><span style="margin-right: 5px;font-size: 12px;color: red;">*</span>电话号码</label>
+                        <label for="register-phoneNumber"><span style="margin-right: 5px;font-size: 12px;color: red;">*</span>电话号码</label>
                         <input id="register-phoneNumber" type="text" name="phoneNumber" autocomplete="phone-number" class="login-input">
                     </div>
                     <button id="register-btn" class="login-btn">
@@ -98,11 +98,7 @@
 
 </script>
 
-<script type="text/javascript">
 
-    //////////////////  variables defined  ///////////////////////////
-
-</script>
 
 <script type="text/javascript">
 
@@ -138,18 +134,18 @@
                     var message = obj.message;
                     var data = obj.data;
                     if (code !== 200) {
-                        layer.msg(message, {time: 3000, skin: 'layui-bg-red', offset: '50px'});
+                        kingLayerMsg(message, userDefaultLayerMsgOptions);
                     } else {
                         // 向 store 中保存用户信息
                         setValueToStore(LOGIN_USER_KEY, data);
 
                         // 提示激活信息
-                        layer.msg("注册成功，请您先激活！", {time: 3000, skin: 'layui-bg-red', offset: '50px'});
+                        kingLayerMsg("注册成功，请您先激活！", userDefaultLayerMsgOptions);
 
                         // 先等待激活的信息提示结束，然后再跳转到激活页面
                         setTimeout(function () {
                             window.location.href = USER_BASE_MAPPING_V1 + "/page/activation";
-                        }, 2000);
+                        }, SLEEP_TIME);
                     }
                 }
             });

@@ -6,7 +6,7 @@ package edu.hhu.air.conditioner.online.monitoring.constant;
  */
 public interface SessionConsts {
 
-    String VERIFICATION_CODE_KEY =  SystemConsts.PROTOCOL_FIELD + "activationCode";
-    String LOGIN_USER_KEY = SystemConsts.PROTOCOL_FIELD + "loginUser";
+    String VERIFICATION_CODE_KEY =  "^JcZ6f2OXP7UYe$T";
+    String LOGIN_USER_KEY = "AMbVbgk4jB7xIa0U";
 
 }

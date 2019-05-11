@@ -48,6 +48,8 @@ public class CustomizeWebMvcConfigurer implements WebMvcConfigurer {
                 .setViewName("air-conditioner/add-info");
         registry.addViewController(AIR_CONDITIONER_BASE_MAPPING_V1 + "/page/online-state")
                 .setViewName("air-conditioner/online-state");
+        registry.addViewController(AIR_CONDITIONER_BASE_MAPPING_V1 + "/page/update-info")
+                .setViewName("air-conditioner/update-info");
     }
 
     @Override

@@ -1,9 +1,9 @@
 package edu.hhu.air.conditioner.online.monitoring.controller.advice;
 
 import edu.hhu.air.conditioner.online.monitoring.constant.SystemConsts;
-import edu.hhu.air.conditioner.online.monitoring.exception.BusinessException;
 import edu.hhu.air.conditioner.online.monitoring.constant.enums.ErrorCodeEnum;
-import edu.hhu.air.conditioner.online.monitoring.model.entity.CustomizeExceptionResponseBody;
+import edu.hhu.air.conditioner.online.monitoring.exception.BusinessException;
+import edu.hhu.air.conditioner.online.monitoring.model.CustomizeExceptionResponseBody;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.ConversionNotSupportedException;
 import org.springframework.beans.TypeMismatchException;
@@ -33,8 +33,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import javax.servlet.http.HttpServletRequest;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author 覃国强

@@ -7,37 +7,21 @@
 
     <link href="https://cdn.staticfile.org/twitter-bootstrap/3.4.1/css/bootstrap.min.css" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
     <link href="https://cdn.staticfile.org/jstree/3.3.7/themes/default/style.min.css" th:href="@{/webjars/jstree/themes/default/style.min.css}" rel="stylesheet">
+
     <link href="../../static/layui/css/layui.css" th:href="@{/webjars/layui/css/layui.css}" rel="stylesheet">
 
     <script type="text/javascript" src="https://cdn.staticfile.org/jquery/3.4.0/jquery.min.js" th:src="@{/webjars/jquery/jquery.min.js}"></script>
     <script type="text/javascript" src="https://cdn.staticfile.org/twitter-bootstrap/3.4.1/js/bootstrap.min.js" th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
     <script type="text/javascript" src="https://cdn.staticfile.org/jstree/3.3.7/jstree.min.js" th:src="@{/webjars/jstree/jstree.min.js}"></script>
     <script type="text/javascript" src="../../static/layui/layui.js" th:src="@{/webjars/layui/layui.js}"></script>
+
+    <script type="text/javascript" src="../../static/js/common.js" th:src="@{/js/common.js}"></script>
+    <script type="text/javascript" src="../../static/js/air.conditioner.js" th:src="@{/js/air.conditioner.js}"></script>
 </head>
 <body class="layui-layout-body">
 <div class="layui-layout layui-layout-admin">
-    <div class="layui-header">
-        <div class="layui-logo" style="width: 300px; font-size: 26px;">电梯风扇监控系统</div>
-        <!-- 头部区域（可配合layui已有的水平导航） -->
-        <ul class="layui-nav layui-layout-left" style="left: 300px;">
-            <li class="layui-nav-item"><a href="#" th:href="@{/v1/monitoring-system/page/index}">首页</a></li>
-            <li class="layui-nav-item"><a href="#" th:href="@{/v1/monitoring-system/air-conditioners/page/add-info}">设备管理</a></li>
-            <li class="layui-nav-item"><a href="#">维修管理</a></li>
-        </ul>
-        <ul class="layui-nav layui-layout-right">
-            <li class="layui-nav-item">
-                <a href="javascript:;">
-                    <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
-                    贤心
-                </a>
-                <dl class="layui-nav-child">
-                    <dd><a href="">基本资料</a></dd>
-                    <dd><a href="">安全设置</a></dd>
-                </dl>
-            </li>
-            <li class="layui-nav-item"><a href="">退出</a></li>
-        </ul>
-    </div>
+
+    <div id="header-navigation-div-id"></div>
 
     <div class="layui-side" style="width: 300px; background-color: #dddddd">
         <div class="layui-side-scroll" style="width: 100%">
@@ -46,51 +30,150 @@
                 <input id="container_q" class="layui-input" placeholder="搜索" style="width: 200px; float: left; border: 1px solid #01AAED;">
             </div>
             <hr class="layui-bg-blue" style="height: 2px">
-            <div id="container">
-                <ul>
-                    <li attr="attr">Root node
-                        <ul>
-                            <li>Child node 1
-                                <ul>
-                                    <li id="child_node_1" data-location="39.990912172420714,116.32715863448607">Child node 1</li>
-                                    <li>Child node 2</li>
-                                </ul>
-                            </li>
-                            <li>Child node 2
-                                <ul>
-                                    <li>Child node 1</li>
-                                    <li>Child node 2</li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
+            <div id="container"></div>
         </div>
     </div>
 
     <div class="layui-body" style="left: 300px;">
-        <iframe id="mapContent" style="float:right; width: 100%; height: 100%" src="http://api.map.baidu.com/marker?output=html&src=webapp.hhu.elevator-monitoring&ak=Xnydmr1oWTenkGrNxvNk8WkXm6jOLcUF&title=河海大学常州校区&location=31.825418310126373,119.98784449530642"></iframe>
+        <iframe id="mapContent" style="float:right; width: 100%; height: 100%"></iframe>
     </div>
 
-    <div class="layui-footer" style="left: 300px">
-        <!-- 底部固定区域 -->
-        河海大学常州校区  2015级物联网工程学院  毕业设计
-    </div>
+    <div id="footer-div-id"></div>
+
 </div>
 
-<script>
-    //JavaScript代码区域
-    layui.use('element', function(){
-        var element = layui.element;
-
-    });
-</script>
 <script type="text/javascript">
-    var mapSrcHead = "http://api.map.baidu.com/marker?output=html&src=webapp.hhu.elevator-monitoring&ak=Xnydmr1oWTenkGrNxvNk8WkXm6jOLcUF&location=";
-    $(function () {
+
+    window.onload = function (ev) {
+
+        // 页面初始化
+        pageAfterOnloadInit();
+
+    }
+
+</script>
+
+
+<script type="text/javascript">
+
+    //////////////////  variables defined  ///////////////////////////
+
+    var CLIENT_AK_KEY = 'Xnydmr1oWTenkGrNxvNk8WkXm6jOLcUF';
+
+    var locationUrlPrefix = "http://api.map.baidu.com/marker?output=html&src=webapp.hhu.elevator-monitoring&ak=" + CLIENT_AK_KEY + "&";
+
+</script>
+
+<script type="text/javascript">
+
+    //////////////// function defined ///////////////////////////////
+
+    // 页面初始化
+    function pageAfterOnloadInit() {
+        initHeaderNavigationDiv();
+        initFooterDiv();
+        initDirectoryTree();
+        // layui 初始化
+        layuiInit();
+        // 初始位置设置为河海大学常州校区
+        initPosition();
+    }
+
+    // layui 初始化
+    function layuiInit() {
+        layui.use('element', function () {
+            var element = layui.element;
+
+        });
+    }
+
+    // 初始位置设置为河海大学常州校区
+    function initPosition() {
+        var titleVar = "当前位置";
+        var contentVar = "河海大学常州校区";
+        var locationVar = '31.825418310126373,119.98784449530642';
+        var paramString = 'title=' + titleVar + "&content=" + contentVar + "&location=" + locationVar;
+        $("#mapContent").attr('src', locationUrlPrefix + paramString);
+    }
+
+    // 从服务端获取需要的数据
+    function getAirConditionerMapDataFromServer() {
+        var outResult = {};
+        $.ajax({
+            url: AIR_CONDITIONER_BASE_MAPPING_V1 + "/map",  // 查询地图需要的所有设备信息
+            type: "get",
+            async: false,
+            success: function (result, status, xhr) {
+                var obj = JSON.parse(result);
+                var code = obj.code;
+                var message = obj.message;
+                var data = obj.data;
+                if (code !== 200) {
+                    kingLayerMsg(message, airConditionerDefaultLayerMsgOptions);
+                } else {
+                    outResult = data;
+                }
+            }
+        });
+        return outResult;
+    }
+
+
+    // 将从服务端获取到的数据转换成目录树需要的数据结构
+    function generateJsTreeData(dataSource) {
+        var data = [];
+        var rootNodeNum = 0;
+        var childNodeNum = 0;
+        for (var province in dataSource) {
+            // 生成一级节点
+            var rootNode = {};
+            rootNode.id = 'rootNode' + (rootNodeNum++);
+            rootNode.parent = '#';
+            rootNode.text = province;
+            data.push(rootNode);
+
+            var provinceObject = dataSource[province];
+            for (var city in provinceObject) {
+                // 生成二级节点
+                var childNode = {};
+                childNode.id = 'childNode' + (childNodeNum++);
+                childNode.parent = rootNode.id;
+                childNode.text = city;
+                data.push(childNode);
+
+                var cityObject = provinceObject[city];
+                for (var i = 0; i < cityObject.length; i++) {
+                    var equipment = cityObject[i];
+                    // 生成三级节点
+                    var leafNode = {};
+                    leafNode.id = equipment.equipmentId;
+                    leafNode.parent = childNode.id;
+                    leafNode.text = equipment.equipmentId;
+
+                    // 生成 li 标签属性
+                    var liAttr = {};
+                    liAttr['data-title'] = equipment.equipmentId;
+                    liAttr['data-content'] = equipment.addressString;
+                    liAttr['data-location'] = equipment.latitude + "," + equipment.longitude;
+
+                    leafNode.li_attr = liAttr;
+                    data.push(leafNode);
+                }
+            }
+        }
+        return data;
+    }
+
+    // 初始化目录树结构
+    function initDirectoryTree() {
+        var dataSource = getAirConditionerMapDataFromServer();
+        var data = generateJsTreeData(dataSource);
+
         $('#container').jstree({
-            "plugins": ["search"]
+            "plugins": ["search"],
+            'core': {
+                'data': data
+            }
         });
         var to = false;
         $('#container_q').keyup(function () {
@@ -102,11 +185,20 @@
                 $('#container').jstree(true).search(v);
             }, 250);
         });
+
+        // 给 JsTree 的叶子节点添加点击监听事件
         $('#container').bind("changed.jstree", function (e, data) {
-            var location = $('#' + data.node.id).attr('data-location');
-            $("#mapContent").attr("src", mapSrcHead + location);
-        })
-    });
+            var curNode = data.node;
+            if (curNode.id.startsWith("LD")) {
+                var liAttr = curNode.li_attr;
+                var titleVar = liAttr['data-title'];
+                var contentVar = liAttr['data-content'];
+                var locationVar = liAttr['data-location'];
+                var paramString = 'title=设备编号：' + titleVar + "&content=" + contentVar + "&location=" + locationVar;
+                $("#mapContent").attr('src', locationUrlPrefix + paramString);
+            }
+        });
+    }
 
 </script>
 </body>

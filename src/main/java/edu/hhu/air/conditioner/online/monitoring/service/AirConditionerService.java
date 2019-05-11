@@ -1,11 +1,9 @@
 package edu.hhu.air.conditioner.online.monitoring.service;
 
-import edu.hhu.air.conditioner.online.monitoring.exception.BusinessException;
 import edu.hhu.air.conditioner.online.monitoring.model.dto.AirConditionerDTO;
 import edu.hhu.air.conditioner.online.monitoring.model.entity.AirConditioner;
-import edu.hhu.air.conditioner.online.monitoring.model.request.AirConditionerSearchRequest;
-import edu.hhu.air.conditioner.online.monitoring.model.response.AirConditionerResponse;
-import edu.hhu.air.conditioner.online.monitoring.model.response.PageResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.io.IOException;
 import java.util.List;
@@ -16,21 +14,31 @@ import java.util.List;
  */
 public interface AirConditionerService {
 
-    AirConditioner add(AirConditionerDTO airConditionerDTO) throws BusinessException, IOException;
+    AirConditionerDTO add(AirConditionerDTO airConditionerDTO) throws IOException;
+
+    void deleteByEquipmentId(String equipmentId);
+
+    AirConditionerDTO updateByEquipmentId(AirConditionerDTO airConditionerDTO) throws IOException;
 
     long count();
 
-    List<AirConditionerResponse> listAll();
+    AirConditionerDTO getById(Long id);
 
-    PageResponse<AirConditionerResponse> listAll(int page, int size);
+    List<AirConditionerDTO> listAll();
 
-    List<AirConditionerResponse> listAll(AirConditionerSearchRequest searchRequest);
+    Page<AirConditionerDTO> listAll(int page, int size);
 
-    PageResponse<AirConditionerResponse> listAll(AirConditionerSearchRequest searchRequest, int page, int size);
+    List<AirConditionerDTO> listAll(Specification<AirConditioner> specification);
 
-    List<AirConditionerResponse> listAllByUserId(Long userId);
+    Page<AirConditionerDTO> listAll(Specification<AirConditioner> specification, int page, int size);
 
-    PageResponse<AirConditionerResponse> listAllByUserId(Long userId, int page, int size);
+    List<AirConditionerDTO> listAllByUserId(Long userId);
+
+    Page<AirConditionerDTO> listAllByUserId(Long userId, int page, int size);
+
+    AirConditionerDTO getByEquipmentId(String equipmentId);
+
+
 
 
 

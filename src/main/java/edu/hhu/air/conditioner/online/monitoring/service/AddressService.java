@@ -1,10 +1,7 @@
 package edu.hhu.air.conditioner.online.monitoring.service;
 
-import edu.hhu.air.conditioner.online.monitoring.model.dto.AddressDTO;
 import edu.hhu.air.conditioner.online.monitoring.model.entity.Address;
 import org.springframework.data.domain.Example;
-
-import java.util.Optional;
 
 /**
  * @author 覃国强
@@ -12,8 +9,10 @@ import java.util.Optional;
  */
 public interface AddressService {
 
-    Address add(AddressDTO addressDTO);
+    Address add(Address address);
 
-    Optional<Address> findOne(Example<Address> example);
+    Address getByExample(Example<Address> example);
+
+    Address getById(Long id);
 
 }

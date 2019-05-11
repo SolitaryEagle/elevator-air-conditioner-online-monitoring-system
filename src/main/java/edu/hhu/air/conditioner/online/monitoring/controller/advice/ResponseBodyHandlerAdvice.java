@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.hhu.air.conditioner.online.monitoring.constant.SystemConsts;
 import edu.hhu.air.conditioner.online.monitoring.constant.enums.ErrorCodeEnum;
 import edu.hhu.air.conditioner.online.monitoring.exception.JsonParseException;
-import edu.hhu.air.conditioner.online.monitoring.model.entity.CustomizeExceptionResponseBody;
+import edu.hhu.air.conditioner.online.monitoring.model.CustomizeExceptionResponseBody;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

@@ -70,9 +70,9 @@ CREATE TABLE `address`
     `id`           bigint(20) unsigned NOT NULL AUTO_INCREMENT,
     `gmt_create`   datetime            NOT NULL COMMENT '数据创建(插入)时间',
     `gmt_modified` datetime            NOT NULL COMMENT '数据最后更新时间',
-    `province`     varchar(255)        NOT NULL DEFAULT '',
-    `city`         varchar(255)        NOT NULL DEFAULT '',
-    `district`     varchar(255)        NOT NULL DEFAULT '',
+    `province`     varchar(255)        NOT NULL,
+    `city`         varchar(255)        NOT NULL,
+    `district`     varchar(255)        NOT NULL,
     `detail`       varchar(255)                 DEFAULT NULL,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
