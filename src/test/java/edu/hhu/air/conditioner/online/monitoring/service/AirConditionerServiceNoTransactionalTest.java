@@ -1,8 +1,7 @@
 package edu.hhu.air.conditioner.online.monitoring.service;
 
-import edu.hhu.air.conditioner.online.monitoring.exception.BusinessException;
-import edu.hhu.air.conditioner.online.monitoring.model.dto.AirConditionerDTO;
 import edu.hhu.air.conditioner.online.monitoring.model.entity.Address;
+import edu.hhu.air.conditioner.online.monitoring.model.entity.AirConditioner;
 import edu.hhu.air.conditioner.online.monitoring.model.entity.User;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -11,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -26,13 +26,15 @@ public class AirConditionerServiceNoTransactionalTest {
 
     @Autowired
     private AirConditionerService airConditionerService;
+    @Autowired
+    private AddressService addressService;
 
     // 向 air_conditioner 表中插入 100 条数据
     @Test
-    public void insert() throws IOException, BusinessException {
+    public void insert() throws IOException {
 
         // 准备 3 个 user
-        User[] users = { User.builder().id(1L).build(), User.builder().id(2L).build(), User.builder().id(3L).build() };
+        User[] users = { User.builder().id(1L).build(), User.builder().id(4L).build() };
 
         // 准备一些空调品牌
         String[] brands = { "米家空调", "米家互联网空调", "米家互联网空调（一级能效）", "DAIKIN 大金", "三菱电机",
@@ -43,24 +45,24 @@ public class AirConditionerServiceNoTransactionalTest {
         String[] sellers = { "小米", "海尔", "格力", "美的" };
 
         // 准备一些地址
-        Address[] addresses = { new Address("江苏省", "常州市", "新北区"),
-                new Address("四川省", "乐山市", "夹江县"),
-                new Address("江西省", "吉安市", "吉州区"), new Address("北京市", "北京城区", "朝阳区"),
-                new Address("辽宁省", "沈阳市", "和平区") };
+        List<Address> addresses = addressService.listAll();
 
-        int length = 100;
+        int length = 30;
         for (int i = 0; i < length; i++) {
 
             int userIndex = random.nextInt(users.length);
             int brandIndex = random.nextInt(brands.length);
             int modelIndex = random.nextInt(models.length);
             int sellerIndex = random.nextInt(sellers.length);
-            int addressIndex = random.nextInt(addresses.length);
+            int addressIndex = random.nextInt(addresses.size());
 
-            AirConditionerDTO value = AirConditionerDTO.builder().brand(brands[brandIndex]).model(models[modelIndex])
-                    .seller(sellers[sellerIndex]).address(addresses[addressIndex])
-                    .user(users[userIndex]).build();
-            airConditionerService.add(value);
+            Address address = addresses.get(addressIndex);
+
+            AirConditioner airConditioner = AirConditioner.builder().brand(brands[brandIndex]).model(models[modelIndex])
+                    .seller(sellers[sellerIndex]).addressString(address.toSimpleString()).addressId(address.getId())
+                    .userId(users[userIndex].getId()).build();
+            airConditionerService.add(airConditioner);
+
         }
     }
 

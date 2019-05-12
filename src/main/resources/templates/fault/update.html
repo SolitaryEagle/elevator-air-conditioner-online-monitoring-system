@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Fault Detail Info</title>
+
+    <link href="https://cdn.staticfile.org/twitter-bootstrap/3.4.1/css/bootstrap.min.css" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+
+    <link href="../../static/layui/css/layui.css" th:href="@{/webjars/layui/css/layui.css}" rel="stylesheet">
+
+    <script type="text/javascript" src="https://cdn.staticfile.org/jquery/3.4.0/jquery.min.js" th:src="@{/webjars/jquery/jquery.min.js}"></script>
+    <script type="text/javascript" src="https://cdn.staticfile.org/twitter-bootstrap/3.4.1/js/bootstrap.min.js" th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+    <script type="text/javascript" src="https://cdn.staticfile.org/distpicker/2.0.5/distpicker.js"></script>
+    <script type="text/javascript" src="https://cdn.staticfile.org/store.js/1.3.20/store.min.js" th:src="@{/webjars/store.js/store.min.js}"></script>
+
+    <script type="text/javascript" src="../../static/layui/layui.all.js" th:src="@{/webjars/layui/layui.all.js}"></script>
+    <script type="text/javascript" src="../../static/layui/layui.js" th:src="@{/webjars/layui/layui.js}"></script>
+    <script type="text/javascript" src="../../static/js/common.js" th:src="@{/js/common.js}"></script>
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+
+    <!-- 头部导航栏 -->
+    <div id="header-navigation-div-id"></div>
+
+    <!-- 侧边导航栏 -->
+    <div id="side-navigation-div-id"></div>
+
+    <div class="layui-body" style="left: 300px;">
+
+        <h3 style="text-align: center;margin: 20px 0;">维修状态流程图</h3>
+        <div style="margin-top: 20px; margin-left: 715px;">
+            <!--  时间线  -->
+            <ul class="layui-timeline" id="timeline-ul-id">
+            </ul>
+        </div>
+
+        <!--  分割线  -->
+        <hr class="layui-bg-blue" style="margin-bottom: 30px;">
+
+        <!-- 内容主体区域 -->
+        <div style="padding: 15px;">
+            <div class="layui-container" style="
+                border: 1px solid #1E9FFF;
+                float: right;
+                margin: 50px 200px 0 0;
+                padding: 20px;
+                background-color: #e2e2e2;
+                border-radius: 10px;
+                  ">
+                <h3 style="text-align: center;">故障详情</h3>
+                <form id="add-info-form" action="#" method="post" class="form-horizontal" role="form" style="width: 95%; margin-top: 50px;">
+
+                    <input type="hidden" id="fault-id">
+
+                    <fieldset disabled>
+                        <div class="form-group">
+                            <label for="equipment-id" class="col-sm-2 control-label">设备编号</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" id="equipment-id">
+                            </div>
+                            <label for="brand" class="col-sm-2 control-label">品牌</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" id="brand">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="model" class="col-sm-2 control-label">型号规格</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" id="model">
+                            </div>
+                            <label for="seller" class="col-sm-2 control-label">销售单位</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" id="seller">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="temperature" class="col-sm-2 control-label">温度(℃)</label>
+                            <div class="col-sm-2">
+                                <input type="text" class="form-control" id="temperature">
+                            </div>
+                            <label for="wind-speed" class="col-sm-2 control-label">风速</label>
+                            <div class="col-sm-2">
+                                <input type="text" class="form-control" id="wind-speed">
+                            </div>
+                            <label for="kwh" class="col-sm-2 control-label">用电量(Kw/h)</label>
+                            <div class="col-sm-2">
+                                <input type="text" class="form-control" id="kwh">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="current-intensity" class="col-sm-2 control-label">电流(A)</label>
+                            <div class="col-sm-2">
+                                <input type="text" class="form-control" id="current-intensity">
+                            </div>
+                            <label for="voltage" class="col-sm-2 control-label">电压(V)</label>
+                            <div class="col-sm-2">
+                                <input type="text" class="form-control" id="voltage">
+                            </div>
+                            <label for="power" class="col-sm-2 control-label">功率(W)</label>
+                            <div class="col-sm-2">
+                                <input type="text" class="form-control" id="power">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="air-conditioner-owner" class="col-sm-2 control-label">设备拥有者</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" id="air-conditioner-owner">
+                            </div>
+                            <label for="fault-state" class="col-sm-2 control-label">故障状态</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" id="fault-state">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="fault-create-time" class="col-sm-2 control-label">报修时间</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" id="fault-create-time">
+                            </div>
+                            <label for="fault-modified-time" class="col-sm-2 control-label">更新时间</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" id="fault-modified-time">
+                            </div>
+                        </div>
+                    </fieldset>
+                    <div class="form-group">
+                        <label for="real-name" class="col-sm-2 control-label"><span style="margin-right: 5px;font-size: 12px;color: red;">*</span>报修人真实姓名</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" id="real-name" placeholder="请输入真实姓名">
+                        </div>
+                        <label for="phone-number" class="col-sm-2 control-label"><span style="margin-right: 5px;font-size: 12px;color: red;">*</span>联系电话</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" id="phone-number" placeholder="请输入联系电话">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="contact-address" class="col-sm-2 control-label"><span style="margin-right: 5px;font-size: 12px;color: red;">*</span>联系地址</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="contact-address" placeholder="请输入联系地址">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="fault-type" class="col-sm-2 control-label"><span style="margin-right: 5px;font-size: 12px;color: red;">*</span>故障类型</label>
+                        <div class="col-sm-10">
+                            <select id="fault-type" class="form-control">
+                                <option value="REFRIGERATION_SYSTEM_BLOCKAGE">制冷系统堵</option>
+                                <option value="REFRIGERATION_SYSTEM_LEAKAGE">制冷系统漏</option>
+                                <option value="FOUR_WAY_VALUE_FAULT">四通阀故障</option>
+                                <option value="ONE_WAY_VALUE_FAULT">单向阀故障</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="fault-description" class="col-sm-2 control-label"><span style="margin-right: 5px;font-size: 12px;color: red;">*</span>故障描述</label>
+                        <div class="col-sm-10">
+                            <textarea class="form-control" id="fault-description" rows="3" style="resize:none" placeholder="请输入故障描述"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-group" id="btn-div-id">
+                        <div class="col-sm-offset-2 col-sm-6" style="width: 40%; margin: 0 auto">
+                            <button class="btn btn-success" id="update-btn" style="margin: 20px 0 0 65%; width: 100px;">更新</button>
+                        </div>
+                        <div class="col-sm-offset-2 col-sm-6" style="width: 40%; margin: 0 auto">
+                            <button class="btn btn-danger" id="delete-btn" style="margin: 20px 0 0 65%; width: 100px;">删除</button>
+                        </div>
+                    </div>
+
+
+                    <fieldset disabled>
+                        <div id="repair-div-id" style="display: none;">
+                            <div class="form-group">
+                                <label for="repair-user" class="col-sm-2 control-label">维修人</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="repair-user">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="repair-material" class="col-sm-2 control-label">维修材料</label>
+                                <div class="col-sm-10">
+                                    <textarea class="form-control" id="repair-material" rows="3" style="resize:none"></textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="repair-record" class="col-sm-2 control-label">维修记录</label>
+                                <div class="col-sm-10">
+                                    <textarea class="form-control" id="repair-record" rows="3" style="resize:none"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="revisit-div-id" style="display: none;">
+                            <div class="form-group">
+                                <label for="revisit-user" class="col-sm-2 control-label">回访人</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="revisit-user">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="revisit-record" class="col-sm-2 control-label">回访记录</label>
+                                <div class="col-sm-10">
+                                    <textarea class="form-control" id="revisit-record" rows="3" style="resize:none"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="evaluation-div-id" style="display: none;">
+                            <div class="form-group">
+                                <label for="evaluation-user" class="col-sm-2 control-label">评价人</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control" id="evaluation-user">
+                                </div>
+                                <label for="evaluation-satisfaction" class="col-sm-2 control-label">满意度</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control" id="evaluation-satisfaction">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="evaluation-content" class="col-sm-2 control-label">评价内容</label>
+                                <div class="col-sm-10">
+                                    <textarea class="form-control" id="evaluation-content" rows="3" style="resize:none"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <div id="footer-div-id"></div>
+</div>
+
+<script type="text/javascript">
+
+    window.onload = function (ev) {
+
+        // 页面初始化
+        pageAfterOnloadInit();
+
+        // 填充表单数据
+        fillEquipmentInfo();
+
+        // 退出事件
+        document.getElementById('logout-btn-id').onclick = logoutEvent;
+
+    }
+
+</script>
+
+<script type="text/javascript">
+
+    //////////////// function defined ///////////////////////////////
+
+    // 页面初始化
+    function pageAfterOnloadInit() {
+
+        initHeaderNavigationDiv();
+
+        var loginUser = getValidValueFromStore(LOGIN_USER_KEY);
+        if (loginUser.role === 'ORDINARY') {
+            initSideNavigationDivOrdinaryFault();
+            // 设置“更新”按钮事件
+            document.getElementById('update-btn').onclick = updateInfoFormSubmitEvent;
+
+            // 设置“删除”按钮事件
+            document.getElementById('delete-btn').onclick = InfoFormDeleteEvent;
+        } else if (loginUser.role === 'CUSTOM_SERVICE') {
+            initSideNavigationDivCustomFault();
+            $("#btn-div-id").replaceWith('');
+        } else {
+            initSideNavigationDivRepairFault();
+            $("#btn-div-id").replaceWith('');
+        }
+        initFooterDiv();
+        // layui 初始化
+        layuiInit();
+
+    }
+
+    // 填充表单数据
+    function fillEquipmentInfo() {
+        var params = parseUrlParameter(window.location.search);
+        var faultId = params.faultId;
+
+        var url = FAULT_BASE_MAPPING_V1 + "/" + faultId;
+        var fault = getDataFromServer(url);
+
+        // 填充时间线
+        if (typeof fault != "undefined" && fault != null) {
+            var liNode =
+                '<li class="layui-timeline-item">' +
+                '    <i class="layui-icon layui-timeline-axis">&#xe63f;</i>' +
+                '    <div class="layui-timeline-content layui-text">' +
+                '        <div class="layui-timeline-title">' + '新建 ' + fault.gmtCreate + '</div>' +
+                '    </div>' +
+                '</li>';
+            $("#timeline-ul-id").append(liNode);
+
+            if (typeof fault.allocation != "undefined" && fault.allocation != null) {
+                liNode =
+                    '<li class="layui-timeline-item">' +
+                    '    <i class="layui-icon layui-timeline-axis">&#xe63f;</i>' +
+                    '    <div class="layui-timeline-content layui-text">' +
+                    '        <div class="layui-timeline-title">' + '分配 ' + fault.allocation.gmtCreate + '</div>' +
+                    '    </div>' +
+                    '</li>';
+                $("#timeline-ul-id").append(liNode);
+
+                if (typeof fault.repair != "undefined" && fault.repair != null) {
+                    liNode =
+                        '<li class="layui-timeline-item">' +
+                        '    <i class="layui-icon layui-timeline-axis">&#xe63f;</i>' +
+                        '    <div class="layui-timeline-content layui-text">' +
+                        '        <div class="layui-timeline-title">' + '维修 ' + fault.repair.gmtCreate + '</div>' +
+                        '    </div>' +
+                        '</li>';
+                    $("#timeline-ul-id").append(liNode);
+
+                    if (typeof fault.revisit != "undefined" && fault.revisit != null) {
+                        liNode =
+                            '<li class="layui-timeline-item">' +
+                            '    <i class="layui-icon layui-timeline-axis">&#xe63f;</i>' +
+                            '    <div class="layui-timeline-content layui-text">' +
+                            '        <div class="layui-timeline-title">' + '回访 ' + fault.revisit.gmtCreate + '</div>' +
+                            '    </div>' +
+                            '</li>';
+                        $("#timeline-ul-id").append(liNode);
+
+                        if (typeof fault.evaluation != "undefined" && fault.evaluation != null) {
+                            liNode =
+                                '<li class="layui-timeline-item">' +
+                                '    <i class="layui-icon layui-timeline-axis">&#xe63f;</i>' +
+                                '    <div class="layui-timeline-content layui-text">' +
+                                '        <div class="layui-timeline-title">' + '评价 ' + fault.evaluation.gmtCreate + '</div>' +
+                                '    </div>' +
+                                '</li>';
+                            $("#timeline-ul-id").append(liNode);
+
+                            liNode =
+                                '<li class="layui-timeline-item">' +
+                                '    <i class="layui-icon layui-timeline-axis">&#xe63f;</i>' +
+                                '    <div class="layui-timeline-content layui-text">' +
+                                '        <div class="layui-timeline-title">' + '维修成功 ' + fault.gmtModified + '</div>' +
+                                '    </div>' +
+                                '</li>';
+                            $("#timeline-ul-id").append(liNode);
+                        }
+                    } else if (fault.state === 'END' && fault.repairResult === 'FAILURE') {
+                        liNode =
+                            '<li class="layui-timeline-item">' +
+                            '    <i class="layui-icon layui-timeline-axis">&#xe63f;</i>' +
+                            '    <div class="layui-timeline-content layui-text">' +
+                            '        <div class="layui-timeline-title">' + '维修失败 ' + fault.gmtModified + '</div>' +
+                            '    </div>' +
+                            '</li>';
+                        $("#timeline-ul-id").append(liNode);
+                    }
+                } else if (fault.state === 'END' && fault.repairResult === 'REPAIRMAN_REJECT') {
+                    liNode =
+                        '<li class="layui-timeline-item">' +
+                        '    <i class="layui-icon layui-timeline-axis">&#xe63f;</i>' +
+                        '    <div class="layui-timeline-content layui-text">' +
+                        '        <div class="layui-timeline-title">' + '维修工拒绝 ' + fault.gmtModified + '</div>' +
+                        '    </div>' +
+                        '</li>';
+                    $("#timeline-ul-id").append(liNode);
+                }
+            }
+        }
+
+        // 表单填充
+        $("#fault-id").val(fault.id);
+        $("#equipment-id").val(fault.airConditioner.equipmentId);
+        $("#brand").val(fault.airConditioner.brand);
+        $("#model").val(fault.airConditioner.model);
+        $("#seller").val(fault.airConditioner.seller);
+        $("#temperature").val(fault.airConditioner.temperature);
+
+        var windSpeed = getWindSpeed(fault.airConditioner.windSpeed);
+        $("#wind-speed").val(windSpeed);
+        $("#kwh").val(fault.airConditioner.kwh);
+        $("#current-intensity").val(fault.airConditioner.currentIntensity);
+        $("#voltage").val(fault.airConditioner.voltage);
+        $("#power").val(fault.airConditioner.power);
+
+        var owner = fault.reportUser.username.trim();
+        if (owner.length <= 0) {
+            owner = fault.reportUser.email;
+        }
+        $("#air-conditioner-owner").val(owner);
+
+
+        var faultState = getFaultState(fault.state);
+        $("#fault-state").val(faultState);
+
+        $("#fault-create-time").val(fault.gmtCreate);
+        $("#fault-modified-time").val(fault.gmtModified);
+        $("#real-name").val(fault.realName);
+        $("#phone-number").val(fault.phoneNumber);
+        $("#contact-address").val(fault.contactAddress);
+
+        var faultTypeSelects = document.getElementById('fault-type');
+        for (var i = 0; i < faultTypeSelects.options.length; i++) {
+            if (fault.type === faultTypeSelects.options[i].value) {
+                faultTypeSelects.options[i].selected = true;
+                break;
+            }
+        }
+
+        $("#fault-description").text(fault.description);
+
+        if (typeof fault.allocation != "undefined" && fault.allocation != null) {
+            $("#btn-div-id").css('display', 'none');
+
+            if (typeof fault.repair != "undefined" && fault.repair != null) {
+                $("#repair-div-id").css('display', 'block');
+
+                url = USER_BASE_MAPPING_V1 + "/" + fault.repair.repairUserId;
+                var repairUser = getDataFromServer(url);
+                var username = repairUser.username.trim();
+                if (username.length <= 0) {
+                    username = repairUser.email;
+                }
+                $("#repair-user").val(username);
+                $("#repair-material").text(fault.repair.material);
+                $("#repair-record").text(fault.repair.record);
+
+                if (typeof fault.revisit != "undefined" && fault.revisit != null) {
+                    $("#revisit-div-id").css('display', 'block');
+
+                    url = USER_BASE_MAPPING_V1 + "/" + fault.revisit.revisitUserId;
+                    var revisitUser = getDataFromServer(url);
+                    username = revisitUser.username.trim();
+                    if (username.length <= 0) {
+                        username = repairUser.email;
+                    }
+                    $("#revisit-user").val(username);
+                    $("#revisit-record").text(fault.revisit.record);
+
+                    if (typeof fault.evaluation != "undefined" && fault.evaluation != null) {
+                        $("#evaluation-div-id").css('display', 'block');
+
+                        url = USER_BASE_MAPPING_V1 + "/" + fault.evaluation.evaluationUserId;
+                        var evaluationUser = getDataFromServer(url);
+                        username = evaluationUser.username.trim();
+                        if (username.length <= 0) {
+                            username = repairUser.email;
+                        }
+                        $("#evaluation-user").val(username);
+                        $("#evaluation-satisfaction").val(fault.evaluation.satisfaction + " 星");
+                        $("#evaluation-content").text(fault.evaluation.content);
+                    }
+
+                }
+            }
+        }
+    }
+
+    function getDataFromServer(url) {
+        var outResult = {};
+        $.ajax({
+            url: url,
+            type: "get",
+            async: false,
+            success: function (result, status, xhr) {
+                var obj = JSON.parse(result);
+                var code = obj.code;
+                var message = obj.message;
+                var data = obj.data;
+                if (code !== 200) {
+                    kingLayerMsg(message, airConditionerDefaultLayerMsgOptions);
+                } else {
+                    outResult = data;
+                }
+            }
+        });
+        return outResult;
+    }
+
+    // 检验真实姓名
+    function checkRealNameAndTip() {
+        var realName = $("#real-name").val().trim();
+        if (typeof realName == "undefined" || realName == null || realName.length <= 0) {
+            kingLayerMsg('请填写真实姓名!', airConditionerDefaultLayerMsgOptions);
+            return false;
+        }
+        return true;
+    }
+
+    // 校验联系电话
+    function checkPhoneNumberAndTip() {
+        var phoneNumber = $("#phone-number").val().trim();
+        if (typeof phoneNumber == "undefined" || phoneNumber == null || phoneNumber.length <= 0) {
+            kingLayerMsg('请填写联系电话!', airConditionerDefaultLayerMsgOptions);
+            return false;
+        }
+        return true;
+    }
+
+    // 校验联系电话
+    function checkContactAddressAndTip() {
+        var phoneNumber = $("#contact-address").val().trim();
+        if (typeof phoneNumber == "undefined" || phoneNumber == null || phoneNumber.length <= 0) {
+            kingLayerMsg('请填写联系电话!', airConditionerDefaultLayerMsgOptions);
+            return false;
+        }
+        return true;
+    }
+
+    // 校验故障描述
+    function checkFaultDescriptionAndTip() {
+        var faultDesc = $("#fault-description").val().trim();
+        if (typeof faultDesc == "undefined" || faultDesc == null || faultDesc.length <= 0) {
+            kingLayerMsg('请填写故障描述!', airConditionerDefaultLayerMsgOptions);
+            return false;
+        }
+        return true;
+    }
+
+    // “更新”按钮事件
+    function updateInfoFormSubmitEvent(ev) {
+
+        // 查看 故障状态是否为 新建
+        var faultState = $("#fault-state").val().trim();
+        if (faultState !== '新建') {
+            kingLayerMsg('禁止更新非新建状态的故障！', airConditionerDefaultLayerMsgOptions);
+            return false;
+        }
+
+        // 表单校验
+        if (checkRealNameAndTip() && checkPhoneNumberAndTip() && checkContactAddressAndTip() && checkFaultDescriptionAndTip()) {
+
+            // 确认更新
+            layer.confirm('确认更新?', {icon: 1, title: '提示'}, function (index) {
+                // 向服务器发送更新请求
+                $.ajax({
+                    url: FAULT_BASE_MAPPING_V1 + "/update",
+                    type: "post",
+                    async: false,
+                    data: {
+                        'id': $("#fault-id").val(),
+                        'realName': $("#real-name").val(),
+                        'phoneNumber': $("#phone-number").val(),
+                        'contactAddress': $("#contact-address").val(),
+                        'type': $("#fault-type").val(),
+                        'description': $("#fault-description").val()
+                    },
+                    success: function (result, status, xhr) {
+                        var obj = JSON.parse(result);
+                        var code = obj.code;
+                        var message = obj.message;
+                        var data = obj.data;
+                        if (code !== 200) {
+                            kingLayerMsg(message, airConditionerDefaultLayerMsgOptions);
+                        } else {
+                            kingLayerMsg("更新成功！", airConditionerDefaultLayerMsgOptions);
+                            setTimeout(function () {
+                                window.location.reload();
+                            }, SLEEP_TIME);
+                        }
+                    }
+                });
+                layer.close(index);
+            });
+        }
+        return false;
+    }
+
+    // “删除”按钮事件
+    /**
+     * @return {boolean}
+     */
+    function InfoFormDeleteEvent(ev) {
+        // 查看 故障状态是否为 新建
+        var faultState = $("#fault-state").val().trim();
+        if (faultState !== '新建') {
+            kingLayerMsg('禁止删除非新建状态的故障！', airConditionerDefaultLayerMsgOptions);
+            return false;
+        }
+
+        // 确认删除
+        layer.confirm('确认删除?', {icon: 2, title: '提示'}, function (index) {
+            var url = FAULT_BASE_MAPPING_V1 + "/" + $("#fault-id").val() + "/delete";
+            // 向服务器发送删除请求
+            $.ajax({
+                url: url,
+                type: "post",
+                async: false,
+                success: function (result, status, xhr) {
+                    var obj = JSON.parse(result);
+                    var code = obj.code;
+                    var message = obj.message;
+                    var data = obj.data;
+                    if (code !== 200) {
+                        kingLayerMsg(message, airConditionerDefaultLayerMsgOptions);
+                    } else {
+                        kingLayerMsg("删除成功！", airConditionerDefaultLayerMsgOptions);
+                        setTimeout(function () {
+                            window.location.href = FAULT_BASE_MAPPING_V1 + "/page/online-state"
+                        }, SLEEP_TIME);
+                    }
+                }
+            });
+            layer.close(index);
+        });
+        return false;
+    }
+
+</script>
+</body>
+</html>

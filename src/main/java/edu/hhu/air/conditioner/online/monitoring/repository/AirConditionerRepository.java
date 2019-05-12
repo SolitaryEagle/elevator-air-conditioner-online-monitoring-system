@@ -43,9 +43,13 @@ public interface AirConditionerRepository extends JpaRepository<AirConditioner, 
     int updateByEquipmentId(AirConditioner airConditioner);
 
     @Modifying(flushAutomatically = true, clearAutomatically = true)
-    @Query("update AirConditioner set state = :state, faultDescription = :faultDescription where id = :id")
-    int updateFaultInfo(Long id, AirConditionerStateEnum state, String faultDescription);
+    @Query("update AirConditioner set state = :#{#airConditioner.state}, " +
+            "faultDescription = :#{#airConditioner.faultDescription}, gmtModified = :#{#airConditioner.gmtModified} " +
+            "where id = :#{#airConditioner.id}")
+    int updateStateAndFaultDescriptionById(AirConditioner airConditioner);
 
     long countByRegionCode(RegionCodeEnum regionCode);
+
+    List<AirConditioner> findByUserIdAndState(Long userId, AirConditionerStateEnum state);
 
 }

@@ -1,5 +1,6 @@
 package edu.hhu.air.conditioner.online.monitoring.model.entity;
 
+import edu.hhu.air.conditioner.online.monitoring.constant.enums.FaultStateEnum;
 import edu.hhu.air.conditioner.online.monitoring.constant.enums.FaultTypeEnum;
 import edu.hhu.air.conditioner.online.monitoring.constant.enums.RepairResultEnum;
 
@@ -40,13 +41,18 @@ public class Fault implements Serializable {
     @Enumerated(EnumType.STRING)
     private FaultTypeEnum type;
 
+    @Enumerated(EnumType.STRING)
+    private FaultStateEnum state;
+
+    @Enumerated(EnumType.STRING)
+    private RepairResultEnum repairResult;
+
     @Column(columnDefinition = "text")
     private String description;
 
     private String realName;
     private String contactAddress;
     private String phoneNumber;
-    private String handleResult;
 
     @Column(columnDefinition = "bigint(20) UNSIGNED")
     private Long airConditionerId;

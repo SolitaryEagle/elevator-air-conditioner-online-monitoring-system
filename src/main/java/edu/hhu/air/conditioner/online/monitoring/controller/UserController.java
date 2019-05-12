@@ -1,7 +1,9 @@
 package edu.hhu.air.conditioner.online.monitoring.controller;
 
 import edu.hhu.air.conditioner.online.monitoring.constant.SessionConsts;
+import edu.hhu.air.conditioner.online.monitoring.constant.UrlMappingConsts;
 import edu.hhu.air.conditioner.online.monitoring.constant.enums.ErrorCodeEnum;
+import edu.hhu.air.conditioner.online.monitoring.constant.enums.RoleEnum;
 import edu.hhu.air.conditioner.online.monitoring.exception.ActivationException;
 import edu.hhu.air.conditioner.online.monitoring.exception.UserException;
 import edu.hhu.air.conditioner.online.monitoring.model.entity.User;
@@ -11,6 +13,8 @@ import edu.hhu.air.conditioner.online.monitoring.model.request.UserResetPassword
 import edu.hhu.air.conditioner.online.monitoring.model.response.UserResponse;
 import edu.hhu.air.conditioner.online.monitoring.service.MailService;
 import edu.hhu.air.conditioner.online.monitoring.service.UserService;
+import edu.hhu.air.conditioner.online.monitoring.util.EntityTranslatorUtils;
+import edu.hhu.air.conditioner.online.monitoring.util.TimestampUtils;
 import edu.hhu.air.conditioner.online.monitoring.util.VerificationCodeUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -18,10 +22,10 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,6 +35,8 @@ import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author 覃国强
@@ -38,7 +44,7 @@ import javax.validation.constraints.NotNull;
  */
 @Slf4j
 @RestController
-@RequestMapping("/v1/monitoring-system/users")
+@RequestMapping(UrlMappingConsts.USER_BASE_MAPPING_V1)
 public class UserController {
 
     @Autowired
@@ -47,12 +53,6 @@ public class UserController {
     private MailService mailService;
     @Autowired
     private UserService userService;
-
-    @GetMapping("/test")
-    public void test(HttpSession session, HttpServletRequest request, HttpServletResponse response) {
-        int a = 1 / 0;
-        System.out.println(session.getAttribute(SessionConsts.VERIFICATION_CODE_KEY));
-    }
 
     /**
      * 注册请求
@@ -77,12 +77,11 @@ public class UserController {
     }
 
     /**
-     * 获取激活验证码请求
+     * 获取激活验证码请求  TODO 应该放到 MailController 中
      *
      * @param receiverEmail 接收验证码的邮箱
      * @return 邮件发送的反馈信息
      */
-    @ResponseBody
     @GetMapping("/activation")
     public String sendActivationCode(@RequestParam @NotNull @Email String receiverEmail) {
         // 校验该邮箱是否存在
@@ -142,7 +141,7 @@ public class UserController {
         User user = User.builder().email(userResetPasswordRequest.getEmail())
                 .password(userResetPasswordRequest.getNewPassword()).build();
         user.setPassword(userResetPasswordRequest.getNewPassword());
-        userService.updatePassword(user);
+        userService.updatePasswordByEmail(user);
         log.info("密码重置成功！email：{}", userResetPasswordRequest.getEmail());
         return "密码重置成功，请重新登录！";
     }
@@ -163,7 +162,7 @@ public class UserController {
             testUser = userService.getByUsername(usernameOrEmail);
         }
         // 验证密码是否正确
-        if (!userService.validatePassword(testUser, password)) {
+        if (!userService.validatePassword(testUser.getPassword(), password)) {
             throw new UserException(ErrorCodeEnum.INCONSISTENT, "password", "用户名、邮箱或密码错误!");
         }
         // 验证是否激活
@@ -182,12 +181,43 @@ public class UserController {
      * @return 登录的 User 部分信息
      */
     @PostMapping("/auto-login")
-    public UserResponse autoLogin(@ModelAttribute UserAutoLoginRequest userAutoLoginRequest) {
-        User testUser = userService.autoLogin(userAutoLoginRequest.toUser());
+    public UserResponse autoLogin(@ModelAttribute UserAutoLoginRequest userAutoLoginRequest)
+            throws InstantiationException, IllegalAccessException {
+
+        User translateUser = EntityTranslatorUtils.translate(userAutoLoginRequest, User.class);
+        translateUser.setGmtCreate(TimestampUtils.fromDate(userAutoLoginRequest.getGmtCreate()));
+        translateUser.setGmtModified(TimestampUtils.fromDate(userAutoLoginRequest.getGmtModified()));
+
+        User testUser = userService.autoLogin(translateUser);
         session.setAttribute(SessionConsts.LOGIN_USER_KEY, testUser);
         log.debug("自动登录成功! userId: {}, username: {}, email: {}", testUser.getId(), testUser.getUsername(),
                 testUser.getEmail());
         return UserResponse.valueOf(testUser);
+    }
+
+    @PostMapping("/logout")
+    public void logout(){
+        session.invalidate();
+    }
+
+    @GetMapping("/{id}")
+    public UserResponse get(@PathVariable Long id) {
+        User user = userService.getById(id);
+        UserResponse userResponse = user2UserResponse(user);
+        return userResponse;
+    }
+
+    private UserResponse user2UserResponse(User user) {
+        UserResponse response = new UserResponse();
+        BeanUtils.copyProperties(user, response);
+        return response;
+    }
+
+    @GetMapping("/role/{role}")
+    public List<UserResponse> listByRole(@PathVariable RoleEnum role){
+        List<User> list = userService.listByRole(role);
+        List<UserResponse> result = list.stream().map(this::user2UserResponse).collect(Collectors.toList());
+        return result;
     }
 
 
@@ -196,7 +226,7 @@ public class UserController {
     // 修改密码
 
     @PutMapping("/password")
-    public String updatePassword(@SessionAttribute(SessionConsts.LOGIN_USER_KEY) User user,
+    public String updatePasswordByEmail(@SessionAttribute(SessionConsts.LOGIN_USER_KEY) User user,
             @Size(min = 8, max = 16) String oldPassword, @Size(min = 8, max = 16) String newPassword,
             String reNewPassword) {
 
@@ -214,7 +244,7 @@ public class UserController {
         }
 
         UserVO userVO = UserVO.builder().email(user.getEmail()).password(newPassword).build();
-        int result = userService.updatePassword(userVO);
+        int result = userService.updatePasswordByEmail(userVO);
         if (result <= 0) {
             return "修改密码失败";
         }

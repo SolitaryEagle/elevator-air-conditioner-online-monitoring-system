@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>AddInfo</title>
+    <title>Air Conditioner Add</title>
 
     <link href="https://cdn.staticfile.org/twitter-bootstrap/3.4.1/css/bootstrap.min.css" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
 
@@ -34,11 +34,12 @@
             <div class="layui-container" style="
                 border: 1px solid #1E9FFF;
                 float: right;
-                margin: 50px 310px 0 0;
+                margin: 50px 200px 0 0;
                 padding: 20px;
                 background-color: #e2e2e2;
                 border-radius: 10px;
                   ">
+                <h3 style="text-align: center">设备信息填写</h3>
                 <form id="add-info-form" action="#" method="post" class="form-horizontal" role="form" style="width: 95%; margin-top: 50px;">
                     <div class="form-group">
                         <label for="brand" class="col-sm-2 control-label">品牌</label>
@@ -105,8 +106,9 @@
         // 设置“重置”按钮事件
         document.getElementById('reset-btn').onclick = addInfoFormResetEvent;
 
-        // layui 初始化
-        layuiInit();
+        // 退出事件
+        document.getElementById('logout-btn-id').onclick = logoutEvent;
+
     }
 
 </script>
@@ -118,19 +120,11 @@
     // 页面初始化
     function pageAfterOnloadInit() {
         initHeaderNavigationDiv();
-        initSideNavigationDiv();
+        initSideNavigationDivOrdinaryEquipment();
         initFooterDiv();
+        // layui 初始化
+        layuiInit();
     }
-
-    // layui 初始化
-    function layuiInit() {
-        layui.use(['element', 'layer'], function () {
-            var element = layui.element;
-            var layer = layui.layer;
-
-        });
-    }
-
 
     // 添加信息表单按钮事件
     function addInfoFormSubmitEvent(ev) {

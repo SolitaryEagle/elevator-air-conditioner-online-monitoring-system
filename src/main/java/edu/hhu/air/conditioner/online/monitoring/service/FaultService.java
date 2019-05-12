@@ -1,7 +1,11 @@
 package edu.hhu.air.conditioner.online.monitoring.service;
 
+import edu.hhu.air.conditioner.online.monitoring.constant.enums.FaultStateEnum;
 import edu.hhu.air.conditioner.online.monitoring.model.entity.Fault;
-import edu.hhu.air.conditioner.online.monitoring.model.vo.FaultVO;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Page;
+
+import java.util.List;
 
 /**
  * @author 覃国强
@@ -9,14 +13,30 @@ import edu.hhu.air.conditioner.online.monitoring.model.vo.FaultVO;
  */
 public interface FaultService {
 
-    Fault save(FaultVO faultVO);
+    Fault add(Fault fault);
 
-    void updateRepairUserId(FaultVO faultVO);
+    void deleteById(Long id);
 
-    void updateRepairInfo(FaultVO faultVO);
+    void updateById(Fault fault);
 
-    void updateRevisitInfo(FaultVO faultVO);
+    int updateStateById(Fault fault);
 
-    void updateEvaluationInfo(FaultVO faultVO);
+    int updateRepairResultById(Fault fault);
+
+    List<Fault> listAll();
+
+    List<Fault> listAllByReportUserId(Long reportUserId);
+
+    Page<Fault> listAll(int page, int size);
+
+    Page<Fault> listAllByReportUserId(Long reportUserId, int page, int size);
+
+    List<Fault> listAll(Example<Fault> example);
+
+    Fault getById(Long id);
+
+    List<Fault> listAllByState(FaultStateEnum state);
+
+    List<Fault> listByAirConditionerId(Long airConditionerId);
 
 }

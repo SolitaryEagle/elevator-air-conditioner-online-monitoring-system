@@ -10,7 +10,7 @@ import edu.hhu.air.conditioner.online.monitoring.model.entity.User;
 import edu.hhu.air.conditioner.online.monitoring.repository.UserRepository;
 import edu.hhu.air.conditioner.online.monitoring.service.UserService;
 import edu.hhu.air.conditioner.online.monitoring.util.PasswordEncryptionUtils;
-import edu.hhu.air.conditioner.online.monitoring.util.TimeStampUtils;
+import edu.hhu.air.conditioner.online.monitoring.util.TimestampUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -32,8 +33,18 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
 
-    @Transactional(rollbackFor = Exception.class)
+    /**
+     * 添加 user 记录。参数 user 中需要的字段：
+     * username：用户名
+     * password：密码明文
+     * email：邮箱
+     * phoneNumber：电话号码
+     *
+     * @param user 聚合 user 字段的参数
+     * @return 保存成功后的 user 对象
+     */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public User add(User user) {
         Optional<User> optional = userRepository.findByUsername(user.getUsername());
         if (optional.isPresent()) {
@@ -47,8 +58,8 @@ public class UserServiceImpl implements UserService {
         }
 
         // 设置默认值
-        user.setGmtCreate(TimeStampUtils.now());
-        user.setGmtModified(TimeStampUtils.now());
+        user.setGmtCreate(TimestampUtils.now());
+        user.setGmtModified(TimestampUtils.now());
         user.setActivation(Boolean.FALSE);
         user.setRole(RoleEnum.ORDINARY);
 
@@ -64,15 +75,23 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(user);
     }
 
-    @Transactional(rollbackFor = Exception.class)
+    /**
+     * 更新 User 的 activation 字段。参数 user 中需要的字段：
+     * id：主键
+     * activation：激活状态
+     *
+     * @param user 聚合 user 字段的参数
+     * @return 数据库受影响的行数
+     */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int updateActivation(User user) {
         Optional<User> optional = userRepository.findById(user.getId());
         if (!optional.isPresent()) {
             log.debug("用户不存在！userId：{}", user.getId());
             throw new UserException(ErrorCodeEnum.MISSING, "userId", "用户不存在");
         }
-        user.setGmtModified(TimeStampUtils.now());
+        user.setGmtModified(TimestampUtils.now());
         int result = userRepository.updateActivationById(user);
         if (result <= 0) {
             log.warn("更新activation字段失败； userId: {}, userEmail: {}, activation: {}",
@@ -83,9 +102,17 @@ public class UserServiceImpl implements UserService {
         return result;
     }
 
-    @Transactional(rollbackFor = Exception.class)
+    /**
+     * 更新 User 的 password 字段。参数 user 中需要的字段：
+     * password：密码明文
+     * email：邮箱
+     *
+     * @param user 聚合 user 字段的参数
+     * @return 数据库受影响的行数
+     */
     @Override
-    public int updatePassword(User user) {
+    @Transactional(rollbackFor = Exception.class)
+    public int updatePasswordByEmail(User user) {
         // 更新先查询
         Optional<User> optional = userRepository.findByEmail(user.getEmail());
         if (!optional.isPresent()) {
@@ -102,7 +129,7 @@ public class UserServiceImpl implements UserService {
             throw new BusinessException(ErrorCodeEnum.PASSWORD_ENCRYPTION_ERROR, "password",
                     SystemConsts.SYSTEM_ERROR_PROMPT);
         }
-        user.setGmtModified(TimeStampUtils.now());
+        user.setGmtModified(TimestampUtils.now());
         int result = userRepository.updatePasswordByEmail(user);
         if (result <= 0) {
             log.warn("更新password字段失败； userId: {}, userEmail: {}, password: {}", user.getId(), user.getEmail(),
@@ -111,18 +138,6 @@ public class UserServiceImpl implements UserService {
                     SystemConsts.SYSTEM_ERROR_PROMPT);
         }
         return result;
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    @Override
-    public int update(User user) {
-        Optional<User> optional = userRepository.findByUsername(user.getUsername());
-        if (optional.isPresent()) {
-            log.debug("用户名已存在！username: {}", user.getUsername());
-            throw new UserException(ErrorCodeEnum.ALREADY_EXISTS, "username", "用户名已存在");
-        }
-        user.setGmtModified(TimeStampUtils.now());
-        return userRepository.updateById(user);
     }
 
     @Override
@@ -161,16 +176,30 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean validatePassword(User user, String password) {
+    public boolean validatePassword(String passwordRecord, String passwordInput) {
         try {
-            return PasswordEncryptionUtils.validate(password, user.getPassword());
+            return PasswordEncryptionUtils.validate(passwordInput, passwordRecord);
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-            log.error("密码验证器错误，password：{}", password, e);
+            log.error("密码验证器错误，password：{}", passwordInput, e);
             throw new BusinessException(ErrorCodeEnum.PASSWORD_DECRYPTION_ERROR, "password",
                     SystemConsts.SYSTEM_ERROR_PROMPT);
         }
     }
 
+    /**
+     * 自动登录。参数 user 中需要的字段：
+     * id：主键
+     * gmtCreate：记录创建时间
+     * gmtModified：记录修改时间
+     * username：用户名
+     * email：邮箱
+     * phoneNumber：电话号码
+     * activation：激活状态
+     * role：用户角色
+     *
+     * @param user 聚合 user 字段的参数
+     * @return 从数据库中拿到的 User 对象
+     */
     @Override
     public User autoLogin(User user) {
         User testUser = getById(user.getId());
@@ -184,6 +213,13 @@ public class UserServiceImpl implements UserService {
         }
         log.debug("自动登录账户记录已更改！id ：{}", user.getId());
         throw new UserException(ErrorCodeEnum.AUTO_LOGIN_ERROR, "autoLogin", "账户记录已更改，无法自动登入，请手动登录！");
+    }
+
+    @Override
+    public List<User> listByRole(RoleEnum role) {
+        List<User> list = userRepository.findByRole(role);
+        log.info("根据 role 获取 User 成功！role：{}", role);
+        return list;
     }
 
     // 检查一个User的数据库记录是否被更改过     TODO 这个方法名还没想好，不知道合不合适

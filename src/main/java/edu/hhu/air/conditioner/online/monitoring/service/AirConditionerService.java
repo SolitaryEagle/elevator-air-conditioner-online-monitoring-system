@@ -1,6 +1,6 @@
 package edu.hhu.air.conditioner.online.monitoring.service;
 
-import edu.hhu.air.conditioner.online.monitoring.model.dto.AirConditionerDTO;
+import edu.hhu.air.conditioner.online.monitoring.constant.enums.AirConditionerStateEnum;
 import edu.hhu.air.conditioner.online.monitoring.model.entity.AirConditioner;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
@@ -14,29 +14,47 @@ import java.util.List;
  */
 public interface AirConditionerService {
 
-    AirConditionerDTO add(AirConditionerDTO airConditionerDTO) throws IOException;
+    /**
+     * 添加 AirConditioner 记录。参数 airConditioner 中需要的字段：
+     * brand：品牌
+     * model：型号
+     * seller：销售方
+     * addressString：地址的普通形式
+     * addressId：地址主键
+     * userId: 所属者主键
+     *
+     * @param airConditioner 聚合 airConditioner 字段的参数
+     * @return 保存成功后的 airConditioner 对象
+     * @throws IOException 获取地址坐标时可能会抛出此异常
+     */
+    AirConditioner add(AirConditioner airConditioner) throws IOException;
 
     void deleteByEquipmentId(String equipmentId);
 
-    AirConditionerDTO updateByEquipmentId(AirConditionerDTO airConditionerDTO) throws IOException;
+    AirConditioner updateByEquipmentId(AirConditioner airConditioner) throws IOException;
+
+    int updateStateAndFaultDescriptionById(AirConditioner airConditioner);
 
     long count();
 
-    AirConditionerDTO getById(Long id);
+    AirConditioner getById(Long id);
 
-    List<AirConditionerDTO> listAll();
+    List<AirConditioner> listAll();
 
-    Page<AirConditionerDTO> listAll(int page, int size);
+    Page<AirConditioner> listAll(int page, int size);
 
-    List<AirConditionerDTO> listAll(Specification<AirConditioner> specification);
+    List<AirConditioner> listAll(Specification<AirConditioner> specification);
 
-    Page<AirConditionerDTO> listAll(Specification<AirConditioner> specification, int page, int size);
+    Page<AirConditioner> listAll(Specification<AirConditioner> specification, int page, int size);
 
-    List<AirConditionerDTO> listAllByUserId(Long userId);
+    List<AirConditioner> listAllByUserId(Long userId);
 
-    Page<AirConditionerDTO> listAllByUserId(Long userId, int page, int size);
+    Page<AirConditioner> listAllByUserId(Long userId, int page, int size);
 
-    AirConditionerDTO getByEquipmentId(String equipmentId);
+    AirConditioner getByEquipmentId(String equipmentId);
+
+    List<AirConditioner> listByUserIdAndState(Long userId, AirConditionerStateEnum state);
+
 
 
 

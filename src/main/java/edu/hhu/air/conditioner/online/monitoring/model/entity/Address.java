@@ -1,13 +1,11 @@
 package edu.hhu.air.conditioner.online.monitoring.model.entity;
 
-import edu.hhu.air.conditioner.online.monitoring.util.TimeStampUtils;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -37,19 +35,13 @@ public class Address implements Serializable {
     private String district;
     private String detail;
 
-    public Address(String province, String city, String district) {
-        this.province = province;
-        this.city = city;
-        this.district = district;
+    public String toSimpleString() {
+        return province + city + district + detail;
     }
 
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
-    }
-
-    public String toSimpleString() {
-        return province + city + district + detail;
     }
 
 }

@@ -8,9 +8,9 @@ import java.util.Date;
  * @author 覃国强
  * @date 2019/5/2 15:09
  */
-public final class TimeStampUtils {
+public final class TimestampUtils {
 
-    private TimeStampUtils() {}
+    private TimestampUtils() {}
 
     public static Timestamp now() {
         return Timestamp.valueOf(LocalDateTime.now());

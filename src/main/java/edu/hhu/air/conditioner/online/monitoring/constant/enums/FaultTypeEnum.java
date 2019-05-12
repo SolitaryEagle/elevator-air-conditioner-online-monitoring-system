@@ -3,6 +3,8 @@ package edu.hhu.air.conditioner.online.monitoring.constant.enums;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.Random;
+
 /**
  * @author 覃国强
  * @date 2019-03-01
@@ -36,5 +38,11 @@ public enum FaultTypeEnum {
 
     private int value;
     private String message;
+
+    public static FaultTypeEnum random() {
+        FaultTypeEnum[] values = values();
+        Random random = new Random();
+        return values[random.nextInt(values.length)];
+    }
 
 }

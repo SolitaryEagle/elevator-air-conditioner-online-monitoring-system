@@ -1,3 +1,5 @@
+USE `elevator_air_conditioner_online_monitoring_system`;
+
 -- 创建本系统的数据库时注意啦！
 -- 首先，如果存在数据表 air_conditioner ，则先删除该数据表
 DROP TABLE IF EXISTS `air_conditioner`;

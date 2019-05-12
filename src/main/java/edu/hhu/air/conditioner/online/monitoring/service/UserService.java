@@ -1,7 +1,10 @@
 package edu.hhu.air.conditioner.online.monitoring.service;
 
+import edu.hhu.air.conditioner.online.monitoring.constant.enums.RoleEnum;
 import edu.hhu.air.conditioner.online.monitoring.model.entity.User;
 import edu.hhu.air.conditioner.online.monitoring.model.request.UserAutoLoginRequest;
+
+import java.util.List;
 
 /**
  * @author 覃国强
@@ -13,9 +16,7 @@ public interface UserService {
 
     int updateActivation(User user);
 
-    int updatePassword(User user);
-
-    int update(User user);
+    int updatePasswordByEmail(User user);
 
     boolean existsById(Long id);
 
@@ -25,8 +26,10 @@ public interface UserService {
 
     User getByEmail(String email);
 
-    boolean validatePassword(User user, String password);
+    boolean validatePassword(String passwordRecord, String passwordInput);
 
     User autoLogin(User user);
+
+    List<User> listByRole(RoleEnum role);
 
 }

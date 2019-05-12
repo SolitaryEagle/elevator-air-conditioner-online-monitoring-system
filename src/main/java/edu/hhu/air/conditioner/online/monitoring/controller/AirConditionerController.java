@@ -1,11 +1,14 @@
 package edu.hhu.air.conditioner.online.monitoring.controller;
 
 import edu.hhu.air.conditioner.online.monitoring.constant.SessionConsts;
+import edu.hhu.air.conditioner.online.monitoring.constant.UrlMappingConsts;
+import edu.hhu.air.conditioner.online.monitoring.constant.enums.AirConditionerStateEnum;
 import edu.hhu.air.conditioner.online.monitoring.constant.enums.RoleEnum;
 import edu.hhu.air.conditioner.online.monitoring.model.Interval;
-import edu.hhu.air.conditioner.online.monitoring.model.dto.AirConditionerDTO;
+import edu.hhu.air.conditioner.online.monitoring.model.entity.Address;
 import edu.hhu.air.conditioner.online.monitoring.model.entity.AirConditioner;
 import edu.hhu.air.conditioner.online.monitoring.model.entity.User;
+import edu.hhu.air.conditioner.online.monitoring.model.request.AddressRequest;
 import edu.hhu.air.conditioner.online.monitoring.model.request.AirConditionerAddRequest;
 import edu.hhu.air.conditioner.online.monitoring.model.request.AirConditionerSearchRequest;
 import edu.hhu.air.conditioner.online.monitoring.model.request.AirConditionerUpdateRequest;
@@ -13,10 +16,16 @@ import edu.hhu.air.conditioner.online.monitoring.model.response.AirConditionerDe
 import edu.hhu.air.conditioner.online.monitoring.model.response.AirConditionerMapResponse;
 import edu.hhu.air.conditioner.online.monitoring.model.response.AirConditionerTableResponse;
 import edu.hhu.air.conditioner.online.monitoring.model.response.PageResponse;
+import edu.hhu.air.conditioner.online.monitoring.model.response.UserResponse;
+import edu.hhu.air.conditioner.online.monitoring.service.AddressService;
 import edu.hhu.air.conditioner.online.monitoring.service.AirConditionerService;
+import edu.hhu.air.conditioner.online.monitoring.service.UserService;
+import edu.hhu.air.conditioner.online.monitoring.util.EntityTranslatorUtils;
 import edu.hhu.air.conditioner.online.monitoring.util.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,7 +34,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
@@ -36,8 +44,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
-import java.util.function.Function;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -45,7 +52,7 @@ import java.util.stream.Collectors;
  * @date 2019-02-20
  */
 @RestController
-@RequestMapping("/v1/monitoring-system/air-conditioners")
+@RequestMapping(UrlMappingConsts.AIR_CONDITIONER_BASE_MAPPING_V1)
 public class AirConditionerController {
 
     @Autowired
@@ -53,6 +60,12 @@ public class AirConditionerController {
 
     @Autowired
     private AirConditionerService airConditionerService;
+    @Autowired
+    private AddressService addressService;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private UserController userController;
 
     /**
      * 设备信息录入
@@ -63,11 +76,21 @@ public class AirConditionerController {
      * @throws IOException 地址查询时可能会发生 IO 异常
      */
     @PostMapping("/add")
-    public AirConditionerDTO add(@SessionAttribute(SessionConsts.LOGIN_USER_KEY) User user,
-            @ModelAttribute AirConditionerAddRequest airConditionerAddRequest) throws IOException {
-        AirConditionerDTO airConditionerDTO = airConditionerAddRequest.toAirConditionerDTO();
-        airConditionerDTO.setUser(user);
-        return airConditionerService.add(airConditionerDTO);
+    public AirConditioner add(@SessionAttribute(SessionConsts.LOGIN_USER_KEY) User user,
+            @ModelAttribute AirConditionerAddRequest airConditionerAddRequest)
+            throws IOException, InstantiationException, IllegalAccessException {
+        AddressRequest addressRequest = airConditionerAddRequest.getAddress();
+        // 获取 Address 实体类
+        Address address = getAddressByAddressRequest(addressRequest);
+
+        // 获取 AirConditioner 实体类
+        AirConditioner translateAirConditioner =
+                EntityTranslatorUtils.translate(airConditionerAddRequest, AirConditioner.class);
+        translateAirConditioner.setAddressString(addressRequest.toSimpleString());
+        translateAirConditioner.setAddressId(address.getId());
+        translateAirConditioner.setUserId(user.getId());
+
+        return airConditionerService.add(translateAirConditioner);
     }
 
     /**
@@ -81,6 +104,24 @@ public class AirConditionerController {
     }
 
     /**
+     * 根据 addressRequest 从数据库中获取一个 Address 对象，如果数据库中已存在此对象，直接返回；否则，先插入，再返回。
+     *
+     * @param addressRequest 给定的 addressRequest 对象
+     * @return 数据库中的 Address 实体对象
+     * @throws InstantiationException 实体转换可能会抛出此异常
+     * @throws IllegalAccessException 实体转换可能会抛出此异常
+     */
+    private Address getAddressByAddressRequest(AddressRequest addressRequest)
+            throws InstantiationException, IllegalAccessException {
+        Address translateAddress = EntityTranslatorUtils.translate(addressRequest, Address.class);
+        Address testAddress = addressService.getByExample(Example.of(translateAddress));
+        if (Objects.isNull(testAddress)) {
+            testAddress = addressService.add(translateAddress);
+        }
+        return testAddress;
+    }
+
+    /**
      * 依据 equipmentId 更新 设备信息
      *
      * @param request 更新表单信息
@@ -88,9 +129,29 @@ public class AirConditionerController {
      */
     @PostMapping("/update")
     public AirConditionerDetailResponse updateByEquipmentId(@ModelAttribute AirConditionerUpdateRequest request)
-            throws IOException {
-        AirConditionerDTO airConditionerDTO = airConditionerService.updateByEquipmentId(request.toAirConditionerDTO());
-        return AirConditionerDetailResponse.valueOf(airConditionerDTO);
+            throws IOException, IllegalAccessException, InstantiationException {
+
+        AddressRequest requestAddress = request.getAddress();
+        Address address = getAddressByAddressRequest(requestAddress);
+
+        AirConditioner translateAirConditioner = EntityTranslatorUtils.translate(request, AirConditioner.class);
+        translateAirConditioner.setAddressString(requestAddress.toSimpleString());
+        translateAirConditioner.setAddressId(address.getId());
+        AirConditioner airConditioner = airConditionerService.updateByEquipmentId(translateAirConditioner);
+        AirConditionerDetailResponse response = airConditioner2AirConditionerDetailResponse(airConditioner);
+        return response;
+    }
+
+    private AirConditionerDetailResponse airConditioner2AirConditionerDetailResponse(AirConditioner airConditioner) {
+        AirConditionerDetailResponse response = new AirConditionerDetailResponse();
+        BeanUtils.copyProperties(airConditioner, response);
+        response.setEquipmentState(airConditioner.getState());
+        response.setWindSpeed(airConditioner.getWindSpeed().getValue());
+        Address address = addressService.getById(airConditioner.getAddressId());
+        response.setAddress(address);
+        UserResponse user = userController.get(airConditioner.getUserId());
+        response.setUser(user);
+        return response;
     }
 
     /**
@@ -103,34 +164,27 @@ public class AirConditionerController {
     public Map<String, Map<String, List<AirConditionerMapResponse>>> getAirConditionerMapDataByUserRole(
             @SessionAttribute(SessionConsts.LOGIN_USER_KEY) User user) {
 
-        List<AirConditionerDTO> list;
-        if (RoleEnum.ADMINISTRATOR.equals(user.getRole()) || RoleEnum.CUSTOM_SERVICE.equals(user.getRole())) {
+        List<AirConditioner> list;
+        if (RoleEnum.REPAIRMAN.equals(user.getRole()) || RoleEnum.CUSTOM_SERVICE.equals(user.getRole())) {
             list = airConditionerService.listAll();
         } else {
             list = airConditionerService.listAllByUserId(user.getId());
         }
         List<AirConditionerMapResponse> collect =
-                list.stream().map(AirConditionerMapResponse::valueOf).collect(Collectors.toList());
+                list.stream().map(this::airConditioner2AirConditionerMapResponse).collect(Collectors.toList());
+
         Map<String, Map<String, List<AirConditionerMapResponse>>> result =
-                collect.stream().collect(Collectors.groupingBy(
-                        airConditionerMapResponse -> airConditionerMapResponse.getAddress().getProvince(),
-                        Collectors.groupingBy(
-                                airConditionerMapResponse -> airConditionerMapResponse.getAddress().getCity())));
-
-        /*
-        for (Map.Entry<String, Map<String, List<AirConditionerMapResponse>>> entry : result.entrySet()) {
-            System.out.println(entry.getKey());
-            for (Map.Entry<String, List<AirConditionerMapResponse>> innerEntry : entry.getValue().entrySet()) {
-                System.out.println("\t" + innerEntry.getKey());
-                innerEntry.getValue().forEach(value -> System.out.println("\t\t" + value.getEquipmentId() + " -> " +
-                        value.getAddressString()));
-            }
-        }
-        */
-
-
-
+                collect.stream().collect(Collectors.groupingBy(value -> value.getAddress().getProvince(),
+                        Collectors.groupingBy(value -> value.getAddress().getCity())));
         return result;
+    }
+
+    private AirConditionerMapResponse airConditioner2AirConditionerMapResponse(AirConditioner airConditioner) {
+        AirConditionerMapResponse response = new AirConditionerMapResponse();
+        BeanUtils.copyProperties(airConditioner, response);
+        Address address = addressService.getById(airConditioner.getAddressId());
+        response.setAddress(address);
+        return response;
     }
 
     /**
@@ -141,13 +195,30 @@ public class AirConditionerController {
      */
     @GetMapping
     public List<AirConditionerTableResponse> listByUserRole(@SessionAttribute(SessionConsts.LOGIN_USER_KEY) User user) {
-        List<AirConditionerDTO> result;
-        if (RoleEnum.ADMINISTRATOR.equals(user.getRole()) || RoleEnum.CUSTOM_SERVICE.equals(user.getRole())) {
+        List<AirConditioner> result;
+        if (RoleEnum.REPAIRMAN.equals(user.getRole()) || RoleEnum.CUSTOM_SERVICE.equals(user.getRole())) {
             result = airConditionerService.listAll();
         } else {
             result = airConditionerService.listAllByUserId(user.getId());
         }
-        return result.stream().map(AirConditionerTableResponse::valueOf).collect(Collectors.toList());
+        return result.stream().map(this::airConditioner2AirConditionerTableResponse).collect(Collectors.toList());
+    }
+
+    @GetMapping("/state/{state}")
+    public List<AirConditioner> listByUserIdAndState(@SessionAttribute(SessionConsts.LOGIN_USER_KEY) User user,
+            @PathVariable AirConditionerStateEnum state) {
+        List<AirConditioner> list = airConditionerService.listByUserIdAndState(user.getId(), state);
+        return list;
+    }
+
+    private AirConditionerTableResponse airConditioner2AirConditionerTableResponse(AirConditioner airConditioner) {
+        AirConditionerTableResponse response = new AirConditionerTableResponse();
+        BeanUtils.copyProperties(airConditioner, response);
+        Address address = addressService.getById(airConditioner.getAddressId());
+        response.setAddress(address.toSimpleString());
+        response.setWindSpeed(airConditioner.getWindSpeed().getValue());
+        response.setEquipmentState(airConditioner.getState().getValue());
+        return response;
     }
 
     /**
@@ -168,13 +239,13 @@ public class AirConditionerController {
             List<AirConditionerTableResponse> data = listByUserRole(user);
             return PageResponse.of(data.size(), data);
         }
-        Page<AirConditionerDTO> result;
-        if (RoleEnum.ADMINISTRATOR.equals(user.getRole()) || RoleEnum.CUSTOM_SERVICE.equals(user.getRole())) {
+        Page<AirConditioner> result;
+        if (RoleEnum.REPAIRMAN.equals(user.getRole()) || RoleEnum.CUSTOM_SERVICE.equals(user.getRole())) {
             result = airConditionerService.listAll(page, limit);
         } else {
             result = airConditionerService.listAllByUserId(user.getId(), page, limit);
         }
-        return PageResponse.of(result, AirConditionerTableResponse::valueOf);
+        return PageResponse.of(result, this::airConditioner2AirConditionerTableResponse);
     }
 
     /**
@@ -192,8 +263,8 @@ public class AirConditionerController {
             searchRequest.setUserId(user.getId());
         }
         Specification<AirConditioner> specification = getAirConditionerSearchRequestSpecification(searchRequest);
-        List<AirConditionerDTO> result = airConditionerService.listAll(specification);
-        return result.stream().map(AirConditionerTableResponse::valueOf).collect(Collectors.toList());
+        List<AirConditioner> result = airConditionerService.listAll(specification);
+        return result.stream().map(this::airConditioner2AirConditionerTableResponse).collect(Collectors.toList());
     }
 
     /**
@@ -295,8 +366,8 @@ public class AirConditionerController {
             searchRequest.setUserId(user.getId());
         }
         Specification<AirConditioner> specification = getAirConditionerSearchRequestSpecification(searchRequest);
-        Page<AirConditionerDTO> result = airConditionerService.listAll(specification, page, limit);
-        return PageResponse.of(result, AirConditionerTableResponse::valueOf);
+        Page<AirConditioner> result = airConditionerService.listAll(specification, page, limit);
+        return PageResponse.of(result, this::airConditioner2AirConditionerTableResponse);
     }
 
     /**
@@ -307,11 +378,10 @@ public class AirConditionerController {
      */
     @GetMapping("/{equipmentId}")
     public AirConditionerDetailResponse getByEquipmentId(@PathVariable String equipmentId) {
-        AirConditionerDTO airConditionerDTO = airConditionerService.getByEquipmentId(equipmentId);
-        return AirConditionerDetailResponse.valueOf(airConditionerDTO);
+        AirConditioner airConditioner = airConditionerService.getByEquipmentId(equipmentId);
+        AirConditionerDetailResponse response = airConditioner2AirConditionerDetailResponse(airConditioner);
+        return response;
     }
-
-
 
 
 /*

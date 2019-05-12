@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Fault Add</title>
+
+    <link href="https://cdn.staticfile.org/twitter-bootstrap/3.4.1/css/bootstrap.min.css" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+
+    <link href="../../static/layui/css/layui.css" th:href="@{/webjars/layui/css/layui.css}" rel="stylesheet">
+
+    <script type="text/javascript" src="https://cdn.staticfile.org/jquery/3.4.0/jquery.min.js" th:src="@{/webjars/jquery/jquery.min.js}"></script>
+    <script type="text/javascript" src="https://cdn.staticfile.org/twitter-bootstrap/3.4.1/js/bootstrap.min.js" th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+    <script type="text/javascript" src="https://cdn.staticfile.org/distpicker/2.0.5/distpicker.min.js"></script>
+    <script type="text/javascript" src="https://cdn.staticfile.org/store.js/1.3.20/store.min.js" th:src="@{/webjars/store.js/store.min.js}"></script>
+
+    <script type="text/javascript" src="../../static/layui/layui.all.js" th:src="@{/webjars/layui/layui.all.js}"></script>
+    <script type="text/javascript" src="../../static/layui/layui.js" th:src="@{/webjars/layui/layui.js}"></script>
+    <script type="text/javascript" src="../../static/js/common.js" th:src="@{/js/common.js}"></script>
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+
+    <!-- 头部导航栏 -->
+    <div id="header-navigation-div-id"></div>
+
+    <!-- 侧边导航栏 -->
+    <div id="side-navigation-div-id"></div>
+
+    <div class="layui-body" style="left: 300px;">
+        <!-- 内容主体区域 -->
+        <div style="padding: 15px;">
+            <div class="layui-container" style="
+                border: 1px solid #1E9FFF;
+                float: right;
+                margin: 50px 200px 0 0;
+                padding: 20px;
+                background-color: #e2e2e2;
+                border-radius: 10px;
+                  ">
+                <h3 style="text-align: center">故障信息填写</h3>
+                <form id="add-info-form" action="#" method="post" class="form-horizontal" role="form" style="width: 95%; margin-top: 50px;">
+                    <div class="form-group">
+                        <label for="equipmentId" class="col-sm-2 control-label">设备编号</label>
+                        <div class="col-sm-4">
+                            <select id="equipmentId" class="form-control">
+                                <option value="">---- 选择设备编号 ----</option>
+                            </select>
+                        </div>
+                        <label for="fault-type" class="col-sm-2 control-label">故障类型</label>
+                        <div class="col-sm-4">
+                            <select id="fault-type" class="form-control">
+                                <option value="REFRIGERATION_SYSTEM_BLOCKAGE">制冷系统堵</option>
+                                <option value="REFRIGERATION_SYSTEM_LEAKAGE">制冷系统漏</option>
+                                <option value="FOUR_WAY_VALUE_FAULT">四通阀故障</option>
+                                <option value="ONE_WAY_VALUE_FAULT">单向阀故障</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="real-name" class="col-sm-2 control-label"><span style="margin-right: 5px;font-size: 12px;color: red;">*</span>真实姓名</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" id="real-name" placeholder="请输入真实姓名">
+                        </div>
+                        <label for="phoneNumber" class="col-sm-2 control-label"><span style="margin-right: 5px;font-size: 12px;color: red;">*</span>联系电话</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" id="phoneNumber" placeholder="请输入联系电话">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="address" class="col-sm-2 control-label"><span style="margin-right: 5px;font-size: 12px;color: red;">*</span>联系地址</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="address" placeholder="请输入联系地址">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="fault-description" class="col-sm-2 control-label"><span style="margin-right: 5px;font-size: 12px;color: red;">*</span>故障描述</label>
+                        <div class="col-sm-10">
+                            <textarea class="form-control" id="fault-description" rows="3" style="resize:none" placeholder="请输入故障描述"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10" style="width: 40%; margin: 0 auto">
+                            <button class="btn btn-success" id="add-btn" style="margin: 20px 0 0 65%; width: 100px;">添加</button>
+                        </div>
+                        <div class="col-sm-offset-2 col-sm-10" style="width: 40%; margin: 0 auto">
+                            <button class="btn btn-danger" id="reset-btn" style="margin: 20px 0 0 65%; width: 100px;">重置</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <div id="footer-div-id"></div>
+</div>
+
+<script type="text/javascript">
+
+    window.onload = function (ev) {
+
+        // 页面初始化
+        pageAfterOnloadInit();
+
+        // 默认数据填充
+        fillDefaultData();
+
+
+        // 设置 equipmentId 事件
+        document.getElementById('equipmentId').onchange = equipmentIdChangeEvent;
+
+        // 设置“添加”按钮事件
+        document.getElementById('add-btn').onclick = addInfoFormSubmitEvent;
+
+        // 设置“重置”按钮事件
+        document.getElementById('reset-btn').onclick = addInfoFormResetEvent;
+
+
+        // 退出事件
+        document.getElementById('logout-btn-id').onclick = logoutEvent;
+
+    }
+
+</script>
+
+<script type="text/javascript">
+
+    //////////////// function defined ///////////////////////////////
+
+    function equipmentIdChangeEvent(ev) {
+        var selectNode = ev.target;
+        var equipment = getEquipmentFromServer(selectNode.value);
+        $("#address").val(equipment.addressString);
+    }
+
+    // 默认数据填充
+    function fillDefaultData() {
+        // 填充 设备编号
+        var equipmentIds = listEquipmentIdFromServer();
+        var equipmentIdSelect = document.getElementById('equipmentId');
+        for (var i = 0; i < equipmentIds.length; i++) {
+            equipmentIdSelect.options[i] = new Option(equipmentIds[i], equipmentIds[i]);
+        }
+
+        // 填充真实姓名和联系电话
+        var loginUser = getValidValueFromStore(LOGIN_USER_KEY);
+        var realName = loginUser.username;
+        if (typeof (realName) !== 'undefined' && realName != null && realName.length <= 0) {
+            realName = loginUser.email;
+        }
+        $("#real-name").val(realName);
+        $("#phoneNumber").val(loginUser.phoneNumber);
+
+        // 填充设备地址
+        if (equipmentIds.length > 0) {
+            var equipment = getEquipmentFromServer(equipmentIds[0]);
+            $("#address").val(equipment.addressString);
+        }
+
+    }
+
+    // 从服务器获取 设备
+    function getEquipmentFromServer(equipmentId) {
+        var equipment = {};
+        $.ajax({
+            url: AIR_CONDITIONER_BASE_MAPPING_V1 + "/" + equipmentId,
+            type: "get",
+            async: false,
+            success: function (result, status, xhr) {
+                var obj = JSON.parse(result);
+                var code = obj.code;
+                var message = obj.message;
+                var data = obj.data;
+                if (code !== 200) {
+                    kingLayerMsg(message, airConditionerDefaultLayerMsgOptions);
+                } else {
+                    equipment = data;
+                }
+            }
+        });
+        return equipment;
+    }
+
+    // 从服务器获取所有的 设备编号
+    function listEquipmentIdFromServer() {
+        var resultIds = [];
+        $.ajax({
+            url: AIR_CONDITIONER_BASE_MAPPING_V1 + '/state/GOOD',
+            type: "get",
+            async: false,
+            success: function (result, status, xhr) {
+                var obj = JSON.parse(result);
+                var code = obj.code;
+                var message = obj.message;
+                var data = obj.data;
+                if (code !== 200) {
+                    kingLayerMsg(message, airConditionerDefaultLayerMsgOptions);
+                } else {
+                    for (var i = 0; i < data.length; i++) {
+                        resultIds.push(data[i].equipmentId);
+                    }
+                }
+            }
+        });
+        return resultIds;
+    }
+
+
+    // 页面初始化
+    function pageAfterOnloadInit() {
+        initHeaderNavigationDiv();
+        initSideNavigationDivOrdinaryFault();
+        initFooterDiv();
+        // layui 初始化
+        layuiInit();
+    }
+
+    // 检验真实姓名
+    function checkRealNameAndTip() {
+        var realName = $("#real-name").val().trim();
+        if (typeof realName == "undefined" || realName == null || realName.length <= 0) {
+            kingLayerMsg('请填写真实姓名!', airConditionerDefaultLayerMsgOptions);
+            return false;
+        }
+        return true;
+    }
+
+    // 校验联系地址
+    function checkAddressAndTip() {
+        var address = $("#address").val().trim();
+        if (typeof address == "undefined" || address == null || address.length <= 0) {
+            kingLayerMsg('请填写联系地址!', airConditionerDefaultLayerMsgOptions);
+            return false;
+        }
+        return true;
+    }
+
+    // 校验联系电话
+    function checkPhoneNumberAndTip() {
+        var phoneNumber = $("#phoneNumber").val().trim();
+        if (typeof phoneNumber == "undefined" || phoneNumber == null || phoneNumber.length <= 0) {
+            kingLayerMsg('请填写联系电话!', airConditionerDefaultLayerMsgOptions);
+            return false;
+        }
+        return true;
+    }
+
+    // 校验故障描述
+    function checkFaultDescriptionAndTip() {
+        var faultDesc = $("#fault-description").val().trim();
+        if (typeof faultDesc == "undefined" || faultDesc == null || faultDesc.length <= 0) {
+            kingLayerMsg('请填写故障描述!', airConditionerDefaultLayerMsgOptions);
+            return false;
+        }
+        return true;
+    }
+
+    // 添加信息表单按钮事件
+    function addInfoFormSubmitEvent(ev) {
+        // 表单校验
+        if (checkRealNameAndTip() && checkAddressAndTip() && checkPhoneNumberAndTip() && checkFaultDescriptionAndTip()) {
+            $.ajax({
+                url: FAULT_BASE_MAPPING_V1 + "/add",
+                type: "post",
+                data: {
+                    'equipmentId': $("#equipmentId").val(),
+                    'type': $("#fault-type").val(),
+                    'realName': $("#real-name").val(),
+                    'contactAddress': $("#address").val(),
+                    'phoneNumber': $("#phoneNumber").val(),
+                    'description': $("#fault-description").val()
+                },
+                success: function (result, status, xhr) {
+                    var obj = JSON.parse(result);
+                    var code = obj.code;
+                    var message = obj.message;
+                    var data = obj.data;
+                    if (code !== 200) {
+                        kingLayerMsg(message, airConditionerDefaultLayerMsgOptions);
+                    } else {
+                        kingLayerMsg("添加成功！", airConditionerDefaultLayerMsgOptions);
+                        addInfoFormResetEvent();
+                    }
+                }
+            });
+        }
+        return false;
+    }
+
+    // “重置”按钮事件
+    function addInfoFormResetEvent(ev) {
+        document.getElementById("fault-description").value = "";
+        document.getElementById("equipmentId").innerHTML = "";
+        fillDefaultData();
+        return false;
+    }
+
+</script>
+</body>
+</html>

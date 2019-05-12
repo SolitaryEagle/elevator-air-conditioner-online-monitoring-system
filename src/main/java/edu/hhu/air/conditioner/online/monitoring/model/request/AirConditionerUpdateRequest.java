@@ -1,13 +1,10 @@
 package edu.hhu.air.conditioner.online.monitoring.model.request;
 
-import edu.hhu.air.conditioner.online.monitoring.constant.enums.AirConditionerStateEnum;
-import edu.hhu.air.conditioner.online.monitoring.model.dto.AirConditionerDTO;
-import edu.hhu.air.conditioner.online.monitoring.model.entity.Address;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.beans.BeanUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
  * @author 覃国强
@@ -23,11 +20,11 @@ public class AirConditionerUpdateRequest {
     private String brand;
     private String model;
     private String seller;
-    private Address address;
+    private AddressRequest address;
 
-    public AirConditionerDTO toAirConditionerDTO() {
-        AirConditionerDTO result = new AirConditionerDTO();
-        BeanUtils.copyProperties(this, result);
-        return result;
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
     }
+
 }

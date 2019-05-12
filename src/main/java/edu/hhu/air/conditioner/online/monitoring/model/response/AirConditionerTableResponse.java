@@ -1,11 +1,9 @@
 package edu.hhu.air.conditioner.online.monitoring.model.response;
 
-import edu.hhu.air.conditioner.online.monitoring.model.dto.AirConditionerDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.beans.BeanUtils;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -35,17 +33,5 @@ public class AirConditionerTableResponse {
     private BigDecimal voltage;
     private BigDecimal power;
     private String equipmentState;
-
-    public static AirConditionerTableResponse valueOf(AirConditionerDTO airConditionerDTO) {
-        AirConditionerTableResponse response = new AirConditionerTableResponse();
-        BeanUtils.copyProperties(airConditionerDTO, response);
-        response.setGmtCreate(new Date(airConditionerDTO.getGmtCreate().getTime()));
-        response.setGmtModified(new Date(airConditionerDTO.getGmtModified().getTime()));
-        response.setAddress(airConditionerDTO.getAddressString());
-        response.setWindSpeed(airConditionerDTO.getWindSpeed().getValue());
-        response.setEquipmentState(airConditionerDTO.getState().getValue());
-        return response;
-    }
-
 
 }

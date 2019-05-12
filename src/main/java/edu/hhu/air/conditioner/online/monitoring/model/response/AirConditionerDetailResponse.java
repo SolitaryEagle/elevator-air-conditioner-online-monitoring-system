@@ -1,14 +1,11 @@
 package edu.hhu.air.conditioner.online.monitoring.model.response;
 
 import edu.hhu.air.conditioner.online.monitoring.constant.enums.AirConditionerStateEnum;
-import edu.hhu.air.conditioner.online.monitoring.model.dto.AirConditionerDTO;
 import edu.hhu.air.conditioner.online.monitoring.model.entity.Address;
-import edu.hhu.air.conditioner.online.monitoring.model.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.beans.BeanUtils;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -39,16 +36,7 @@ public class AirConditionerDetailResponse {
     private AirConditionerStateEnum equipmentState;
     private String faultDescription;
     private Address address;
-    private User user;
-
-    public static AirConditionerDetailResponse valueOf(AirConditionerDTO airConditionerDTO) {
-        AirConditionerDetailResponse response = new AirConditionerDetailResponse();
-        BeanUtils.copyProperties(airConditionerDTO, response);
-        response.setGmtCreate(new Date(airConditionerDTO.getGmtCreate().getTime()));
-        response.setGmtModified(new Date(airConditionerDTO.getGmtModified().getTime()));
-        response.setWindSpeed(airConditionerDTO.getWindSpeed().getValue());
-        response.setEquipmentState(airConditionerDTO.getState());
-        return response;
-    }
+    private UserResponse user;
+    private String addressString;
 
 }
