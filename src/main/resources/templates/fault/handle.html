@@ -193,7 +193,8 @@
                 data: {
                     'faultId': $("#fault-id").val().trim(),
                     'record': $("#repair-record").val().trim(),
-                    'result': 'FAILURE'
+                    'result': 'FAILURE',
+                    'material': $("#repair-material").val().trim()
                 },
                 success: function (result, status, xhr) {
                     var obj = JSON.parse(result);

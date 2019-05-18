@@ -34,7 +34,7 @@ public class AirConditionerServiceNoTransactionalTest {
     public void insert() throws IOException {
 
         // 准备 3 个 user
-        User[] users = { User.builder().id(1L).build(), User.builder().id(4L).build() };
+        User[] users = { User.builder().id(1L).build(), User.builder().id(2L).build() };
 
         // 准备一些空调品牌
         String[] brands = { "米家空调", "米家互联网空调", "米家互联网空调（一级能效）", "DAIKIN 大金", "三菱电机",

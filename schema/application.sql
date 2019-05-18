@@ -67,10 +67,10 @@ CREATE TABLE `address` (
     `id`           bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
     `gmt_create`   datetime            NOT NULL COMMENT '数据创建(插入)时间',
     `gmt_modified` datetime            NOT NULL COMMENT '数据最后更新时间',
-    `province`     varchar(255)        NOT NULL,
-    `city`         varchar(255)        NOT NULL,
-    `district`     varchar(255)        NOT NULL,
-    `detail`       varchar(255) DEFAULT NULL,
+    `province`     varchar(255)        NOT NULL DEFAULT '',
+    `city`         varchar(255)        NOT NULL DEFAULT '',
+    `district`     varchar(255)        NOT NULL DEFAULT '',
+    `detail`       varchar(255)                 DEFAULT NULL,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
@@ -84,24 +84,23 @@ CREATE TABLE `fault` (
     `gmt_create`         datetime            NOT NULL COMMENT '数据创建(插入)时间',
     `gmt_modified`       datetime            NOT NULL COMMENT '数据最后更新时间',
     `type`               varchar(255)        NOT NULL COMMENT '故障类型',
+    `state`              varchar(255)        NOT NULL COMMENT '故障状态',
     `description`        text                NOT NULL COMMENT '故障描述',
     `real_name`          varchar(255)        NOT NULL COMMENT '报修者真实姓名',
     `contact_address`    varchar(255)        NOT NULL COMMENT '报修者联系地址',
     `phone_number`       varchar(255)        NOT NULL COMMENT '报修者电话号码',
-    `handle_result`      varchar(255)        NOT NULL COMMENT '故障处理结果',
+    `repair_result`      varchar(255) COMMENT '故障处理结果',
     `air_conditioner_id` bigint(20) UNSIGNED NOT NULL COMMENT '故障设备id',
     `report_user_id`     bigint(20) UNSIGNED NOT NULL COMMENT '报修者id',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
-
-
 -- 创建本系统的数据库时注意啦！
--- 首先，如果存在数据表 fault_allocation ，则先删除该数据表
-DROP TABLE IF EXISTS `fault_allocation`;
+-- 首先，如果存在数据表 allocation ，则先删除该数据表
+DROP TABLE IF EXISTS `allocation`;
 
--- 创建数据表 fault_allocation
-CREATE TABLE `fault_allocation` (
+-- 创建数据表 allocation
+CREATE TABLE `allocation` (
     `id`                 bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
     `gmt_create`         datetime            NOT NULL COMMENT '数据创建(插入)时间',
     `gmt_modified`       datetime            NOT NULL COMMENT '数据最后更新时间',
@@ -121,15 +120,42 @@ CREATE TABLE `repair` (
     `gmt_create`     datetime            NOT NULL COMMENT '数据创建(插入)时间',
     `gmt_modified`   datetime            NOT NULL COMMENT '数据最后更新时间',
     `result`         varchar(255)        NOT NULL COMMENT '维修结果',
-    `material`       text                NOT NULL COMMENT '维修材料',
+    `material`       text COMMENT '维修材料',
     `record`         text                NOT NULL COMMENT '维修记录',
     `fault_id`       bigint(20) UNSIGNED NOT NULL COMMENT '故障id',
     `repair_user_id` bigint(20) UNSIGNED NOT NULL COMMENT '维修者id',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
+-- 创建本系统的数据库时注意啦！
+-- 首先，如果存在数据表 revisit ，则先删除该数据表
+DROP TABLE IF EXISTS `revisit`;
 
+-- 创建数据表 revisit
+CREATE TABLE `revisit` (
+    `id`                 bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `gmt_create`         datetime            NOT NULL COMMENT '数据创建(插入)时间',
+    `gmt_modified`       datetime            NOT NULL COMMENT '数据最后更新时间',
+    `record`             text                NOT NULL COMMENT '维修记录',
+    `fault_id`           bigint(20) UNSIGNED NOT NULL COMMENT '故障id',
+    `revisit_user_id`     bigint(20) UNSIGNED NOT NULL COMMENT '回访者id',
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
+-- 创建本系统的数据库时注意啦！
+-- 首先，如果存在数据表 evaluation ，则先删除该数据表
+DROP TABLE IF EXISTS `evaluation`;
 
+-- 创建数据表 evaluation
+CREATE TABLE `evaluation` (
+    `id`                 bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `gmt_create`         datetime            NOT NULL COMMENT '数据创建(插入)时间',
+    `gmt_modified`       datetime            NOT NULL COMMENT '数据最后更新时间',
+    `content`            text                NOT NULL COMMENT '评价内容',
+    `satisfaction`       tinyint(4) DEFAULT NULL COMMENT '满意度',
+    `fault_id`           bigint(20) UNSIGNED NOT NULL COMMENT '故障id',
+    `evaluation_user_id` bigint(20) UNSIGNED NOT NULL COMMENT '评价者id',
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
 

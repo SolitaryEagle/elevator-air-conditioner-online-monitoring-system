@@ -39,11 +39,12 @@ public class FaultServiceNoTransactionalTest {
                 "冷凝器、蒸发器外部脏堵，将影响制冷效果。", "压缩机启动电容的损坏判断与排除。",
                 "空调电源线（与220V或380V接线）容量不足，引起主机不工作。", "空调三相供电电源相序错误引起系统不工作。" };
 
-        User[] users = { userService.getById(1L), userService.getById(4L) };
+        User[] users = { userService.getById(1L), userService.getById(2L) };
 
         int length = 16;
 
         for (int i = 0; i < length; i++) {
+
             FaultTypeEnum type = FaultTypeEnum.random();
             String desc = descs[RANDOM.nextInt(descs.length)];
             User reportUser = users[RANDOM.nextInt(users.length)];

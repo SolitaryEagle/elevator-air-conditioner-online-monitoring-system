@@ -113,7 +113,6 @@ public class FaultController {
     @PostMapping("/{id}/state/reject/update")
     public void updateStateRejectById(@PathVariable Long id) {
 
-        Fault fault = faultService.getById(id);
 
         Fault rejectFault = Fault.builder().id(id).state(FaultStateEnum.END).build();
         faultService.updateStateById(rejectFault);
@@ -121,10 +120,12 @@ public class FaultController {
         rejectFault = Fault.builder().id(id).repairResult(RepairResultEnum.REPAIRMAN_REJECT).build();
         faultService.updateRepairResultById(rejectFault);
 
+        Fault fault = faultService.getById(id);
+        Fault copyFault = new Fault();
+        BeanUtils.copyProperties(fault, copyFault);
         fault.setId(null);
         fault.setRepairResult(null);
-
-        faultService.add(fault);
+        faultService.add(copyFault);
 
     }
 

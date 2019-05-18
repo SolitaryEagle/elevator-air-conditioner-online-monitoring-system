@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.persistence.Entity;
@@ -36,7 +37,14 @@ public class Address implements Serializable {
     private String detail;
 
     public String toSimpleString() {
-        return province + city + district + detail;
+        StringBuilder sb = new StringBuilder();
+        sb.append(province);
+        sb.append(city);
+        sb.append(district);
+        if (StringUtils.isNotBlank(detail)) {
+            sb.append(detail);
+        }
+        return sb.toString();
     }
 
     @Override

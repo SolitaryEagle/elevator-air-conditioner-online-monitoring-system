@@ -11,6 +11,7 @@ import edu.hhu.air.conditioner.online.monitoring.service.FaultService;
 import edu.hhu.air.conditioner.online.monitoring.service.RepairService;
 import edu.hhu.air.conditioner.online.monitoring.util.TimestampUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,9 +53,11 @@ public class RepairServiceImpl implements RepairService {
 
             // 将原维修工单重新加入fault表中
             fault = faultService.getById(repair.getFaultId());
-            fault.setId(null);
-            fault.setRepairResult(null);
-            faultService.add(fault);
+            Fault copyFault = new Fault();
+            BeanUtils.copyProperties(fault, copyFault);
+            copyFault.setId(null);
+            copyFault.setRepairResult(null);
+            faultService.add(copyFault);
         }
 
         return repairRepository.save(repair);
