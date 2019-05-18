@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Handle</title>
+
+    <link href="https://cdn.staticfile.org/twitter-bootstrap/3.4.1/css/bootstrap.min.css" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+
+    <link href="../../static/layui/css/layui.css" th:href="@{/webjars/layui/css/layui.css}" rel="stylesheet">
+
+    <script type="text/javascript" src="https://cdn.staticfile.org/jquery/3.4.0/jquery.min.js" th:src="@{/webjars/jquery/jquery.min.js}"></script>
+    <script type="text/javascript" src="https://cdn.staticfile.org/twitter-bootstrap/3.4.1/js/bootstrap.min.js" th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+    <script type="text/javascript" src="https://cdn.staticfile.org/distpicker/2.0.5/distpicker.min.js"></script>
+    <script type="text/javascript" src="https://cdn.staticfile.org/store.js/1.3.20/store.min.js" th:src="@{/webjars/store.js/store.min.js}"></script>
+
+    <script type="text/javascript" src="../../static/layui/layui.all.js" th:src="@{/webjars/layui/layui.all.js}"></script>
+    <script type="text/javascript" src="../../static/layui/layui.js" th:src="@{/webjars/layui/layui.js}"></script>
+    <script type="text/javascript" src="../../static/js/common.js" th:src="@{/js/common.js}"></script>
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+
+    <!-- 头部导航栏 -->
+    <div id="header-navigation-div-id"></div>
+
+    <!-- 侧边导航栏 -->
+    <div id="side-navigation-div-id"></div>
+
+    <!-- 内容主体区域 -->
+    <div class="layui-body" style="left: 300px;">
+
+        <!--    数据展示表格    -->
+        <div style="margin: 40px 10px; padding: 0 10px; border: 1px solid #1E9FFF; border-radius: 5px;">
+            <table id="dataTableId" lay-filter="dataTableId"></table>
+        </div>
+
+        <!--  分割线  -->
+        <hr class="layui-bg-blue" style="margin-bottom: 30px;">
+
+        <!--  分配表单  -->
+        <div style="padding: 15px; display: none;" id="allocation-form-div-id">
+            <div class="layui-container" style="
+                border: 1px solid #1E9FFF;
+                float: right;
+                margin: 0 230px;
+                padding: 20px;
+                background-color: #e2e2e2;
+                border-radius: 10px;
+                  ">
+                <form id="add-info-form" action="#" method="post" class="form-horizontal" role="form" style="width: 95%; margin-top: 50px;">
+
+                    <input type="hidden" id="fault-id">
+
+                    <fieldset disabled>
+                        <div class="form-group">
+                            <label for="equipment-id" class="col-sm-2 control-label">设备编号</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" id="equipment-id">
+                            </div>
+                            <label for="fault-type" class="col-sm-2 control-label">故障类型</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" id="fault-type">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="report-user" class="col-sm-2 control-label">报修人</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" id="report-user">
+                            </div>
+                            <label for="phone-number" class="col-sm-2 control-label">联系电话</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" id="phone-number">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="report-create-time" class="col-sm-2 control-label">报修时间</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" id="report-create-time">
+                            </div>
+                            <label for="report-modified-time" class="col-sm-2 control-label">更新时间</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" id="report-modified-time">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="contact-address" class="col-sm-2 control-label">联系地址</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="contact-address">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="fault-description" class="col-sm-2 control-label">故障描述</label>
+                            <div class="col-sm-10">
+                                <textarea class="form-control" id="fault-description" rows="3" style="resize:none"></textarea>
+                            </div>
+                        </div>
+                    </fieldset>
+                    <div class="form-group">
+                        <label for="repair-material" class="col-sm-2 control-label">维修材料</label>
+                        <div class="col-sm-10">
+                            <textarea class="form-control" id="repair-material" rows="3" style="resize:none" placeholder="请填写维修材料"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="repair-record" class="col-sm-2 control-label">维修记录</label>
+                        <div class="col-sm-10">
+                            <textarea class="form-control" id="repair-record" rows="3" style="resize:none" placeholder="请填写维修记录或失败原因"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-group" id="btn-div-id">
+                        <div class="col-sm-offset-2 col-sm-6" style="width: 40%; margin: 0 auto">
+                            <button class="btn btn-success" id="success-btn" style="margin: 20px 0 0 65%; width: 100px;">成功</button>
+                        </div>
+                        <div class="col-sm-offset-2 col-sm-6" style="width: 40%; margin: 0 auto">
+                            <button class="btn btn-danger" id="failed-btn" style="margin: 20px 0 0 65%; width: 100px;">失败</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+
+    </div>
+
+    <!-- 页脚 -->
+    <div id="footer-div-id"></div>
+</div>
+
+<script type="text/javascript">
+
+    window.onload = function (ev) {
+
+        // 页面初始化
+        pageAfterOnloadInit();
+
+        // 设置“分配”按钮事件
+        document.getElementById('success-btn').onclick = handleFormSuccessEvent;
+
+        document.getElementById('failed-btn').onclick = handleFormFailureEvent;
+        // 退出事件
+        document.getElementById('logout-btn-id').onclick = logoutEvent;
+    }
+
+</script>
+
+
+<script type="text/html" id="tableBarRepairHandle">
+    <a class="layui-btn layui-btn-xs" lay-event="handle">处理</a>
+</script>
+
+<script type="text/javascript">
+
+    //////////////// function defined ///////////////////////////////
+
+    function checkRepairMaterialAndTip() {
+        var repairMaterial = $("#repair-material").val().trim();
+        if (typeof repairMaterial == "undefined" || repairMaterial == null || repairMaterial.length <= 0) {
+            kingLayerMsg('请输入维修材料!', airConditionerDefaultLayerMsgOptions);
+            return false;
+        }
+        return true;
+    }
+
+
+    function checkRepairRecordAndTip() {
+        var repairMaterial = $("#repair-record").val().trim();
+        if (typeof repairMaterial == "undefined" || repairMaterial == null || repairMaterial.length <= 0) {
+            kingLayerMsg('请输入维修记录!', airConditionerDefaultLayerMsgOptions);
+            return false;
+        }
+        return true;
+    }
+
+    function checkRepairReasonAndTip() {
+        var repairMaterial = $("#repair-record").val().trim();
+        if (typeof repairMaterial == "undefined" || repairMaterial == null || repairMaterial.length <= 0) {
+            kingLayerMsg('请输入维修失败原因!', airConditionerDefaultLayerMsgOptions);
+            return false;
+        }
+        return true;
+    }
+
+
+    function handleFormFailureEvent() {
+
+        if (checkRepairReasonAndTip()) {
+            $.ajax({
+                url: REPAIR_BASE_MAPPING_V1 + "/add",
+                type: "post",
+                async: false,
+                data: {
+                    'faultId': $("#fault-id").val().trim(),
+                    'record': $("#repair-record").val().trim(),
+                    'result': 'FAILURE',
+                    'material': $("#repair-material").val().trim()
+                },
+                success: function (result, status, xhr) {
+                    var obj = JSON.parse(result);
+                    var code = obj.code;
+                    var message = obj.message;
+                    var data = obj.data;
+                    if (code !== 200) {
+                        kingLayerMsg(message, airConditionerDefaultLayerMsgOptions);
+                    } else {
+                        kingLayerMsg("已提交！", airConditionerDefaultLayerMsgOptions);
+
+                        // 关闭 allocation 表单
+                        document.getElementById('allocation-form-div-id').style.display = 'none';
+
+                        // 重载数据表
+                        var url = FAULT_BASE_MAPPING_V1 + "/repairing";
+                        var tableData = getDataFromServer(url);
+                        layui.use('table', function () {
+                            var table = layui.table;
+                            table.reload('dataTableId', {
+                                data: tableData
+                            })
+                        });
+                    }
+                }
+            });
+        }
+        return false;
+    }
+
+    function handleFormSuccessEvent() {
+
+        if (checkRepairMaterialAndTip() && checkRepairRecordAndTip()) {
+            $.ajax({
+                url: REPAIR_BASE_MAPPING_V1 + "/add",
+                type: "post",
+                async: false,
+                data: {
+                    'faultId': $("#fault-id").val().trim(),
+                    'record': $("#repair-record").val().trim(),
+                    'result': 'SUCCESS',
+                    'material': $("#repair-material").val().trim()
+                },
+                success: function (result, status, xhr) {
+                    var obj = JSON.parse(result);
+                    var code = obj.code;
+                    var message = obj.message;
+                    var data = obj.data;
+                    if (code !== 200) {
+                        kingLayerMsg(message, airConditionerDefaultLayerMsgOptions);
+                    } else {
+                        kingLayerMsg("已提交！", airConditionerDefaultLayerMsgOptions);
+
+                        // 关闭 allocation 表单
+                        document.getElementById('allocation-form-div-id').style.display = 'none';
+
+                        // 重载数据表
+                        var url = FAULT_BASE_MAPPING_V1 + "/repairing";
+                        var tableData = getDataFromServer(url);
+                        layui.use('table', function () {
+                            var table = layui.table;
+                            table.reload('dataTableId', {
+                                data: tableData
+                            })
+                        });
+                    }
+                }
+            });
+        }
+        return false;
+    }
+
+    // 页面初始化，可以进入这个页面的身份有：CUSTOM_SERVICE
+    function pageAfterOnloadInit() {
+
+        initHeaderNavigationDiv();
+        initSideNavigationDivRepairFault();
+
+        initFooterDiv();
+        // layui 初始化
+        layuiInit();
+
+        // layui 数据表格初始化
+        layuiTableInitCustom();
+
+
+    }
+
+    // custom layui table 初始化
+    function layuiTableInitCustom() {
+        layui.use('table', function () {
+            var table = layui.table;
+
+            var url = FAULT_BASE_MAPPING_V1 + "/repairing";
+            var tableData = getDataFromServer(url);
+
+            // 表格渲染
+            table.render({
+                elem: '#dataTableId',
+                id: 'dataTableId',
+                url: '',        // 默认数据查询数据接口
+                loading: true,  // 显示加载条
+                page: true,     // 开启分页
+                even: true,     // 设置隔行背景
+                data: tableData,
+                cols: [
+                    [   //表头
+                        {field: 'id', hide: true},
+                        {field: 'equipmentId', title: '设备编号', sort: true, align: 'center', width: 139},
+                        {field: 'type', title: '故障类型', sort: true, align: 'center', width: 139},
+                        {field: 'realName', title: '报修人', sort: true, align: 'center', width: 139},
+                        {field: 'allocationUser', title: '分配人', sort: true, align: 'center', width: 139},
+                        {field: 'phoneNumber', title: '联系电话', sort: true, align: 'center', width: 139},
+                        {field: 'gmtModified', title: '刷新时间', sort: true, align: 'center', width: 169},
+                        {field: 'description', title: '故障描述', sort: true, align: 'center'},
+                        {title: '操作', width: 129, align: 'center', toolbar: '#tableBarRepairHandle'}
+                    ]
+                ]
+            });
+
+            //监听行工具事件，行末按钮事件
+            table.on('tool(dataTableId)', function (obj) { //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+                var data = obj.data;         //获得当前行数据
+                var layEvent = obj.event;    //获得 lay-event 对应的值
+                if (layEvent === 'handle') {
+
+                    // 填充 handle 表单
+                    var url = FAULT_BASE_MAPPING_V1 + "/" + data.id;
+                    var fault = getDataFromServer(url);
+
+                    $("#fault-id").val(fault.id);
+                    $("#equipment-id").val(fault.airConditioner.equipmentId);
+                    $("#fault-type").val(data.type);
+                    $("#report-user").val(data.realName);
+                    $("#phone-number").val(data.phoneNumber);
+                    $("#report-create-time").val(fault.gmtCreate);
+                    $("#report-modified-time").val(fault.gmtModified);
+                    $("#contact-address").val(fault.contactAddress);
+                    $("#fault-description").text(fault.description);
+                    $("#repair-material").val('');
+                    $("#repair-record").val('');
+
+                    // 打开 allocation 表单
+                    document.getElementById('allocation-form-div-id').style.display = 'block';
+
+                    url = FAULT_BASE_MAPPING_V1 + "/repairing";
+                    var tableData = getDataFromServer(url);
+                    table.reload('dataTableId', {
+                        data: tableData
+                    });
+
+                }
+            });
+        });
+    }
+
+    function getDataFromServer(url) {
+        var outResult = {};
+        $.ajax({
+            url: url,
+            type: "get",
+            async: false,
+            success: function (result, status, xhr) {
+                var obj = JSON.parse(result);
+                var code = obj.code;
+                var message = obj.message;
+                var data = obj.data;
+                if (code !== 200) {
+                    kingLayerMsg(message, airConditionerDefaultLayerMsgOptions);
+                } else {
+                    outResult = data;
+                }
+            }
+        });
+        return outResult;
+    }
+
+</script>
+</body>
+</html>

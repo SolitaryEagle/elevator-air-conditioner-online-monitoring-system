@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Air Conditioner List</title>
+
+    <link href="https://cdn.staticfile.org/twitter-bootstrap/3.4.1/css/bootstrap.min.css" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+
+    <link href="../../static/layui/css/layui.css" th:href="@{/webjars/layui/css/layui.css}" rel="stylesheet">
+
+    <script type="text/javascript" src="https://cdn.staticfile.org/jquery/3.4.0/jquery.min.js" th:src="@{/webjars/jquery/jquery.min.js}"></script>
+    <script type="text/javascript" src="https://cdn.staticfile.org/twitter-bootstrap/3.4.1/js/bootstrap.min.js" th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+    <script type="text/javascript" src="https://cdn.staticfile.org/distpicker/2.0.5/distpicker.min.js"></script>
+    <script type="text/javascript" src="https://cdn.staticfile.org/store.js/1.3.20/store.min.js" th:src="@{/webjars/store.js/store.min.js}"></script>
+
+    <script type="text/javascript" src="../../static/layui/layui.all.js" th:src="@{/webjars/layui/layui.all.js}"></script>
+    <script type="text/javascript" src="../../static/layui/layui.js" th:src="@{/webjars/layui/layui.js}"></script>
+    <script type="text/javascript" src="../../static/js/common.js" th:src="@{/js/common.js}"></script>
+    <script type="text/javascript" src="../../static/js/air.conditioner.js" th:src="@{/js/air.conditioner.js}"></script>
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+
+    <!-- 头部导航栏 -->
+    <div id="header-navigation-div-id"></div>
+
+    <!-- 侧边导航栏 -->
+    <div id="side-navigation-div-id"></div>
+
+    <!-- 内容主体区域 -->
+    <div class="layui-body" style="left: 300px;">
+
+        <!--    搜索表单    -->
+        <div style="padding: 15px;">
+            <div class="layui-container" style="
+                border: 1px solid #1E9FFF;
+                margin: 10px auto;
+                padding: 20px;
+                background-color: #e2e2e2;
+                border-radius: 10px;
+                  ">
+                <h3 style="text-align: center">查询条件</h3>
+                <form id="state-search-form" class="form-horizontal" role="form" style="width: 95%; margin-top: 30px;">
+                    <div class="form-group">
+                        <label for="brand" class="col-sm-1 control-label">品牌</label>
+                        <div class="col-sm-5">
+                            <input type="text" class="form-control" id="brand" name="brand" placeholder="请输入品牌">
+                        </div>
+                        <label for="model" class="col-sm-1 control-label">型号规格</label>
+                        <div class="col-sm-5">
+                            <input type="text" class="form-control" id="model" name="model" placeholder="请输入型号规格">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="seller" class="col-sm-1 control-label">销售单位</label>
+                        <div class="col-sm-5">
+                            <input type="text" class="form-control" id="seller" name="seller" placeholder="请输入销售单位">
+                        </div>
+                        <label for="address" class="col-sm-1 control-label">设备地址</label>
+                        <div class="col-sm-5">
+                            <input type="text" class="form-control" id="address" name="model" placeholder="请输入设备地址">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="wind-speed" class="col-sm-1 control-label">风速</label>
+                        <div class="col-sm-5">
+                            <select id="wind-speed" class="form-control">
+                                <option value="">---- 选择风速 ----</option>
+                                <option value="FAST">快</option>
+                                <option value="SLOW">慢</option>
+                                <option value="STOP">停止</option>
+                            </select>
+                        </div>
+                        <label for="equipment-state" class="col-sm-1 control-label">设备状态</label>
+                        <div class="col-sm-5">
+                            <select id="equipment-state" class="form-control">
+                                <option value="">---- 选择设备状态 ----</option>
+                                <option value="GOOD">良好</option>
+                                <option value="FAULT">故障</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="min-temperature" class="col-sm-1 control-label">温度</label>
+                        <div class="col-sm-2">
+                            <input type="text" class="form-control" id="min-temperature" name="seller" placeholder="℃（整数）">
+                        </div>
+                        <label for="max-temperature" class="col-sm-1 control-label" style="text-align: center; font-size: 12px; padding: 10px 26px; height: 34px;">——</label>
+                        <div class="col-sm-2">
+                            <input type="text" class="form-control" id="max-temperature" name="model" placeholder="℃（整数）">
+                        </div>
+                        <label for="min-kwh" class="col-sm-1 control-label">用电量</label>
+                        <div class="col-sm-2">
+                            <input type="text" class="form-control" id="min-kwh" name="seller" placeholder="Kw/h（正数）">
+                        </div>
+                        <label for="max-kwh" class="col-sm-1 control-label" style="text-align: center; font-size: 12px; padding: 10px 26px; height: 34px;">——</label>
+                        <div class="col-sm-2">
+                            <input type="text" class="form-control" id="max-kwh" name="model" placeholder="Kw/h（正数）">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="min-current-intensity" class="col-sm-1 control-label">电流</label>
+                        <div class="col-sm-2">
+                            <input type="text" class="form-control" id="min-current-intensity" name="seller" placeholder="A（正数）">
+                        </div>
+                        <label for="max-current-intensity" class="col-sm-1 control-label" style="text-align: center; font-size: 12px; padding: 10px 26px; height: 34px;">——</label>
+                        <div class="col-sm-2">
+                            <input type="text" class="form-control" id="max-current-intensity" name="model" placeholder="A（正数）">
+                        </div>
+                        <label for="min-voltage" class="col-sm-1 control-label">电压</label>
+                        <div class="col-sm-2">
+                            <input type="text" class="form-control" id="min-voltage" name="seller" placeholder="V（正数）">
+                        </div>
+                        <label for="max-voltage" class="col-sm-1 control-label" style="text-align: center; font-size: 12px; padding: 10px 26px; height: 34px;">——</label>
+                        <div class="col-sm-2">
+                            <input type="text" class="form-control" id="max-voltage" name="model" placeholder="V（正数）">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="min-power" class="col-sm-1 control-label">功率</label>
+                        <div class="col-sm-2">
+                            <input type="text" class="form-control" id="min-power" name="seller" placeholder="W（正数）">
+                        </div>
+                        <label for="max-power" class="col-sm-1 control-label" style="text-align: center; font-size: 12px; padding: 10px 26px; height: 34px;">——</label>
+                        <div class="col-sm-2">
+                            <input type="text" class="form-control" id="max-power" name="model" placeholder="W（正数）">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10" style="width: 40%; margin: 0 auto">
+                            <button class="btn btn-success" id="search-btn" style="margin: 20px 0 0 65%; width: 100px;">查询</button>
+                        </div>
+                        <div class="col-sm-offset-2 col-sm-10" style="width: 40%; margin: 0 auto">
+                            <button class="btn btn-danger" id="reset-btn" style="margin: 20px 0 0 65%; width: 100px;">重置</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!--  分割线  -->
+        <hr class="layui-bg-blue" style="margin-bottom: 30px;">
+
+        <!--    数据展示表格    -->
+        <div style="margin: 0 10px; padding: 0 10px; border: 1px solid #1E9FFF; border-radius: 5px;">
+            <table id="dataTableId" lay-filter="dataTableId"></table>
+        </div>
+
+    </div>
+
+    <!-- 页脚 -->
+    <div id="footer-div-id"></div>
+</div>
+
+<script type="text/javascript">
+
+    window.onload = function (ev) {
+
+        // 页面初始化
+        pageAfterOnloadInit();
+
+
+
+
+        document.getElementById('min-temperature').onblur = checkMinTemperature;
+        document.getElementById('max-temperature').onblur = checkMaxTemperature;
+        document.getElementById('min-kwh').onblur = checkMinKwh;
+        document.getElementById('max-kwh').onblur = checkMaxKwh;
+        document.getElementById('min-current-intensity').onblur = checkMinCurrentIntensity;
+        document.getElementById('max-current-intensity').onblur = checkMaxCurrentIntensity;
+        document.getElementById('min-voltage').onblur = checkMinVoltage;
+        document.getElementById('max-voltage').onblur = checkMaxVoltage;
+        document.getElementById('min-power').onblur = checkMinPower;
+        document.getElementById('max-power').onblur = checkMaxPower;
+        document.getElementById('min-temperature').onkeyup = checkMinTemperature;
+        document.getElementById('max-temperature').onkeyup = checkMaxTemperature;
+        document.getElementById('min-kwh').onkeyup = checkMinKwh;
+        document.getElementById('max-kwh').onkeyup = checkMaxKwh;
+        document.getElementById('min-current-intensity').onkeyup = checkMinCurrentIntensity;
+        document.getElementById('max-current-intensity').onkeyup = checkMaxCurrentIntensity;
+        document.getElementById('min-voltage').onkeyup = checkMinVoltage;
+        document.getElementById('max-voltage').onkeyup = checkMaxVoltage;
+        document.getElementById('min-power').onkeyup = checkMinPower;
+        document.getElementById('max-power').onkeyup = checkMaxPower;
+
+        // 设置“查询”按钮事件
+        document.getElementById('search-btn').onclick = stateSearchFormSubmitEvent;
+
+        // 设置“重置”按钮事件
+        document.getElementById('reset-btn').onclick = stateSearchFormResetEvent;
+
+
+        // 退出事件
+        document.getElementById('logout-btn-id').onclick = logoutEvent;
+    }
+
+</script>
+
+<script type="text/html" id="tableBarOrdinary">
+    <a class="layui-btn layui-btn-xs" lay-event="detail">查看</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+
+<script type="text/html" id="tableBarCustomRepair">
+    <a class="layui-btn layui-btn-xs" lay-event="detail">查看</a>
+</script>
+
+<script type="text/javascript">
+
+    //////////////// function defined ///////////////////////////////
+
+    // 页面初始化，可以进入这个页面的身份有：ORDINARY、CUSTOM_SERVICE、REPAIR
+    function pageAfterOnloadInit() {
+
+        initHeaderNavigationDiv();
+        var loginUser = getValidValueFromStore(LOGIN_USER_KEY);
+        if (loginUser.role === 'ORDINARY') {
+            initSideNavigationDivOrdinaryEquipment();
+        } else {
+            initSideNavigationDivCustomOrRepairEquipment();
+        }
+        initFooterDiv();
+        // layui 初始化
+        layuiInit();
+
+        // layui 数据表格初始化
+        if (loginUser.role === 'ORDINARY') {
+            layuiTableInitOrdinary();
+        } else {
+            layuiTableInitCustomOrRepair();
+        }
+
+    }
+
+    // customOrRepair layui table 初始化
+    function layuiTableInitCustomOrRepair() {
+        layui.use('table', function () {
+            var table = layui.table;
+
+            // 表格渲染
+            table.render({
+                elem: '#dataTableId',
+                id: 'dataTableId',
+                url: AIR_CONDITIONER_BASE_MAPPING_V1 + "/page",  // 默认数据查询数据接口
+                loading: true,  // 显示加载条
+                page: true,     // 开启分页
+                even: true,     // 设置隔行背景
+                response: {
+                    statusCode: 200     //规定成功的状态码，默认：0
+                },
+                parseData: function (result) { //result 即为原始返回的数据
+                    var obj = JSON.parse(result);
+                    var code = obj.code;
+                    var message = obj.message;
+                    var data = obj.data;
+                    if (code !== 200) {
+                        message = "请您先登录！";
+                    }
+                    return {
+                        "code": code,               //解析接口状态
+                        "msg": message,             //解析提示文本
+                        "count": data.count,        //解析数据长度
+                        "data": data.data           //解析数据列表
+                    };
+                },
+                cols: [
+                    [   //表头
+                        {field: 'id', hide: true},
+                        {field: 'equipmentId', title: '设备编号', sort: true, align: 'center', width: 126},
+                        {field: 'gmtModified', title: '刷新时间', sort: true, align: 'center', width: 161},
+                        {field: 'temperature', title: '温度(℃)', sort: true, align: 'center', width: 92},
+                        {field: 'windSpeed', title: '风速', sort: true, align: 'center', width: 65},
+                        {field: 'kwh', title: '用电量(Kw/h)', sort: true, align: 'center', width: 119},
+                        {field: 'currentIntensity', title: '电流(A)', sort: true, align: 'center', width: 83},
+                        {field: 'voltage', title: '电压(V)', sort: true, align: 'center', width: 83},
+                        {field: 'power', title: '功率(W)', sort: true, align: 'center', width: 98},
+                        {field: 'equipmentState', title: '状态', sort: true, align: 'center', width: 69},
+                        {field: 'brand', title: '品牌', sort: true, align: 'center', width: 110},
+                        {field: 'model', title: '型号', sort: true, align: 'center', width: 110},
+                        {field: 'seller', title: '销售单位', sort: true, align: 'center', width: 110},
+                        {field: 'address', title: '地址', sort: true, align: 'center'},
+                        {fixed: 'right', title: '操作', width: 120, align: 'center', toolbar: '#tableBarCustomRepair'}
+                    ]
+                ]
+            });
+
+            //监听行工具事件，行末按钮事件
+            table.on('tool(dataTableId)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+                var data = obj.data;         //获得当前行数据
+                var layEvent = obj.event;    //获得 lay-event 对应的值
+                if(layEvent === 'detail'){
+
+                    // 打开 update-info 页面
+                    var url = AIR_CONDITIONER_BASE_MAPPING_V1 + "/page/update-info?equipmentId=" + data.equipmentId;
+                    window.open(url);
+
+                }
+            });
+        });
+    }
+
+    // odinary layui 数据表格初始化
+    function layuiTableInitOrdinary() {
+        layui.use('table', function () {
+            var table = layui.table;
+
+            // 表格渲染
+            table.render({
+                elem: '#dataTableId',
+                id: 'dataTableId',
+                url: AIR_CONDITIONER_BASE_MAPPING_V1 + "/page",  // 默认数据查询数据接口
+                loading: true,  // 显示加载条
+                page: true,     // 开启分页
+                even: true,     // 设置隔行背景
+                response: {
+                    statusCode: 200     //规定成功的状态码，默认：0
+                },
+                parseData: function (result) { //result 即为原始返回的数据
+                    var obj = JSON.parse(result);
+                    var code = obj.code;
+                    var message = obj.message;
+                    var data = obj.data;
+                    if (code !== 200) {
+                        message = "请您先登录！";
+                    }
+                    return {
+                        "code": code,               //解析接口状态
+                        "msg": message,             //解析提示文本
+                        "count": data.count,        //解析数据长度
+                        "data": data.data           //解析数据列表
+                    };
+                },
+                cols: [
+                    [   //表头
+                        {field: 'id', hide: true},
+                        {field: 'equipmentId', title: '设备编号', sort: true, align: 'center', width: 126},
+                        {field: 'gmtModified', title: '刷新时间', sort: true, align: 'center', width: 161},
+                        {field: 'temperature', title: '温度(℃)', sort: true, align: 'center', width: 92},
+                        {field: 'windSpeed', title: '风速', sort: true, align: 'center', width: 65},
+                        {field: 'kwh', title: '用电量(Kw/h)', sort: true, align: 'center', width: 119},
+                        {field: 'currentIntensity', title: '电流(A)', sort: true, align: 'center', width: 83},
+                        {field: 'voltage', title: '电压(V)', sort: true, align: 'center', width: 83},
+                        {field: 'power', title: '功率(W)', sort: true, align: 'center', width: 98},
+                        {field: 'equipmentState', title: '状态', sort: true, align: 'center', width: 69},
+                        {field: 'brand', title: '品牌', sort: true, align: 'center', width: 110},
+                        {field: 'model', title: '型号', sort: true, align: 'center', width: 110},
+                        {field: 'seller', title: '销售单位', sort: true, align: 'center', width: 110},
+                        {field: 'address', title: '地址', sort: true, align: 'center'},
+                        {fixed: 'right', title: '操作', width: 120, align: 'center', toolbar: '#tableBarOrdinary'}
+                    ]
+                ]
+            });
+
+            //监听行工具事件，行末按钮事件
+            table.on('tool(dataTableId)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+                var data = obj.data;         //获得当前行数据
+                var layEvent = obj.event;    //获得 lay-event 对应的值
+                if(layEvent === 'detail'){
+
+                    // 打开 update-info 页面
+                    var url = AIR_CONDITIONER_BASE_MAPPING_V1 + "/page/update-info?equipmentId=" + data.equipmentId;
+                    window.open(url);
+
+                } else if(layEvent === 'del'){
+
+                    layer.confirm('确认删除?', {icon: 2, title: '提示'}, function(index){
+                        layer.close(index);
+
+                        //向服务端发送删除指令
+                        var url = AIR_CONDITIONER_BASE_MAPPING_V1 + "/" + data.equipmentId + "/delete";
+                        $.ajax({
+                            url: url,
+                            type: "post",
+                            success: function (result, status, xhr) {
+                                var resultObj = JSON.parse(result);
+                                var code = resultObj.code;
+                                var message = resultObj.message;
+                                if (code !== 200) {
+                                    kingLayerMsg(message, airConditionerDefaultLayerMsgOptions);
+                                } else {
+                                    kingLayerMsg("删除成功！", airConditionerDefaultLayerMsgOptions);
+                                    var data = getTableDataFromServer();
+                                    // 表格重载
+                                    layui.use('table', function () {
+                                        var table = layui.table;
+                                        table.reload('dataTableId', {
+                                            data: data,
+                                            url: ''  // 数据接口置为空
+                                        })
+                                    });
+                                }
+                            }
+                        });
+                    });
+                }
+            });
+        });
+    }
+
+    function isInteger(value) {
+        var regex = /^-?\d+$/;
+        return regex.test(value);
+    }
+
+    function isPositive(value) {
+        var regex = /^\d+.?\d*$/;
+        return regex.test(value);
+    }
+
+    function checkMinTemperature() {
+        var value = $("#min-temperature").val().trim();
+        if (value.length > 0 && !isInteger(value)) {
+            kingLayerMsg('请输入一个合法的最小温度！', airConditionerDefaultLayerMsgOptions);
+            return false;
+        }
+        return true;
+    }
+
+    function checkMaxTemperature() {
+        var value = $("#max-temperature").val().trim();
+        if (value.length > 0 && !isInteger(value)) {
+            kingLayerMsg('请输入一个合法的最大温度！', airConditionerDefaultLayerMsgOptions);
+            return false;
+        }
+        return true;
+    }
+
+    function checkMinKwh() {
+        var value = $("#min-kwh").val().trim();
+        if (value.length > 0 && !isPositive(value)) {
+            kingLayerMsg('请输入一个合法的最小用电量！', airConditionerDefaultLayerMsgOptions);
+            return false;
+        }
+        return true;
+    }
+
+    function checkMaxKwh() {
+        var value = $("#max-kwh").val().trim();
+        if (value.length > 0 && !isPositive(value)) {
+            kingLayerMsg('请输入一个合法的最大用电量！', airConditionerDefaultLayerMsgOptions);
+            return false;
+        }
+        return true;
+    }
+
+    function checkMinCurrentIntensity() {
+        var value = $("#min-current-intensity").val().trim();
+        if (value.length > 0 && !isPositive(value)) {
+            kingLayerMsg('请输入一个合法的最小电流！', airConditionerDefaultLayerMsgOptions);
+            return false;
+        }
+        return true;
+    }
+
+    function checkMaxCurrentIntensity() {
+        var value = $("#max-current-intensity").val().trim();
+        if (value.length > 0 && !isPositive(value)) {
+            kingLayerMsg('请输入一个合法的最大电流！', airConditionerDefaultLayerMsgOptions);
+            return false;
+        }
+        return true;
+    }
+
+    function checkMinVoltage() {
+        var value = $("#min-voltage").val().trim();
+        if (value.length > 0 && !isPositive(value)) {
+            kingLayerMsg('请输入一个合法的最小电压！', airConditionerDefaultLayerMsgOptions);
+            return false;
+        }
+        return true;
+    }
+
+    function checkMaxVoltage() {
+        var value = $("#max-voltage").val().trim();
+        if (value.length > 0 && !isPositive(value)) {
+            kingLayerMsg('请输入一个合法的最大电压！', airConditionerDefaultLayerMsgOptions);
+            return false;
+        }
+        return true;
+    }
+
+    function checkMinPower() {
+        var value = $("#min-power").val().trim();
+        if (value.length > 0 && !isPositive(value)) {
+            kingLayerMsg('请输入一个合法的最小功率！', airConditionerDefaultLayerMsgOptions);
+            return false;
+        }
+        return true;
+    }
+
+    function checkMaxPower() {
+        var value = $("#max-power").val().trim();
+        if (value.length > 0 && !isPositive(value)) {
+            kingLayerMsg('请输入一个合法的最大功率！', airConditionerDefaultLayerMsgOptions);
+            return false;
+        }
+        return true;
+    }
+
+    function stateSearchFormSubmitEvent(ev) {
+        if (checkMinTemperature() && checkMaxTemperature() && checkMinKwh() && checkMaxKwh() && checkMinCurrentIntensity()
+            && checkMaxCurrentIntensity() && checkMinVoltage() && checkMaxVoltage() && checkMinPower() && checkMaxPower()) {
+
+            // 发送查询设备信息请求
+            $.ajax({
+                url: AIR_CONDITIONER_BASE_MAPPING_V1 + "/search",  // 带查询条件的查询
+                type: "get",
+                data: {
+                    'brand': $("#brand").val().trim(),
+                    'model': $("#model").val().trim(),
+                    'seller': $("#seller").val().trim(),
+                    'address': $("#address").val().trim(),
+                    'windSpeed': $("#wind-speed").val().trim(),
+                    'equipmentState': $("#equipment-state").val().trim(),
+                    'temperature.min': $("#min-temperature").val().trim(),
+                    'temperature.max': $("#max-temperature").val().trim(),
+                    'kwh.min': $("#min-kwh").val().trim(),
+                    'kwh.max': $("#max-kwh").val().trim(),
+                    'currentIntensity.min': $("#min-current-intensity").val().trim(),
+                    'currentIntensity.max': $("#max-current-intensity").val().trim(),
+                    'voltage.min': $("#min-voltage").val().trim(),
+                    'voltage.max': $("#max-voltage").val().trim(),
+                    'power.min': $("#min-power").val().trim(),
+                    'power.max': $("#max-power").val().trim()
+                },
+                success: function (result, status, xhr) {
+                    var obj = JSON.parse(result);
+                    var code = obj.code;
+                    var message = obj.message;
+                    var data = obj.data;
+                    if (code !== 200) {
+                        kingLayerMsg(message, airConditionerDefaultLayerMsgOptions);
+                    } else {
+                        kingLayerMsg("查询成功！", airConditionerDefaultLayerMsgOptions);
+                        // 表格重载
+                        layui.use('table', function () {
+                            var table = layui.table;
+                            table.reload('dataTableId', {
+                                data: data,
+                                url: ''  // 数据接口置为空
+                            })
+                        });
+                    }
+                }
+            });
+        }
+        return false;
+    }
+
+    function stateSearchFormResetEvent(ev) {
+        var form = document.getElementById('state-search-form');
+        var inputs = form.getElementsByTagName('input');
+        for (var i = 0; i < inputs.length; i++) {
+            inputs[i].value = "";
+        }
+
+        var selects = form.getElementsByTagName('select');
+        for (i = 0; i < selects.length; i++) {
+            selects[i].options[0].selected = true;
+        }
+
+        var data = getTableDataFromServer();
+
+        // 表格重载
+        layui.use('table', function () {
+            var table = layui.table;
+            table.reload('dataTableId', {
+                data: data,
+                url: ''  // 数据接口置为空
+            })
+        });
+        return false;
+    }
+
+    // 查询数据
+    function getTableDataFromServer() {
+        var outResult = {};
+        $.ajax({
+            url: AIR_CONDITIONER_BASE_MAPPING_V1,  // 按用户查询所有设备信息
+            type: "get",
+            async: false,
+            success: function (result, status, xhr) {
+                var obj = JSON.parse(result);
+                var code = obj.code;
+                var message = obj.message;
+                var data = obj.data;
+                if (code !== 200) {
+                    kingLayerMsg(message, airConditionerDefaultLayerMsgOptions);
+                } else {
+                   outResult = data;
+                }
+            }
+        });
+        return outResult;
+    }
+
+
+
+</script>
+</body>
+</html>

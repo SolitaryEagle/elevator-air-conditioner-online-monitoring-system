@@ -1,0 +1,544 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>获取和设置textArea的内容</title>
+</head>
+<body>
+<button id="click-btn" class="btn btn-info">点击</button>
+
+
+<script type="text/javascript">
+
+    window.onload = function (ev) {
+
+
+        document.getElementById('click-btn').onclick = function (ev1) {
+
+            readJsonAttr();
+
+        }
+
+    };
+
+    var result =
+        {
+            "江西省": {
+                "吉安市": [
+                    {
+                        "equipmentId": "LD3600000008",
+                        "addressString": "江西省吉安市吉州区",
+                        "address": {
+                            "id": 6,
+                            "gmtCreate": "2019-05-10 21:34:38",
+                            "gmtModified": "2019-05-10 21:34:38",
+                            "province": "江西省",
+                            "city": "吉安市",
+                            "district": "吉州区",
+                            "detail": ""
+                        },
+                        "longitude": 115.00153936965165,
+                        "latitude": 27.14931499387718
+                    },
+                    {
+                        "equipmentId": "LD3600000012",
+                        "addressString": "江西省吉安市吉州区",
+                        "address": {
+                            "id": 6,
+                            "gmtCreate": "2019-05-10 21:34:38",
+                            "gmtModified": "2019-05-10 21:34:38",
+                            "province": "江西省",
+                            "city": "吉安市",
+                            "district": "吉州区",
+                            "detail": ""
+                        },
+                        "longitude": 115.00153936965165,
+                        "latitude": 27.14931499387718
+                    },
+                    {
+                        "equipmentId": "LD3600000014",
+                        "addressString": "江西省吉安市吉州区",
+                        "address": {
+                            "id": 6,
+                            "gmtCreate": "2019-05-10 21:34:38",
+                            "gmtModified": "2019-05-10 21:34:38",
+                            "province": "江西省",
+                            "city": "吉安市",
+                            "district": "吉州区",
+                            "detail": ""
+                        },
+                        "longitude": 115.00153936965165,
+                        "latitude": 27.14931499387718
+                    },
+                    {
+                        "equipmentId": "LD3600000016",
+                        "addressString": "江西省吉安市吉州区",
+                        "address": {
+                            "id": 6,
+                            "gmtCreate": "2019-05-10 21:34:38",
+                            "gmtModified": "2019-05-10 21:34:38",
+                            "province": "江西省",
+                            "city": "吉安市",
+                            "district": "吉州区",
+                            "detail": ""
+                        },
+                        "longitude": 115.00153936965165,
+                        "latitude": 27.14931499387718
+                    },
+                    {
+                        "equipmentId": "LD3600000017",
+                        "addressString": "江西省吉安市吉州区",
+                        "address": {
+                            "id": 6,
+                            "gmtCreate": "2019-05-10 21:34:38",
+                            "gmtModified": "2019-05-10 21:34:38",
+                            "province": "江西省",
+                            "city": "吉安市",
+                            "district": "吉州区",
+                            "detail": ""
+                        },
+                        "longitude": 115.00153936965165,
+                        "latitude": 27.14931499387718
+                    },
+                    {
+                        "equipmentId": "LD3600000019",
+                        "addressString": "江西省吉安市吉州区",
+                        "address": {
+                            "id": 6,
+                            "gmtCreate": "2019-05-10 21:34:38",
+                            "gmtModified": "2019-05-10 21:34:38",
+                            "province": "江西省",
+                            "city": "吉安市",
+                            "district": "吉州区",
+                            "detail": ""
+                        },
+                        "longitude": 115.00153936965165,
+                        "latitude": 27.14931499387718
+                    },
+                    {
+                        "equipmentId": "LD3600000021",
+                        "addressString": "江西省吉安市吉州区",
+                        "address": {
+                            "id": 6,
+                            "gmtCreate": "2019-05-10 21:34:38",
+                            "gmtModified": "2019-05-10 21:34:38",
+                            "province": "江西省",
+                            "city": "吉安市",
+                            "district": "吉州区",
+                            "detail": ""
+                        },
+                        "longitude": 115.00153936965165,
+                        "latitude": 27.14931499387718
+                    }
+                ]
+            },
+            "江苏省": {
+                "常州市": [
+                    {
+                        "equipmentId": "LD3200000005",
+                        "addressString": "江苏省常州市新北区",
+                        "address": {
+                            "id": 4,
+                            "gmtCreate": "2019-05-10 21:32:42",
+                            "gmtModified": "2019-05-10 21:32:42",
+                            "province": "江苏省",
+                            "city": "常州市",
+                            "district": "新北区",
+                            "detail": ""
+                        },
+                        "longitude": 119.97751429275537,
+                        "latitude": 31.83632394762366
+                    },
+                    {
+                        "equipmentId": "LD3200000008",
+                        "addressString": "江苏省常州市新北区",
+                        "address": {
+                            "id": 4,
+                            "gmtCreate": "2019-05-10 21:32:42",
+                            "gmtModified": "2019-05-10 21:32:42",
+                            "province": "江苏省",
+                            "city": "常州市",
+                            "district": "新北区",
+                            "detail": ""
+                        },
+                        "longitude": 119.97751429275537,
+                        "latitude": 31.83632394762366
+                    },
+                    {
+                        "equipmentId": "LD3200000011",
+                        "addressString": "江苏省常州市新北区",
+                        "address": {
+                            "id": 4,
+                            "gmtCreate": "2019-05-10 21:32:42",
+                            "gmtModified": "2019-05-10 21:32:42",
+                            "province": "江苏省",
+                            "city": "常州市",
+                            "district": "新北区",
+                            "detail": ""
+                        },
+                        "longitude": 119.97751429275537,
+                        "latitude": 31.83632394762366
+                    },
+                    {
+                        "equipmentId": "LD3200000012",
+                        "addressString": "江苏省常州市新北区",
+                        "address": {
+                            "id": 4,
+                            "gmtCreate": "2019-05-10 21:32:42",
+                            "gmtModified": "2019-05-10 21:32:42",
+                            "province": "江苏省",
+                            "city": "常州市",
+                            "district": "新北区",
+                            "detail": ""
+                        },
+                        "longitude": 119.97751429275537,
+                        "latitude": 31.83632394762366
+                    },
+                    {
+                        "equipmentId": "LD3200000014",
+                        "addressString": "江苏省常州市新北区",
+                        "address": {
+                            "id": 4,
+                            "gmtCreate": "2019-05-10 21:32:42",
+                            "gmtModified": "2019-05-10 21:32:42",
+                            "province": "江苏省",
+                            "city": "常州市",
+                            "district": "新北区",
+                            "detail": ""
+                        },
+                        "longitude": 119.97751429275537,
+                        "latitude": 31.83632394762366
+                    },
+                    {
+                        "equipmentId": "LD3200000018",
+                        "addressString": "江苏省常州市新北区",
+                        "address": {
+                            "id": 4,
+                            "gmtCreate": "2019-05-10 21:32:42",
+                            "gmtModified": "2019-05-10 21:32:42",
+                            "province": "江苏省",
+                            "city": "常州市",
+                            "district": "新北区",
+                            "detail": ""
+                        },
+                        "longitude": 119.97751429275537,
+                        "latitude": 31.83632394762366
+                    },
+                    {
+                        "equipmentId": "LD3200000020",
+                        "addressString": "江苏省常州市新北区",
+                        "address": {
+                            "id": 4,
+                            "gmtCreate": "2019-05-10 21:32:42",
+                            "gmtModified": "2019-05-10 21:32:42",
+                            "province": "江苏省",
+                            "city": "常州市",
+                            "district": "新北区",
+                            "detail": ""
+                        },
+                        "longitude": 119.97751429275537,
+                        "latitude": 31.83632394762366
+                    },
+                    {
+                        "equipmentId": "LD3200000026",
+                        "addressString": "江苏省常州市新北区",
+                        "address": {
+                            "id": 4,
+                            "gmtCreate": "2019-05-10 21:32:42",
+                            "gmtModified": "2019-05-10 21:32:42",
+                            "province": "江苏省",
+                            "city": "常州市",
+                            "district": "新北区",
+                            "detail": ""
+                        },
+                        "longitude": 119.97751429275537,
+                        "latitude": 31.83632394762366
+                    },
+                    {
+                        "equipmentId": "LD3200000029",
+                        "addressString": "江苏省常州市新北区",
+                        "address": {
+                            "id": 4,
+                            "gmtCreate": "2019-05-10 21:32:42",
+                            "gmtModified": "2019-05-10 21:32:42",
+                            "province": "江苏省",
+                            "city": "常州市",
+                            "district": "新北区",
+                            "detail": ""
+                        },
+                        "longitude": 119.97751429275537,
+                        "latitude": 31.83632394762366
+                    }
+                ]
+            },
+            "辽宁省": {
+                "沈阳市": [
+                    {
+                        "equipmentId": "LD2100000001",
+                        "addressString": "辽宁省沈阳市和平区",
+                        "address": {
+                            "id": 8,
+                            "gmtCreate": "2019-05-10 21:34:39",
+                            "gmtModified": "2019-05-10 21:34:39",
+                            "province": "辽宁省",
+                            "city": "沈阳市",
+                            "district": "和平区",
+                            "detail": ""
+                        },
+                        "longitude": 123.42664426615303,
+                        "latitude": 41.79523605290212
+                    },
+                    {
+                        "equipmentId": "LD2100000005",
+                        "addressString": "辽宁省沈阳市和平区",
+                        "address": {
+                            "id": 8,
+                            "gmtCreate": "2019-05-10 21:34:39",
+                            "gmtModified": "2019-05-10 21:34:39",
+                            "province": "辽宁省",
+                            "city": "沈阳市",
+                            "district": "和平区",
+                            "detail": ""
+                        },
+                        "longitude": 123.42664426615303,
+                        "latitude": 41.79523605290212
+                    },
+                    {
+                        "equipmentId": "LD2100000006",
+                        "addressString": "辽宁省沈阳市和平区",
+                        "address": {
+                            "id": 8,
+                            "gmtCreate": "2019-05-10 21:34:39",
+                            "gmtModified": "2019-05-10 21:34:39",
+                            "province": "辽宁省",
+                            "city": "沈阳市",
+                            "district": "和平区",
+                            "detail": ""
+                        },
+                        "longitude": 123.42664426615303,
+                        "latitude": 41.79523605290212
+                    },
+                    {
+                        "equipmentId": "LD2100000009",
+                        "addressString": "辽宁省沈阳市和平区",
+                        "address": {
+                            "id": 8,
+                            "gmtCreate": "2019-05-10 21:34:39",
+                            "gmtModified": "2019-05-10 21:34:39",
+                            "province": "辽宁省",
+                            "city": "沈阳市",
+                            "district": "和平区",
+                            "detail": ""
+                        },
+                        "longitude": 123.42664426615303,
+                        "latitude": 41.79523605290212
+                    }
+                ]
+            },
+            "北京市": {
+                "北京城区": [
+                    {
+                        "equipmentId": "LD1100000002",
+                        "addressString": "北京市北京城区朝阳区",
+                        "address": {
+                            "id": 5,
+                            "gmtCreate": "2019-05-10 21:32:42",
+                            "gmtModified": "2019-05-10 21:32:42",
+                            "province": "北京市",
+                            "city": "北京城区",
+                            "district": "朝阳区",
+                            "detail": ""
+                        },
+                        "longitude": 116.44955872950158,
+                        "latitude": 39.92637452307989
+                    },
+                    {
+                        "equipmentId": "LD1100000011",
+                        "addressString": "北京市北京城区朝阳区",
+                        "address": {
+                            "id": 5,
+                            "gmtCreate": "2019-05-10 21:32:42",
+                            "gmtModified": "2019-05-10 21:32:42",
+                            "province": "北京市",
+                            "city": "北京城区",
+                            "district": "朝阳区",
+                            "detail": ""
+                        },
+                        "longitude": 116.44955872950158,
+                        "latitude": 39.92637452307989
+                    }
+                ]
+            },
+            "四川省": {
+                "乐山市": [
+                    {
+                        "equipmentId": "LD5100000005",
+                        "addressString": "四川省乐山市夹江县",
+                        "address": {
+                            "id": 7,
+                            "gmtCreate": "2019-05-10 21:34:38",
+                            "gmtModified": "2019-05-10 21:34:38",
+                            "province": "四川省",
+                            "city": "乐山市",
+                            "district": "夹江县",
+                            "detail": ""
+                        },
+                        "longitude": 103.57841009994,
+                        "latitude": 29.74384630298549
+                    },
+                    {
+                        "equipmentId": "LD5100000012",
+                        "addressString": "四川省乐山市夹江县",
+                        "address": {
+                            "id": 7,
+                            "gmtCreate": "2019-05-10 21:34:38",
+                            "gmtModified": "2019-05-10 21:34:38",
+                            "province": "四川省",
+                            "city": "乐山市",
+                            "district": "夹江县",
+                            "detail": ""
+                        },
+                        "longitude": 103.57841009994,
+                        "latitude": 29.74384630298549
+                    },
+                    {
+                        "equipmentId": "LD5100000013",
+                        "addressString": "四川省乐山市夹江县",
+                        "address": {
+                            "id": 7,
+                            "gmtCreate": "2019-05-10 21:34:38",
+                            "gmtModified": "2019-05-10 21:34:38",
+                            "province": "四川省",
+                            "city": "乐山市",
+                            "district": "夹江县",
+                            "detail": ""
+                        },
+                        "longitude": 103.57841009994,
+                        "latitude": 29.74384630298549
+                    },
+                    {
+                        "equipmentId": "LD5100000014",
+                        "addressString": "四川省乐山市夹江县",
+                        "address": {
+                            "id": 7,
+                            "gmtCreate": "2019-05-10 21:34:38",
+                            "gmtModified": "2019-05-10 21:34:38",
+                            "province": "四川省",
+                            "city": "乐山市",
+                            "district": "夹江县",
+                            "detail": ""
+                        },
+                        "longitude": 103.57841009994,
+                        "latitude": 29.74384630298549
+                    },
+                    {
+                        "equipmentId": "LD5100000015",
+                        "addressString": "四川省乐山市夹江县",
+                        "address": {
+                            "id": 7,
+                            "gmtCreate": "2019-05-10 21:34:38",
+                            "gmtModified": "2019-05-10 21:34:38",
+                            "province": "四川省",
+                            "city": "乐山市",
+                            "district": "夹江县",
+                            "detail": ""
+                        },
+                        "longitude": 103.57841009994,
+                        "latitude": 29.74384630298549
+                    },
+                    {
+                        "equipmentId": "LD5100000017",
+                        "addressString": "四川省乐山市夹江县",
+                        "address": {
+                            "id": 7,
+                            "gmtCreate": "2019-05-10 21:34:38",
+                            "gmtModified": "2019-05-10 21:34:38",
+                            "province": "四川省",
+                            "city": "乐山市",
+                            "district": "夹江县",
+                            "detail": ""
+                        },
+                        "longitude": 103.57841009994,
+                        "latitude": 29.74384630298549
+                    },
+                    {
+                        "equipmentId": "LD5100000018",
+                        "addressString": "四川省乐山市夹江县",
+                        "address": {
+                            "id": 7,
+                            "gmtCreate": "2019-05-10 21:34:38",
+                            "gmtModified": "2019-05-10 21:34:38",
+                            "province": "四川省",
+                            "city": "乐山市",
+                            "district": "夹江县",
+                            "detail": ""
+                        },
+                        "longitude": 103.57841009994,
+                        "latitude": 29.74384630298549
+                    },
+                    {
+                        "equipmentId": "LD5100000020",
+                        "addressString": "四川省乐山市夹江县",
+                        "address": {
+                            "id": 7,
+                            "gmtCreate": "2019-05-10 21:34:38",
+                            "gmtModified": "2019-05-10 21:34:38",
+                            "province": "四川省",
+                            "city": "乐山市",
+                            "district": "夹江县",
+                            "detail": ""
+                        },
+                        "longitude": 103.57841009994,
+                        "latitude": 29.74384630298549
+                    },
+                    {
+                        "equipmentId": "LD5100000021",
+                        "addressString": "四川省乐山市夹江县",
+                        "address": {
+                            "id": 7,
+                            "gmtCreate": "2019-05-10 21:34:38",
+                            "gmtModified": "2019-05-10 21:34:38",
+                            "province": "四川省",
+                            "city": "乐山市",
+                            "district": "夹江县",
+                            "detail": ""
+                        },
+                        "longitude": 103.57841009994,
+                        "latitude": 29.74384630298549
+                    },
+                    {
+                        "equipmentId": "LD5100000022",
+                        "addressString": "四川省乐山市夹江县",
+                        "address": {
+                            "id": 7,
+                            "gmtCreate": "2019-05-10 21:34:38",
+                            "gmtModified": "2019-05-10 21:34:38",
+                            "province": "四川省",
+                            "city": "乐山市",
+                            "district": "夹江县",
+                            "detail": ""
+                        },
+                        "longitude": 103.57841009994,
+                        "latitude": 29.74384630298549
+                    }
+                ]
+            }
+        };
+
+    function readJsonAttr() {
+        for (var province in result) {
+            console.log(province);
+            var provinceObject = result[province];
+            for (var city in provinceObject) {
+                console.log(city);
+                var cityObject = provinceObject[city];
+                for (var i = 0; i < cityObject.length; i++) {
+                    console.log(cityObject[i].equipmentId + cityObject[i].addressString);
+                }
+            }
+        }
+    }
+
+</script>
+
+</body>
